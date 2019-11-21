@@ -2,11 +2,15 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Serwis Egzaminacyjny{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body style="background-color: #AAAAAA">
+        {% block body %}
+        <nav style="background-color: #565656">MENU</nav>
+            <button>User</button>
+            <button>Exam</button>
+        {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>

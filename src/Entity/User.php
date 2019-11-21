@@ -1,7 +1,13 @@
 <?php
-
+namespace App\Entity;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\Date;
+//use Symfony\Component\Validator\Tests\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Created by PhpStorm.
  * User: Asus
@@ -9,21 +15,82 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
  * Time: 11:32
  */
 
-class User  extends Entity
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ */
+
+class User  extends Entity implements UserInterface, EquatableInterface
 {
+    /**
+     * * @Assert\Type("Integer")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
     private $id;
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
     private $username;
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
     private $password;
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
     private $first_name;
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
     private $last_name;
+    /**
+     * * @Assert\Email()
+     * @ORM\Column(type="string")
+     */
     private $email;
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
     private $role;
+    /**
+     * @Assert\Type("\DateTime")
+     * @ORM\Column(type="datetime")
+     */
     private $last_login;
+    /**
+     * @Assert\Type("\DateTime")
+     * @ORM\Column(type="datetime")
+     */
     private $last_password_change;
+    /**
+     * @Assert\Type("\DateTime")
+     * @ORM\Column(type="datetime")
+     */
     private $date_registration;
 
+    /*public function __construct($id, $username, $password, $salt, array $roles, $email, $first_name, $last_name, $last_login,$last_password_change, $date_registration)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->password = $password;
+        $this->salt = $salt;
+        $this->email = $email;
+        $this->first_name = $first_name;
+        $this->last_name = $last_name;
+        $this->last_login = $last_login;
+        $this->last_password_change = $last_password_change;
+        $this->date_registration = $date_registration;
+    }*/
+
+
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -31,7 +98,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      */
     public function setId($id): void
     {
@@ -39,7 +106,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getUsername()
     {
@@ -47,7 +114,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $username
+     * @param String $username
      */
     public function setUsername($username): void
     {
@@ -55,7 +122,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getPassword()
     {
@@ -63,7 +130,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $password
+     * @param String $password
      */
     public function setPassword($password): void
     {
@@ -71,7 +138,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getFirstName()
     {
@@ -79,7 +146,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $first_name
+     * @param String $first_name
      */
     public function setFirstName($first_name): void
     {
@@ -87,7 +154,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getLastName()
     {
@@ -95,7 +162,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $last_name
+     * @param String $last_name
      */
     public function setLastName($last_name): void
     {
@@ -103,7 +170,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getEmail()
     {
@@ -111,7 +178,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $email
+     * @param String $email
      */
     public function setEmail($email): void
     {
@@ -119,7 +186,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return String
      */
     public function getRole()
     {
@@ -127,7 +194,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $role
+     * @param String $role
      */
     public function setRole($role): void
     {
@@ -135,7 +202,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getLastLogin()
     {
@@ -143,7 +210,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $last_login
+     * @param \DateTime $last_login
      */
     public function setLastLogin($last_login): void
     {
@@ -151,7 +218,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getLastPasswordChange()
     {
@@ -159,7 +226,7 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $last_password_change
+     * @param \DateTime $last_password_change
      */
     public function setLastPasswordChange($last_password_change): void
     {
@@ -167,7 +234,7 @@ class User  extends Entity
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getDateRegistration()
     {
@@ -175,13 +242,71 @@ class User  extends Entity
     }
 
     /**
-     * @param mixed $date_registration
+     * @param \DateTime $date_registration
      */
     public function setDateRegistration($date_registration): void
     {
         $this->date_registration = $date_registration;
     }
 
+    public function getAllInformation(){
+        $data = [$this->username,$this->password,$this->first_name,$this->last_name,$this->email,$this->role,
+            $this->last_login,$this->last_password_change,$this->date_registration];
+        return $data;
+    }
+    /**
+     * Returns the roles granted to the user.
+     *
+     *     public function getRoles()
+     *     {
+     *         return ['ROLE_USER'];
+     *     }
+     *
+     * Alternatively, the roles might be stored on a ``roles`` property,
+     * and populated in any number of different ways when the user object
+     * is created.
+     *
+     * @return (Role|string)[] The user roles
+     */
+    public function getRoles()
+    {
+        // TODO: Implement getRoles() method.
+    }
 
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
 
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * The equality comparison should neither be done by referential equality
+     * nor by comparing identities (i.e. getId() === getId()).
+     *
+     * However, you do not need to compare every attribute, but only those that
+     * are relevant for assessing whether re-authentication is required.
+     *
+     * @return bool
+     */
+    public function isEqualTo(UserInterface $user)
+    {
+        // TODO: Implement isEqualTo() method.
+    }
 }
