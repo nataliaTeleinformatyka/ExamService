@@ -3,13 +3,37 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Serwis Egzaminacyjny{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
     </head>
     <body style="background-color: #AAAAAA">
         {% block body %}
-        <nav style="background-color: #565656">MENU</nav>
-            <button>User</button>
-            <button>Exam</button>
+        <nav style="background-color: #565656">
+            <button type="button" class="btn btn-default btn-sm">
+                <a href="/userList" title="User list">
+                    <span class="glyphicon glyphicon-align-justify"></span> User
+                </a>
+            </button>
+            <button type="button" class="btn btn-default btn-sm">
+                <a href="/examList" title="Exam list">
+                <span class="glyphicon glyphicon-align-justify"></span> Exam
+                </a>
+            </button>
+            <button type="button" class="btn btn-default btn-sm">
+                <a href="#" title="User exam list">
+                    <span class="glyphicon glyphicon-align-justify"></span> User exam
+                </a>
+            </button>
+            <button type="button" class="btn btn-default btn-sm">
+                <a href="/learningMaterialsGroupList" title="Learning materials group list">
+                    <span class="glyphicon glyphicon-align-justify"></span> Learning materials group
+                </a>
+            </button>
+        </nav>
         {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

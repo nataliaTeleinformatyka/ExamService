@@ -1,0 +1,44 @@
+{# templates/examList.html.twig #}
+{% include 'base.html.twig' %}
+<div class="sign">
+    <a href="exam" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
+    </a>
+</div>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Name</td>
+        <td>Learning required</td>
+        <td>Minimum questions</td>
+        <td>Maximum attempts</td>
+        <td>Start date</td>
+        <td>End date</td>
+        <td>Additional Information</td>
+        <td></td>
+    </tr>
+    {% for action in data %}
+    <tr>
+        <td> {{ action.id|default('undefined') }}  </td>
+        <td> {{ action.name|default('undefined') }}  </td>
+        <td> {{ action.learning_required|default('undefined') }} </td>
+        <td> {{ action.min_questions|default('') }} </td>
+        <td> {{ action.max_attempts|default('') }} </td>
+        <td> {{ action.start_date|default('') }}</td>
+        <td> {{ action.end_date|default('') }}</td>
+        <td> {{ action.additional_information|default('') }}</td>
+        <td><div class="sign">
+                 <a href="#">
+                    <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
+                 </a>
+                <a href="#">
+                    <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
+                </a>
+                <a href="examList/questionList/exam={{ action.id }}" title="Question list">
+                    <span class="glyphicon glyphicon-list"></span>
+                </a>
+        </div>
+        </td>
+    </tr>
+    {% endfor%}
+</table>

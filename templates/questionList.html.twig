@@ -1,0 +1,41 @@
+{# templates/questionList.html.twig #}
+{% include 'base.html.twig' %}
+<div class="sign">
+    <a href="question" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add new question
+    </a>
+</div>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Content</td>
+        <td>Maximum answers</td>
+        <td>Is multichoice</td>
+        <td>Is file</td>
+    </tr>
+    {% for action in data %}
+        <tr>
+            <td> {{ action.id|default('undefined') }}  </td>
+            <td> {{ action.content|default('undefined') }}  </td>
+            <td> {{ action.max_answers|default('undefined') }} </td>
+            <td> {{ action.is_multichoice|default('') }} </td>
+            <td> {{ action.is_file|default('') }} </td>
+
+            <td><div class="sign">
+                        <a href="#" title="delete question">
+                            <span class="glyphicon glyphicon-remove-sign"></span>
+                        </a>
+                        <a href="#" title="edit question">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+                        <a href="#" title="Answer list">
+                            <span class="glyphicon glyphicon-list"></span>
+                        </a>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-file" title="File list"></span>
+                        </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor%}
+</table>

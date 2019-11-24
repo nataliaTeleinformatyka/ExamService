@@ -62,40 +62,16 @@ class UserController extends AbstractController
             $data[7] = $request->request->get('last_password_change');
             $data[8] = $request->request->get('date_registration');
 
-
-
-
-
             $user = $form->getData();
-            $password = $form["password"]->getData();
-          /*  $products = $user->getDoctrine()
-                ->getRepository(User::class)->insert[$userData];*/
-// ... perform some action, such as saving the task to the database
-            // for example, if Task is a Doctrine entity, save it!
-             $entityManager = $this->getDoctrine()->getManager();
 
-             /*$entityManager->persist($user);
-             $entityManager->flush();*/
+            $entityManager = $this->getDoctrine()->getManager();
 
-            //var_dump($request->request->get($form->getName()));
-           /* $user->setUsername($form->get('username')->getData());
-            $user->setRole($form->get('role')->getData());
-            $user->setPassword($form->get('password')->getData());
-            $user->setLastName($form->get('last_name')->getData());
-            $user->setFirstName($form->get('first_name')->getData());
-            $user->setEmail($form->get('email')->getData());
-            $user->setDateRegistration(new \DateTime('now'));
-            $user->setLastPasswordChange(new \DateTime('now'));
-            $user->setLastLogin(new \DateTime('now'));*/
+            $values = $user->getAllInformation();
+            $repositoryUser = new UserRepository();
+            $repositoryUser -> insert($values);
 
-           // var_dump($user->getEmail());
-        $test = $user->getAllInformation();
-           $repositoryUser = new UserRepository();
-           $repositoryUser -> insert($test);
-            print_r($test);
-
-
-      //      return $this->redirectToRoute('/insertUser');
+           // return $this->forward($this->generateUrl('user'));
+           // return $this->redirectToRoute('/user');
         }
 
         return $this->render('userAdd.html.twig', [
@@ -103,8 +79,34 @@ class UserController extends AbstractController
         ]);
     }
 
-    public function viewUsers() {
+    /**
+     * @Route("/userList")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function userListCreate() {
+        $userInformation= new UserRepository();
+        $id = $userInformation -> getQuantity();
 
+        for( $i = 0; $i <$id;$i++) {
+            $users = $userInformation->getUser($i);
+
+            $tplArray[$i] = array (
+                'id' => $i,
+                'username' => $users['username'],
+                'password' => $users['password'],
+                'first_name' => $users['first_name'],
+                'last_name' => $users['last_name'],
+                'email' => $users['email'],
+                'role' => $users['role'],
+                'last_login' => $users['last_login']['date'],
+                'last_password_change' => $users['last_password_change']['date'],
+                'date_registration' => $users['date_registration']['date']
+            );
+        }
+        return $this->render( 'userList.html.twig', array (
+            'data' => $tplArray
+        ) );
     }
+
 
 }

@@ -19,10 +19,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 
-class User  extends Entity implements UserInterface, EquatableInterface
+class User extends Entity implements UserInterface, EquatableInterface
 {
     /**
-     * * @Assert\Type("Integer")
+     * @Assert\Type("Integer")
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -73,21 +73,6 @@ class User  extends Entity implements UserInterface, EquatableInterface
      * @ORM\Column(type="datetime")
      */
     private $date_registration;
-
-    /*public function __construct($id, $username, $password, $salt, array $roles, $email, $first_name, $last_name, $last_login,$last_password_change, $date_registration)
-    {
-        $this->id = $id;
-        $this->username = $username;
-        $this->password = $password;
-        $this->salt = $salt;
-        $this->email = $email;
-        $this->first_name = $first_name;
-        $this->last_name = $last_name;
-        $this->last_login = $last_login;
-        $this->last_password_change = $last_password_change;
-        $this->date_registration = $date_registration;
-    }*/
-
 
     /**
      * @return int

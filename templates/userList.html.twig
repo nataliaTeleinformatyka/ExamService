@@ -1,0 +1,41 @@
+{# templates/userList.html.twig #}
+{% include 'base.html.twig' %}
+<div class="sign">
+    <a href="user" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add new user
+    </a>
+</div>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Username</td>
+        <td>Password</td>
+        <td>First name</td>
+        <td>Last name</td>
+        <td>Email</td>
+        <td>Role</td>
+        <td>Last login</td>
+        <td>Last password change</td>
+        <td>Date Registration</td>
+    </tr>
+    {% for action in data %}
+        <tr>
+            <td> {{ action.id|default('undefined') }}  </td>
+            <td> {{ action.username|default('undefined') }}  </td>
+            <td> {{ action.password|default('undefined') }} </td>
+            <td> {{ action.first_name|default('undefined') }} </td>
+            <td> {{ action.last_name|default('undefined') }} </td>
+            <td> {{ action.email|default('undefined') }}</td>
+            <td> {{ action.role|default('undefined') }}</td>
+            <td> {{ action.last_login|default('undefined') }}</td>
+            <td> {{ action.last_password_change|default('undefined') }}</td>
+            <td> {{ action.date_registration|default('undefined') }}</td>
+            <td><div class="sign"> <a href="#">
+                    <span class="glyphicon glyphicon-remove-sign"></span>
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor%}
+</table>

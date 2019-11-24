@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+{# templates/article/recent_list.html.twig #}
+{% for article in articles %}
+    <a href="{{ path('login_show', {'slug': login.slug}) }}">
+        {{ login.title }}
+    </a>
+{% endfor %}

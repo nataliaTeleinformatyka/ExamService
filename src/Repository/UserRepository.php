@@ -51,7 +51,7 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
 
         $this->database = $factory->createDatabase();
     }*/
-
+//todo: przesylanie zakodowanego hasla, sesja strony. logowanie
 
     /**
      * UserRepository constructor.
@@ -74,39 +74,51 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
     }
 
    public function getUser(int $userId) {
-        if(empty($userId) /*|| isset($userId)*/) { return false; }
+      //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
        try {
            if ($this->reference->getSnapshot()->hasChild($userId)) {
                return $this->reference->getChild($userId)->getValue();
            } else {
-               return false;
+               return 0;
            }
        } catch (ApiException $e) {
 
        }
    }
 
+    public function getAllUsers() {
+        $userId = $this->getQuantity();
+        if(empty($userId) /*|| isset($userId)*/) { return 0; }
+        for($i=0;$i<$userId;$i++) {
+            try {
+                if ($this->reference->getSnapshot()->hasChild($i)) {
+                    $data[$i] = $this->reference->getChild($i)->getValue();
+                    return $data;
+                    //return $this->reference->getChild($i)->getValue();
+                } else {
+                    return 0;
+                }
+            } catch (ApiException $e) {
+
+            }
+        }
+    }
+
    public function insert(array $data) {
        if(empty($data) /*|| isset($data)*/) { return false; }
 
        $actualUserId = $this->getQuantity();
-
-      // foreach($data as $key => $value) {
-          // $this->database->getReference()->getChild($this->dbname)->getChild($key)->set($value);
-           $this->reference/*->getChild($this->dbname)*/->getChild($actualUserId)->set([
-               //$actualUserId => [
-               'username' => $data[0],
-               'password' => $data[1],
-               'first_name' => $data[2],
-               'last_name' => $data[3],
-               'email' => $data[4],
-               'role' => $data[5],
-               'last_login' => $data[6],
-               'last_password_change' => $data[7],
-               'date_registration' => $data[8]
-           // ]
-           ]);
-       //}
+       $this->reference->getChild($actualUserId)->set([
+           'username' => $data[0],
+           'password' => $data[1],
+           'first_name' => $data[2],
+           'last_name' => $data[3],
+           'email' => $data[4],
+           'role' => $data[5],
+           'last_login' => $data[6],
+           'last_password_change' => $data[7],
+           'date_registration' => $data[8]
+       ]);
        return true;
    }
 
@@ -126,12 +138,12 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
 
     public function getQuantity()
     {
-
         try {
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {
         }
     }
+
 
     /**
      * Loads the user for the given username.
@@ -148,8 +160,10 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
     }
 }
 /*$users = new UserRepository();
-var_dump($users);
-var_dump($users->insert([
+var_dump($users->getAllUsers());
+var_dump($users->getQuantity());*/
+
+/*var_dump($users->insert([
     'username','password','first_name','last_name','email','role','last_login','last_password_change','date_registration'
 ]));*/
 /*var_dump($users->insert([

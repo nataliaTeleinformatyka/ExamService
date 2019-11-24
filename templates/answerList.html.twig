@@ -1,0 +1,33 @@
+{# templates/answerList.html.twig #}
+{% include 'base.html.twig' %}
+<div class="sign">
+    <a href="answer" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add new answer
+    </a>
+</div>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Content</td>
+        <td>Is true</td>
+        <td>Is active</td>
+    </tr>
+    {% for action in data %}
+        <tr>
+            <td> {{ action.id|default('undefined') }}  </td>
+            <td> {{ action.content|default('undefined') }}  </td>
+            <td> {{ action.is_true|default('') }} </td>
+            <td> {{ action.is_active|default('') }} </td>
+
+            <td><div class="sign">
+                    <a href="#" title="delete answer">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                    </a>
+                    <a href="#" title="edit answer">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor%}
+</table>

@@ -17,4 +17,4 @@ $factory = (new Factory)
     ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
 
 $database = $factory->createDatabase();
-die(print_r($database));
+//die(print_r($database));
