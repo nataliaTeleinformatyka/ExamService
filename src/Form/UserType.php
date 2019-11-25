@@ -32,7 +32,7 @@ class UserType extends AbstractType {
             ->add('first_name', TextType::class)
             ->add('last_name', TextType::class)
             ->add('email', EmailType::class)
-            ->add('role', ChoiceType::class, [
+            ->add('roles', ChoiceType::class, [
                 'choices'  => [
                     'Admin' => 'admin',
                     'Teacher' => 'teacher',

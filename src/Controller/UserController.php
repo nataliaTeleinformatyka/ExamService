@@ -57,7 +57,7 @@ class UserController extends AbstractController
             $data[2] = $request->request->get('first_name');
             $data[3] = $request->request->get('last_name');
             $data[4] = $request->request->get('email');
-            $data[5] = $request->request->get('role');
+            $data[5] = $request->request->get('roles');
             $data[6] = $request->request->get('last_login');
             $data[7] = $request->request->get('last_password_change');
             $data[8] = $request->request->get('date_registration');

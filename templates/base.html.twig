@@ -12,28 +12,18 @@
     </head>
     <body style="background-color: #AAAAAA">
         {% block body %}
-        <nav style="background-color: #565656">
-            <button type="button" class="btn btn-default btn-sm">
-                <a href="/userList" title="User list">
-                    <span class="glyphicon glyphicon-align-justify"></span> User
-                </a>
-            </button>
-            <button type="button" class="btn btn-default btn-sm">
-                <a href="/examList" title="Exam list">
-                <span class="glyphicon glyphicon-align-justify"></span> Exam
-                </a>
-            </button>
-            <button type="button" class="btn btn-default btn-sm">
-                <a href="#" title="User exam list">
-                    <span class="glyphicon glyphicon-align-justify"></span> User exam
-                </a>
-            </button>
-            <button type="button" class="btn btn-default btn-sm">
-                <a href="/learningMaterialsGroupList" title="Learning materials group list">
-                    <span class="glyphicon glyphicon-align-justify"></span> Learning materials group
-                </a>
-            </button>
-        </nav>
+            <nav>
+                <div class="container log">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-in">Username</span>
+                    </a>
+                    Jesli zalogowany to wyloguj jesli nie to nie ma
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-out">Sign out</span>
+                    </a>
+
+                </div>
+            </nav>
         {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>

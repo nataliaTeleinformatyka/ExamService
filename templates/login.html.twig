@@ -1,7 +1,16 @@
-{% extends 'base.html.twig' %}
+{% include 'base.html.twig' %}
 {# templates/login.html.twig #}
-{% for article in articles %}
-    <a href="{{ }}">
+{% block body %}
+    <body>
+    {% if errors %}
+        {{ errors.messageKey }}
+    {% endif %}
+    {% block login %}
+        <div class="signIn"> LOGOWANIE
+        {{ form(form) }}
+        Jeśli nie pamiętasz hasła kliknij w link aktywacyjny
+        </div>
+    </body>
+    {%  endblock %}
+{% endblock %}
 
-    </a>
-{% endfor %}

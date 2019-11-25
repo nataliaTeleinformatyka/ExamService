@@ -54,8 +54,8 @@ class User extends Entity implements UserInterface, EquatableInterface
      */
     private $email;
     /**
-     * * @Assert\Type("String")
-     * @ORM\Column(type="string")
+     * * @Assert\Type("Array")
+     * @ORM\Column(type="array")
      */
     private $role;
     /**
@@ -89,39 +89,6 @@ class User extends Entity implements UserInterface, EquatableInterface
     {
         $this->id = $id;
     }
-
-    /**
-     * @return String
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * @param String $username
-     */
-    public function setUsername($username): void
-    {
-        $this->username = $username;
-    }
-
-    /**
-     * @return String
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param String $password
-     */
-    public function setPassword($password): void
-    {
-        $this->password = $password;
-    }
-
     /**
      * @return String
      */
@@ -169,23 +136,6 @@ class User extends Entity implements UserInterface, EquatableInterface
     {
         $this->email = $email;
     }
-
-    /**
-     * @return String
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * @param String $role
-     */
-    public function setRole($role): void
-    {
-        $this->role = $role;
-    }
-
     /**
      * @return \DateTime
      */
@@ -240,46 +190,83 @@ class User extends Entity implements UserInterface, EquatableInterface
         return $data;
     }
     /**
-     * Returns the roles granted to the user.
+     * A visual identifier that represents this user.
      *
-     *     public function getRoles()
-     *     {
-     *         return ['ROLE_USER'];
-     *     }
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->username;
+    }
+
+    public function setUsername(string $username): self
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
      */
     public function getRoles()
     {
-        // TODO: Implement getRoles() method.
+        $role = $this->role;
+       // $role[] = 'ROLE_USER';
+
+        return $role;
+    }
+
+    public function setRoles(array $role): self
+    {
+        switch($role) {
+            case 'admin':
+                $role = 'ROLE_ADMIN';
+                break;
+            case 'teacher':
+                $role = 'ROLE_TEACHER';
+                break;
+            case 'student':
+                $role = 'ROLE_STUDENT';
+                break;
+            default: $role = '';
+        }
+
+        $this->role = $role;
+
+        return $this;
     }
 
     /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
+     * @see UserInterface
+     */
+    public function getPassword(): string
+    {
+        return (string) $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
      */
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
+        // not needed when using the "bcrypt" algorithm in security.yaml
     }
-    
 
     /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
+     * @see UserInterface
      */
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     /**

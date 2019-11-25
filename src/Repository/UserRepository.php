@@ -114,7 +114,7 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
            'first_name' => $data[2],
            'last_name' => $data[3],
            'email' => $data[4],
-           'role' => $data[5],
+           'role' => array($data[5]),
            'last_login' => $data[6],
            'last_password_change' => $data[7],
            'date_registration' => $data[8]
