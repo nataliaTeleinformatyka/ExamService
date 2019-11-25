@@ -269,6 +269,7 @@ class User extends Entity implements UserInterface, EquatableInterface
     {
         // TODO: Implement getSalt() method.
     }
+    
 
     /**
      * Removes sensitive data from the user.

@@ -70,7 +70,7 @@ class QuestionRepository
             }
         }
     }
-
+//todo: dodawanie nowego pytania do wybranego uprzednio egzaminu
     public function insert(array $data)
     {
         if (empty($data) /*|| isset($data)*/) {
@@ -79,7 +79,7 @@ class QuestionRepository
 
         $actualUserId = $this->getQuantity();
 
-        $this->reference//->getChild()
+        $this->reference->getChild("User")
             ->getChild($actualUserId)->set([
                 'content' => $data[0],
                 'max_answers' => $data[1],

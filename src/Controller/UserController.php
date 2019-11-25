@@ -108,5 +108,11 @@ class UserController extends AbstractController
         ) );
     }
 
+    /**
+     * @Route("/userDelete")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function userDelete() {
 
+    }
 }

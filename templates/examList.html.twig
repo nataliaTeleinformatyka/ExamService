@@ -28,10 +28,10 @@
         <td> {{ action.end_date|default('') }}</td>
         <td> {{ action.additional_information|default('') }}</td>
         <td><div class="sign">
-                 <a href="#">
-                    <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
-                 </a>
                 <a href="#">
+                    <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
+                </a>
+                <a href="/examEdit">
                     <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
                 </a>
                 <a href="examList/questionList/exam={{ action.id }}" title="Question list">

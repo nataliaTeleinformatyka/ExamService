@@ -18,8 +18,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class QuestionController extends AbstractController
 {
+    //todo: dodac numer egzaminu do pytania
     /**
-     * @Route("/question/{id}")
+     * @Route("/examList/questionList/question/")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */

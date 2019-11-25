@@ -99,5 +99,19 @@ class ExamController extends AbstractController
             'data' => $tplArray
         ) );
     }
+    /**
+     * @Route("/examEdit")
+     */
+    public function editExam(Request $request)
+    {
+        $exam = new Exam([]);
 
+        $form = $this->createForm(ExamType::class, $exam);
+        $form->handleRequest($request);
+
+        return $this->$this->render('examAdd.html.twig', array(
+            'id' => $request->query->get('id'),
+            'form' => $form->createView(),
+        ));
+    }
 }
