@@ -3,10 +3,10 @@
  * Created by PhpStorm.
  * User: Asus
  * Date: 23.11.2019
- * Time: 12:12
+ * Time: 11:58
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,10 +16,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\AnswerRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\QuestionRepository")
  */
 
-class Answer extends Entity  implements  EquatableInterface
+class Question extends Entity  implements EquatableInterface
 {
     /**
      * @Assert\Type("Integer")
@@ -29,23 +29,48 @@ class Answer extends Entity  implements  EquatableInterface
      */
     private $id;
     /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $id_exam;
+    /**
      * @Assert\NotBlank
      * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
     private $content;
+
+    /**
+     * @return mixed
+     */
+    public function getIdExam()
+    {
+        return $this->id_exam;
+    }
+
+    /**
+     * @param mixed $id_exam
+     */
+    public function setIdExam($id_exam): void
+    {
+        $this->id_exam = $id_exam;
+    }
     /**
      * @Assert\NotBlank
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $max_answers;
+    /**
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */
-    private $is_true;
+    private $is_multichoice;
     /**
-     * @Assert\NotBlank
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */
-    private $is_active;
+    private $is_file;
 
     /**
      * @return mixed
@@ -82,39 +107,56 @@ class Answer extends Entity  implements  EquatableInterface
     /**
      * @return mixed
      */
-    public function getisTrue()
+    public function getMaxAnswers()
     {
-        return $this->is_true;
+        return $this->max_answers;
     }
 
     /**
-     * @param mixed $is_true
+     * @param mixed $max_answers
      */
-    public function setIsTrue($is_true): void
+    public function setMaxAnswers($max_answers): void
     {
-        $this->is_true = $is_true;
+        $this->max_answers = $max_answers;
     }
 
     /**
      * @return mixed
      */
-    public function getisActive()
+    public function getisMultichoice()
     {
-        return $this->is_active;
+        return $this->is_multichoice;
     }
 
     /**
-     * @param mixed $is_active
+     * @param mixed $is_multichoice
      */
-    public function setIsActive($is_active): void
+    public function setIsMultichoice($is_multichoice): void
     {
-        $this->is_active = $is_active;
+        $this->is_multichoice = $is_multichoice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getisFile()
+    {
+        return $this->is_file;
+    }
+
+    /**
+     * @param mixed $is_file
+     */
+    public function setIsFile($is_file): void
+    {
+        $this->is_file = $is_file;
     }
 
     public function getAllInformation(){
-        $data = [$this->content,$this->is_true,$this->is_active];
+        $data = [$this->content,$this->max_answers,$this->is_multichoice,$this->is_file];
         return $data;
     }
+
     /**
      * The equality comparison should neither be done by referential equality
      * nor by comparing identities (i.e. getId() === getId()).

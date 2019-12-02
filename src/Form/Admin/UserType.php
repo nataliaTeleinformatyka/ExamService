@@ -1,7 +1,7 @@
 <?php
-namespace App\Form;
+namespace App\Form\Admin;
 
-use App\Entity\User;
+use App\Entity\Admin\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;

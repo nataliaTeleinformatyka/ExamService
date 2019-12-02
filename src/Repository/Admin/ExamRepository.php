@@ -3,22 +3,23 @@
  * Created by PhpStorm.
  * User: Asus
  * Date: 23.11.2019
- * Time: 17:20
+ * Time: 12:35
  */
 
-namespace App\Repository;
+namespace App\Repository\Admin;
 
 
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
-class LearningMaterialsGroupRepository
+class ExamRepository
 {
+
     protected $db;
     protected $database;
-    protected $dbname = 'LearningMaterialsGroup';
-    private $entityManager = 'LearningMaterialsGroup';
+    protected $dbname = 'Exam';
+    private $entityManager = 'Exam';
     protected $reference;
 
     public function __construct()
@@ -33,12 +34,12 @@ class LearningMaterialsGroupRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getExam(int $materialsGroupId)
+    public function getExam(int $examId)
     {
         //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
         try {
-            if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
-                return $this->reference->getChild($materialsGroupId)->getValue();
+            if ($this->reference->getSnapshot()->hasChild($examId)) {
+                return $this->reference->getChild($examId)->getValue();
             } else {
                 return 0;
             }
@@ -47,13 +48,14 @@ class LearningMaterialsGroupRepository
         }
     }
 
+
     public function getAllExams()
     {
-        $materialsGroupId = $this->getQuantity();
-        if (empty($materialsGroupId) /*|| isset($userId)*/) {
+        $examId = $this->getQuantity();
+        if (empty($examId) /*|| isset($userId)*/) {
             return 0;
         }
-        for ($i = 0; $i < $materialsGroupId; $i++) {
+        for ($i = 0; $i < $examId; $i++) {
             try {
                 if ($this->reference->getSnapshot()->hasChild($i)) {
                     $data[$i] = $this->reference->getChild($i)->getValue();
@@ -73,24 +75,30 @@ class LearningMaterialsGroupRepository
             return false;
         }
 
-        $materialsGroupId = $this->getQuantity();
+        $actualUserId = $this->getQuantity();
 
         $this->reference
-            ->getChild($materialsGroupId)->set([
-                'name_of_group' => $data[0],
-            ]);
+        ->getChild($actualUserId)->set([
+            //$actualUserId => [
+            'name' => $data[0],
+            'learning_required' => $data[1],
+            'additional_information' => $data[2],
+            'min_questions' => $data[3],
+            'max_attempts' => $data[4],
+            'start_date' => $data[5],
+            'end_date' => $data[6]
+        ]);
         return true;
     }
 
-    public function delete(int $materialsGroupId)
+    public function delete(int $examId)
     {
-        if (empty($materialsGroupId) /*|| isset($userId)*/) {
+        if (empty($examId) /*|| isset($userId)*/) {
             return false;
         }
-
         try {
-            if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
-                $this->reference->getChild($materialsGroupId)->remove();
+            if ($this->reference->getSnapshot()->hasChild($examId)) {
+                $this->reference->getChild($examId)->remove();
                 return true;
             } else {
                 return false;
@@ -106,4 +114,13 @@ class LearningMaterialsGroupRepository
         } catch (ApiException $e) {
         }
     }
+
+
+    public function find($exam_id){
+
+
+
+    }
+
+
 }

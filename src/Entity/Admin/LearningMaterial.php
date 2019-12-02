@@ -6,7 +6,7 @@
  * Time: 12:16
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,55 +16,34 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\LearningMaterialsGroupRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\LearningMaterialRepository")
  */
 
-class LearningMaterialsGroup extends Entity  implements  EquatableInterface
+class LearningMaterial extends Entity  implements  EquatableInterface
 {
     /**
      * @Assert\Type("Integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
-     */private $id;
+     */
+    private $id;
     /**
      * @Assert\NotBlank
      * @Assert\Type("String")
      * @ORM\Column(type="string")
-     */private $name_of_group;
+     */
+    private $name;
+
+    //todo:plik zewnetrzny pdf,jpg,link do filmu ,getters and setters
+    private $content;
 
     /**
-     * @return mixed
+     * @Assert\NotBlank
+     * @Assert\Type("Boolean")
+     * @ORM\Column(type="boolean")
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getNameOfGroup()
-    {
-        return $this->name_of_group;
-    }
-
-    /**
-     * @param mixed $name_of_group
-     */
-    public function setNameOfGroup($name_of_group): void
-    {
-        $this->name_of_group = $name_of_group;
-    }
-
+    private $is_required;
 
     /**
      * The equality comparison should neither be done by referential equality

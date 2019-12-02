@@ -6,9 +6,10 @@
  * Time: 10:11
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\Security\Core\User\EquatableInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ExamRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\ExamRepository")
  */
 
 class Exam extends Entity  implements  EquatableInterface
@@ -67,7 +68,7 @@ class Exam extends Entity  implements  EquatableInterface
    private $end_date;
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getId()
     {
@@ -75,7 +76,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $id
+     * @param integer $id
      */
     public function setId($id): void
     {
@@ -83,7 +84,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {
@@ -91,7 +92,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
     public function setName($name): void
     {
@@ -99,7 +100,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return boolean
      */
     public function getLearningRequired()
     {
@@ -107,7 +108,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $learning_required
+     * @param boolean $learning_required
      */
     public function setLearningRequired($learning_required): void
     {
@@ -115,7 +116,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAdditionalInformation()
     {
@@ -123,7 +124,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $additional_information
+     * @param string $additional_information
      */
     public function setAdditionalInformation($additional_information): void
     {
@@ -131,7 +132,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getMinQuestions()
     {
@@ -139,7 +140,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $min_questions
+     * @param integer $min_questions
      */
     public function setMinQuestions($min_questions): void
     {
@@ -147,7 +148,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getMaxAttempts()
     {
@@ -155,7 +156,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $max_attempts
+     * @param integer $max_attempts
      */
     public function setMaxAttempts($max_attempts): void
     {
@@ -163,7 +164,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return datetime
      */
     public function getStartDate()
     {
@@ -171,7 +172,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $start_date
+     * @param datetime $start_date
      */
     public function setStartDate($start_date): void
     {
@@ -179,7 +180,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @return mixed
+     * @return datetime
      */
     public function getEndDate()
     {
@@ -187,7 +188,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     /**
-     * @param mixed $end_date
+     * @param datetime $end_date
      */
     public function setEndDate($end_date): void
     {
@@ -216,4 +217,25 @@ class Exam extends Entity  implements  EquatableInterface
     {
         // TODO: Implement isEqualTo() method.
     }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+  /*  public function jsonSerialize()
+    {
+        return [
+            'id'    => $this->id,
+            'name' => $this->name,
+            'learning_required'  => $this->learning_required,
+            'additional_information' => $this->additional_information,
+            'min_questions' => $this->min_questions,
+            'max_attempts' => $this->max_attempts,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date
+        ];
+    }*/
 }

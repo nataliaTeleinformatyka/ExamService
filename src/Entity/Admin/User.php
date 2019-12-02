@@ -1,12 +1,9 @@
 <?php
-namespace App\Entity;
+namespace App\Entity\Admin;
+
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\GeneratedValue;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints\Date;
-//use Symfony\Component\Validator\Tests\Constraints as Assert;
 use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Created by PhpStorm.
@@ -16,10 +13,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\UserRepository")
  */
 
-class User extends Entity implements UserInterface, EquatableInterface
+class User extends Entity implements UserInterface
 {
     /**
      * @Assert\Type("Integer")

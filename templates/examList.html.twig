@@ -1,7 +1,7 @@
 {# templates/examList.html.twig #}
 {% include 'menu.html.twig' %}
 <div class="sign">
-    <a href="exam" class="btn btn-info btn-lg">
+    <a href="admin/exam" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
     </a>
 </div>
@@ -28,13 +28,13 @@
         <td> {{ action.end_date|default('') }}</td>
         <td> {{ action.additional_information|default('') }}</td>
         <td><div class="sign">
-                <a href="#">
+                <a href="{{ path('delete', { 'exam': action.id }) }}">
                     <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
                 </a>
-                <a href="/examEdit">
+                <a href="{{ path('edit', { 'exam': action.id }) }}">
                     <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
                 </a>
-                <a href="examList/questionList/exam={{ action.id }}" title="Question list">
+                <a href="{{ path('questionList', { 'id': action.id }) }}" title="Question list">
                     <span class="glyphicon glyphicon-list"></span>
                 </a>
         </div>

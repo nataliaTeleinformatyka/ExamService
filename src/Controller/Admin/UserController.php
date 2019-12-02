@@ -6,14 +6,13 @@
  * Time: 17:58
  */
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 
-use App\Repository\UserRepository;
+use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\User;
-use App\Form\UserType;
-use Symfony\Component\Console\Helper\Table;
+use App\Entity\Admin\User;
+use App\Form\Admin\UserType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 

@@ -3,10 +3,10 @@
  * Created by PhpStorm.
  * User: Asus
  * Date: 23.11.2019
- * Time: 11:58
+ * Time: 12:12
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,10 +16,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\QuestionRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\AnswerRepository")
  */
 
-class Question extends Entity  implements EquatableInterface
+class Answer extends Entity  implements  EquatableInterface
 {
     /**
      * @Assert\Type("Integer")
@@ -29,6 +29,49 @@ class Question extends Entity  implements EquatableInterface
      */
     private $id;
     /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $exam_id;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $question_id;
+
+    /**
+     * @return mixed
+     */
+    public function getExamId()
+    {
+        return $this->exam_id;
+    }
+
+    /**
+     * @param mixed $exam_id
+     */
+    public function setExamId($exam_id): void
+    {
+        $this->exam_id = $exam_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuestionId()
+    {
+        return $this->question_id;
+    }
+
+    /**
+     * @param mixed $question_id
+     */
+    public function setQuestionId($question_id): void
+    {
+        $this->question_id = $question_id;
+    }
+
+    /**
      * @Assert\NotBlank
      * @Assert\Type("String")
      * @ORM\Column(type="string")
@@ -36,22 +79,16 @@ class Question extends Entity  implements EquatableInterface
     private $content;
     /**
      * @Assert\NotBlank
-     * @Assert\Type("Integer")
-     * @ORM\Column(type="integer")
+     * @Assert\Type("Boolean")
+     * @ORM\Column(type="boolean")
      */
-    private $max_answers;
+    private $is_true;
     /**
      * @Assert\NotBlank
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */
-    private $is_multichoice;
-    /**
-     * @Assert\NotBlank
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
-     */
-    private $is_file;
+    private $is_active;
 
     /**
      * @return mixed
@@ -88,56 +125,39 @@ class Question extends Entity  implements EquatableInterface
     /**
      * @return mixed
      */
-    public function getMaxAnswers()
+    public function getisTrue()
     {
-        return $this->max_answers;
+        return $this->is_true;
     }
 
     /**
-     * @param mixed $max_answers
+     * @param mixed $is_true
      */
-    public function setMaxAnswers($max_answers): void
+    public function setIsTrue($is_true): void
     {
-        $this->max_answers = $max_answers;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getisMultichoice()
-    {
-        return $this->is_multichoice;
-    }
-
-    /**
-     * @param mixed $is_multichoice
-     */
-    public function setIsMultichoice($is_multichoice): void
-    {
-        $this->is_multichoice = $is_multichoice;
+        $this->is_true = $is_true;
     }
 
     /**
      * @return mixed
      */
-    public function getisFile()
+    public function getisActive()
     {
-        return $this->is_file;
+        return $this->is_active;
     }
 
     /**
-     * @param mixed $is_file
+     * @param mixed $is_active
      */
-    public function setIsFile($is_file): void
+    public function setIsActive($is_active): void
     {
-        $this->is_file = $is_file;
+        $this->is_active = $is_active;
     }
 
     public function getAllInformation(){
-        $data = [$this->content,$this->max_answers,$this->is_multichoice,$this->is_file];
+        $data = [$this->content,$this->is_true,$this->is_active];
         return $data;
     }
-
     /**
      * The equality comparison should neither be done by referential equality
      * nor by comparing identities (i.e. getId() === getId()).

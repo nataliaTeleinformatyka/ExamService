@@ -6,10 +6,10 @@
  * Time: 13:51
  */
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 
-use App\Entity\Question;
+use App\Entity\Admin\Question;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;

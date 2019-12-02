@@ -6,12 +6,12 @@
  * Time: 17:20
  */
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 
-use App\Entity\LearningMaterialsGroup;
-use App\Form\LearningMaterialsGroupType;
-use App\Repository\LearningMaterialsGroupRepository;
+use App\Entity\Admin\LearningMaterialsGroup;
+use App\Form\Admin\LearningMaterialsGroupType;
+use App\Repository\Admin\LearningMaterialsGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -65,12 +65,14 @@ class LearningMaterialsGroupController extends AbstractController
                 $tplArray[$i] = array(
                     'id' => $i,
                     'name_of_group' => $learningMaterialsGroup['name_of_group'],
+                    'exam_id' => $learningMaterialsGroup['exam_id'],
                 );
             }
         } else {
             $tplArray = array(
                 'id' => "",
                 'name_of_group' => "",
+                'exam_id' => "",
 
             );
         }

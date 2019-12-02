@@ -5,21 +5,15 @@
  * Date: 23.10.2019
  * Time: 18:19
  */
-namespace App\Repository;
+namespace App\Repository\Admin;
 
-use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use App\Entity\Admin\User;
+
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Kreait\Firebase\Database\Transaction;
-
 
 require_once 'C:\xampp\htdocs\examServiceProject\vendor\autoload.php';
 class UserRepository /*extends EntityRepository */ implements UserLoaderInterface
@@ -157,7 +151,11 @@ class UserRepository /*extends EntityRepository */ implements UserLoaderInterfac
     public function loadUserByUsername($username)
     {
         // TODO: Implement loadUserByUsername() method.
+       return $this->reference->getValue($username);
+
     }
+
+
 }
 /*$users = new UserRepository();
 var_dump($users->getAllUsers());

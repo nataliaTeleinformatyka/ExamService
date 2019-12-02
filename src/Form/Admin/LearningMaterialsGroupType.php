@@ -6,11 +6,14 @@
  * Time: 17:20
  */
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 
-use App\Entity\LearningMaterialsGroup;
+use App\Entity\Admin\Exam;
+use App\Entity\Admin\LearningMaterialsGroup;
+use App\Repository\ExamRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,8 +27,15 @@ class LearningMaterialsGroupType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $exams = new ExamRepository();
+        $values=$exams->getAllExams();
+    print_r($values);
         $builder
             ->add('name_of_group', TextType::class)
+            ->add('exam_id', ChoiceType::class, [
+                'choices'  => [
+                    'No' => false, //todo: wyswietlanie istniejacych egzaminow Id-Name
+                ]])
             ->add('save', SubmitType::class, ['label' => 'Add Learning Materials Group'])
             ->setMethod('POST')
             ->getForm();

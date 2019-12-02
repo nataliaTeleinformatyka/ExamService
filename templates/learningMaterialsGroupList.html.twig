@@ -9,12 +9,15 @@
     <tr>
         <td>Id</td>
         <td>Name of Group</td>
+        <td>Exam Id</td>
         <td></td>
     </tr>
     {% for action in data %}
         <tr>
             <td> {{ action.id|default('undefined') }}  </td>
             <td> {{ action.name_of_group|default('undefined') }}  </td>
+            <td> {{ action.id|default('undefined') }}  </td>
+
 
             <td><div class="sign">
                     <a href="#" title="delete learning materials group">

@@ -6,16 +6,12 @@
  * Time: 17:55
  */
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 
-use App\Entity\User;
-use App\Form\LoginType;
+use App\Entity\Admin\User;
+use App\Form\Admin\LoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -50,14 +46,14 @@ class LoginController  extends AbstractController
             ->getForm();
         $form->handleRequest($request);*/
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getDoctrine()->getRepository(User::class);
-
-            if ($user->getUsername() == $request->request->get('login') && $user->getPassword() == $request->request->get('password')) {
+            $user = $this->getDoctrine()->getRepository(User::class)->loadUserByUsername($request->request->get('login'));
+            if ($user[0]['username'] == $request->request->get('username') && $user[0]['password'] == $request->request->get('password')) {
                 $session = new Session();
                 $session->start();
                 $session->set("client", $user);
-                return $this->redirectToRoute('main');
-            } else return $this->redirectToRoute('login', array("message" => 'Bad login or password'));
+                $_SESSION['username'] = $request->request->get('username');
+                return $this->redirectToRoute('user');
+            }//todo: else return $this->redirectToRoute('login', array("message" => 'Bad login or password'));
         }
 
         return $this->render('login.html.twig', [

@@ -6,9 +6,10 @@
  * Time: 13:56
  */
 
-namespace App\Repository;
+namespace App\Repository\Admin;
 
 
+use App\Entity\Admin\Question;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -37,12 +38,14 @@ class QuestionRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getQuestion(int $questionId)
+    public function getQuestion(int $idExam, int $questionId)
     {
+        $examReference = $this->database->getReference("Exam");
+
         //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
         try {
-            if ($this->reference->getSnapshot()->hasChild($questionId)) {
-                return $this->reference->getChild($questionId)->getValue();
+           if ($examReference->getSnapshot()->getChild($idExam)->hasChild("Question")) {
+                return $examReference->getSnapshot()->getChild($idExam)->getChild("Question")->getChild($questionId)->getValue();
             } else {
                 return 0;
             }
@@ -51,53 +54,35 @@ class QuestionRepository
         }
     }
 
-    public function getAllExams()
-    {
-        $questionId = $this->getQuantity();
-        if (empty($questionId) /*|| isset($userId)*/) {
-            return 0;
-        }
-        for ($i = 0; $i < $questionId; $i++) {
-            try {
-                if ($this->reference->getSnapshot()->hasChild($i)) {
-                    $data[$i] = $this->reference->getChild($i)->getValue();
-                    return $data;
-                } else {
-                    return 0;
-                }
-            } catch (ApiException $e) {
-
-            }
-        }
-    }
-//todo: dodawanie nowego pytania do wybranego uprzednio egzaminu
-    public function insert(array $data)
+    public function insert( int $idExam, array $data)
     {
         if (empty($data) /*|| isset($data)*/) {
             return false;
         }
+        $questionId = $this->getQuantity($idExam);
+        $examReference = $this->database->getReference("Exam");
 
-        $actualUserId = $this->getQuantity();
-
-        $this->reference->getChild("User")
-            ->getChild($actualUserId)->set([
+        $examReference->getChild($idExam)
+            ->getChild("Question")->getChild($questionId)->set([
+                'id_exam' => $idExam,
                 'content' => $data[0],
                 'max_answers' => $data[1],
                 'is_multichoice' => $data[2],
-                'is_file' => $data[3],
+                'is_file' => $data[3]
             ]);
         return true;
     }
 
-    public function delete(int $questionId)
+    public function delete(int $idExam, int $questionId)
     {
         if (empty($questionId) /*|| isset($userId)*/) {
             return false;
         }
+        $examReference = $this->database->getReference("Exam");
 
         try {
-            if ($this->reference->getSnapshot()->hasChild($questionId)) {
-                $this->reference->getChild($questionId)->remove();
+            if ($examReference->getSnapshot()->getChild($idExam)->hasChild("Question")) {
+                $examReference->getChild($idExam)->getChild("Question")->getChild($questionId)->remove();
                 return true;
             } else {
                 return false;
@@ -106,10 +91,12 @@ class QuestionRepository
         }
     }
 
-    public function getQuantity()
+    public function getQuantity(int $idExam)
     {
         try {
-            return $this->reference->getSnapshot()->numChildren();
+            $examReference = $this->database->getReference("Exam");
+
+            return $examReference->getSnapshot()->getChild($idExam)->getChild("Question")->numChildren();
         } catch (ApiException $e) {
         }
     }

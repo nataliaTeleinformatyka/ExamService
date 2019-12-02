@@ -2,22 +2,25 @@
 /**
  * Created by PhpStorm.
  * User: Asus
- * Date: 23.11.2019
- * Time: 15:45
+ * Date: 20.11.2019
+ * Time: 10:57
  */
 
-namespace App\Form;
+namespace App\Form\Admin;
 
 
-use App\Entity\Answer;
+use App\Entity\Admin\Exam;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AnswerType extends AbstractType
+class ExamType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -26,20 +29,19 @@ class AnswerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content', TextareaType::class)
-            ->add('is_true', ChoiceType::class,
+            ->add('name', TextType::class)
+            ->add('learning_required', ChoiceType::class,
                 [
                     'choices'  => [
                         'Yes' => true,
                         'No' => false,
                     ]])
-            ->add('is_active', ChoiceType::class,
-                [
-                    'choices'  => [
-                        'Yes' => true,
-                        'No' => false,
-                    ]])
-            ->add('save', SubmitType::class, ['label' => 'Add Question'])
+            ->add('min_questions', IntegerType::class)
+            ->add('max_attempts', IntegerType::class)
+            ->add('start_date', DateType::class)
+            ->add('end_date', DateType::class)
+            ->add('additional_information', TextareaType::class)
+            ->add('save', SubmitType::class, ['label' => 'Add Exam'])
             ->setMethod('POST')
             ->getForm();
     }
@@ -47,7 +49,7 @@ class AnswerType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Answer::class,
+            'data_class' => Exam::class,
         ]);
     }
 
@@ -55,6 +57,6 @@ class AnswerType extends AbstractType
      * @return string
      */
     public function getName() {
-        return 'answer_add';
+        return 'exam_add';
     }
 }

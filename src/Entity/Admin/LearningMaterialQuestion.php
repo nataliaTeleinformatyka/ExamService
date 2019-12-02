@@ -6,7 +6,7 @@
  * Time: 12:17
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\LearningMaterialQuestionRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\LearningMaterialQuestionRepository")
  */
 
 class LearningMaterialQuestion extends Entity  implements  EquatableInterface

@@ -6,7 +6,7 @@
  * Time: 12:16
  */
 
-namespace App\Entity;
+namespace App\Entity\Admin;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,10 +16,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\LearningMaterialRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Admin\LearningMaterialsGroupRepository")
  */
 
-class LearningMaterial extends Entity  implements  EquatableInterface
+class LearningMaterialsGroup extends Entity  implements  EquatableInterface
 {
     /**
      * @Assert\Type("Integer")
@@ -28,22 +28,65 @@ class LearningMaterial extends Entity  implements  EquatableInterface
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @return mixed
+     */
+    public function getExamId()
+    {
+        return $this->exam_id;
+    }
+
+    /**
+     * @param mixed $exam_id
+     */
+    public function setExamId($exam_id): void
+    {
+        $this->exam_id = $exam_id;
+    }
     /**
      * @Assert\NotBlank
      * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
-    private $name;
-
-    //todo:plik zewnetrzny pdf,jpg,link do filmu ,getters and setters
-    private $content;
+    private $name_of_group;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $exam_id;
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
+     * @param mixed $id
      */
-    private $is_required;
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameOfGroup()
+    {
+        return $this->name_of_group;
+    }
+
+    /**
+     * @param mixed $name_of_group
+     */
+    public function setNameOfGroup($name_of_group): void
+    {
+        $this->name_of_group = $name_of_group;
+    }
+
 
     /**
      * The equality comparison should neither be done by referential equality
