@@ -21,9 +21,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UserExam extends Entity  implements  EquatableInterface
 {
+    /**
+    * @Assert\Type("Integer")
+    * @ORM\Column(type="integer")
+    */
+    private $user_id;
 
     /**
-     * @Assert\NotBlank
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $exam_id;
+    /**
      * @Assert\Type("Datetime")
      * @ORM\Column(type="datetime")
      */
@@ -39,6 +48,37 @@ class UserExam extends Entity  implements  EquatableInterface
      */
     private $end_access_time;
 
+    /**
+     * @return mixed
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param mixed $user_id
+     */
+    public function setUserId($user_id): void
+    {
+        $this->user_id = $user_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExamId()
+    {
+        return $this->exam_id;
+    }
+
+    /**
+     * @param mixed $exam_id
+     */
+    public function setExamId($exam_id): void
+    {
+        $this->exam_id = $exam_id;
+    }
     /**
      * @return mixed
      */
@@ -86,6 +126,10 @@ class UserExam extends Entity  implements  EquatableInterface
     {
         $this->end_access_time = $end_access_time;
     }
+    public function getAllInformation(){
+        $data = [$this->date_of_resolve_exam, $this->start_access_time,$this->end_access_time];
+        return $data;
+    }
 
     /**
      * @return mixed
@@ -120,4 +164,5 @@ class UserExam extends Entity  implements  EquatableInterface
     {
         // TODO: Implement isEqualTo() method.
     }
+
 }

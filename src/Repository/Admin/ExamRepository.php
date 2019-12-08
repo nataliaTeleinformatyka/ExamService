@@ -63,9 +63,7 @@ class ExamRepository
                 } else {
                     return 0;
                 }
-            } catch (ApiException $e) {
-
-            }
+            } catch (ApiException $e) {}
         }
     }
 
@@ -75,18 +73,21 @@ class ExamRepository
             return false;
         }
 
-        $actualUserId = $this->getQuantity();
+        $actualExamId = $this->getQuantity();
 
         $this->reference
-        ->getChild($actualUserId)->set([
+        ->getChild($actualExamId)->set([
             //$actualUserId => [
+            'exam_id' => $actualExamId,
             'name' => $data[0],
             'learning_required' => $data[1],
             'additional_information' => $data[2],
             'min_questions' => $data[3],
             'max_attempts' => $data[4],
             'start_date' => $data[5],
-            'end_date' => $data[6]
+            'end_date' => $data[6],
+            'created_by' => 0, //todo: user_id ktory jest zalogowany
+            'duration_of_exam' => $data[7]
         ]);
         return true;
     }

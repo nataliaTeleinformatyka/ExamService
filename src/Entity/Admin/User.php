@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\Admin\UserRepository")
  */
 
-class User extends Entity implements UserInterface
+class User extends Entity //implements UserInterface
 {
     /**
      * @Assert\Type("Integer")
@@ -51,8 +51,8 @@ class User extends Entity implements UserInterface
      */
     private $email;
     /**
-     * * @Assert\Type("Array")
-     * @ORM\Column(type="array")
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
      */
     private $role;
     /**
@@ -70,7 +70,11 @@ class User extends Entity implements UserInterface
      * @ORM\Column(type="datetime")
      */
     private $date_registration;
-
+    /**
+     * * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
+    private $class;
     /**
      * @return int
      */
@@ -181,9 +185,25 @@ class User extends Entity implements UserInterface
         $this->date_registration = $date_registration;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * @param mixed $class
+     */
+    public function setClass($class): void
+    {
+        $this->class = $class;
+    }
+
     public function getAllInformation(){
         $data = [$this->username,$this->password,$this->first_name,$this->last_name,$this->email,$this->role,
-            $this->last_login,$this->last_password_change,$this->date_registration];
+            $this->last_login,$this->last_password_change,$this->date_registration,$this->class];
         return $data;
     }
     /**
@@ -196,25 +216,22 @@ class User extends Entity implements UserInterface
         return (string) $this->username;
     }
 
-    public function setUsername(string $username): self
+    public function setUsername(string $username)
     {
         $this->username = $username;
 
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+
     public function getRoles()
     {
         $role = $this->role;
-       // $role[] = 'ROLE_USER';
 
         return $role;
     }
 
-    public function setRoles(array $role): self
+    public function setRoles(String $role)
     {
         switch($role) {
             case 'admin':
@@ -242,25 +259,25 @@ class User extends Entity implements UserInterface
         return (string) $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $password)
     {
         $this->password = $password;
 
         return $this;
     }
-
+/*
     /**
      * @see UserInterface
      */
-    public function getSalt()
+    /*public function getSalt()
     {
         // not needed when using the "bcrypt" algorithm in security.yaml
-    }
+    }*/
 
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    /*public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -275,8 +292,8 @@ class User extends Entity implements UserInterface
      *
      * @return bool
      */
-    public function isEqualTo(UserInterface $user)
+   /* public function isEqualTo(UserInterface $user)
     {
         // TODO: Implement isEqualTo() method.
-    }
+    }*/
 }

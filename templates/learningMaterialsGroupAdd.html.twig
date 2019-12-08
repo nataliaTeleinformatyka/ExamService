@@ -1,5 +1,8 @@
 {# templates/learningMaterialsGroupAdd.html.twig #}
-{% include 'menu.html.twig' %}
-{% block learning_materials_group_add %}
+{% extends 'base.html.twig' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
     {{ form(form) }}
 {% endblock %}

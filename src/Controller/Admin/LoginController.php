@@ -10,7 +10,10 @@ namespace App\Controller\Admin;
 
 
 use App\Entity\Admin\User;
-use App\Form\Admin\LoginType;
+use App\Form\LoginType;
+use App\Repository\Admin\UserRepository;
+use App\Security\UserProvider;
+use Kreait\Firebase\Exception\Auth\InvalidPassword;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +24,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class LoginController  extends AbstractController
 {
     /**
-     * @Route("/login")
+     * @Route("/login", name="login")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -31,11 +34,11 @@ class LoginController  extends AbstractController
         $user = new User([]);
         $form = $this->createForm(LoginType::class, $user);
         $form->handleRequest($request);
-
+        $userRepository = new UserRepository();
         $errors = $authenticationUtils->getLastAuthenticationError();
 
         // last username entered by the user
-       // $lastUsername = $authenticationUtils->getLastUsername();
+        // $lastUsername = $authenticationUtils->getLastUsername();
         /*$form = $this->createForm(LoginType::class, $user);
         $form->handleRequest($request);*/
 
@@ -46,8 +49,28 @@ class LoginController  extends AbstractController
             ->getForm();
         $form->handleRequest($request);*/
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getDoctrine()->getRepository(User::class)->loadUserByUsername($request->request->get('login'));
-            if ($user[0]['username'] == $request->request->get('username') && $user[0]['password'] == $request->request->get('password')) {
+            //$user = $this->getDoctrine()->getRepository(UserProvider::class)->loadUserByUsername($request->request->get('login'));
+            $info = $form->getData();
+
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $email = $user->getEmail();
+            $password = $user->getPassword();
+            try {
+                $goodLog = $userRepository->checkPassword($email, $password);
+            }catch (InvalidPassword $e) {
+                    $errors = $e->getMessage();
+            }
+            //todo; last login change in database or download from authentication
+            //return $this->redirectToRoute('userList');
+        }
+        return $this->render('login.html.twig', [
+            'form' => $form->createView(),
+            'errors' => $errors,
+        ]);
+    }
+
+          /*  if ($user[0]['username'] == $request->request->get('username') && $user[0]['password'] == $request->request->get('password')) {
                 $session = new Session();
                 $session->start();
                 $session->set("client", $user);

@@ -26,18 +26,20 @@ class UserType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //todo:password min 6 znakow
         $builder
             ->add('username', TextType::class)
             ->add('password', PasswordType::class)
             ->add('first_name', TextType::class)
             ->add('last_name', TextType::class)
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class) //todo: nie moze sie zarejestrowac jesli email juz w bazie
             ->add('roles', ChoiceType::class, [
                 'choices'  => [
-                    'Admin' => 'admin',
+                    'Admin' =>'admin',
                     'Teacher' => 'teacher',
                     'Student' => 'student',
                 ]])
+            ->add('class', TextType::class) //todo:ograniczenie - klasa gdy wczesniej wybrano role student,inaczej niewidoczne
             ->add('save', SubmitType::class, ['label' => 'Add User'])
             ->setMethod('POST')
             ->setAction('')

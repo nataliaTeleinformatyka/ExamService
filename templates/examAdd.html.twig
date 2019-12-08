@@ -1,5 +1,8 @@
 {# templates/examAdd.html.twig #}
-{% include 'menu.html.twig' %}
-{% block exam_add %}
+{% extends 'base.html.twig' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
     {{ form(form) }}
 {% endblock %}

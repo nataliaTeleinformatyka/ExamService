@@ -29,21 +29,113 @@ class LearningMaterial extends Entity  implements  EquatableInterface
      */
     private $id;
     /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $learningMaterialsGroupId;
+    /**
      * @Assert\NotBlank
      * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
     private $name;
 
-    //todo:plik zewnetrzny pdf,jpg,link do filmu ,getters and setters
-    private $content;
+    /**
+     * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
+    private $name_of_content;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */
     private $is_required;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameOfContent()
+    {
+        return $this->name_of_content;
+    }
+
+    /**
+     * @param mixed $name_of_content
+     */
+    public function setNameOfContent($name_of_content): void
+    {
+        $this->name_of_content = $name_of_content;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIsRequired()
+    {
+        return $this->is_required;
+    }
+
+    /**
+     * @param mixed $is_required
+     */
+    public function setIsRequired($is_required): void
+    {
+        $this->is_required = $is_required;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLearningMaterialsGroupId()
+    {
+        return $this->learningMaterialsGroupId;
+    }
+
+    /**
+     * @param mixed $learningMaterialsGroupId
+     */
+    public function setLearningMaterialsGroupId($learningMaterialsGroupId): void
+    {
+        $this->learningMaterialsGroupId = $learningMaterialsGroupId;
+    }
+
+    public function getAllInformation(){
+        $data = [$this->id,$this->name,$this->name_of_content,$this->is_required,$this->learningMaterialsGroupId];
+        return $data;
+    }
 
     /**
      * The equality comparison should neither be done by referential equality

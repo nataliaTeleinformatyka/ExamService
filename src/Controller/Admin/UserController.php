@@ -10,6 +10,7 @@ namespace App\Controller\Admin;
 
 
 use App\Repository\Admin\UserRepository;
+use App\Security\UserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Admin\User;
 use App\Form\Admin\UserType;
@@ -19,21 +20,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user")
+     * @Route("/user", name="user")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request)
     {
-        // creates a task object and initializes some data for this example
-       /* $user = new User();
-        $user->setId('');
-        $user->setUsername('');
-        $user->setRole('');
-        $user->setPassword('');
-        $user->setLastName('');
-        $user->setFirstName('');
-        $user->setEmail('');*/
+        //todo: jesli admin to moze dodac wszystkich, jesli nauczyciel to moze dodac tylko uczniow
+
         $repository = $this->getDoctrine()->getRepository(User::class);
         $user = new User([]);
         $user->setLastPasswordChange(new \DateTime('now'));
@@ -43,34 +37,26 @@ class UserController extends AbstractController
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
-      /*  if ($request->isMethod('POST')) {
-           // $form->submit($request->request->get($form->getName()));
-            $this->redirect('user/thankyou?'.http_build_query($request->getParameter('username')));
-        }*/
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            //$username = $form->get('username')->getData();
-            $data[0]=$request->request->get('username');
-            $data[1] = $request->request->get('password');
-            $data[2] = $request->request->get('first_name');
-            $data[3] = $request->request->get('last_name');
-            $data[4] = $request->request->get('email');
-            $data[5] = $request->request->get('roles');
-            $data[6] = $request->request->get('last_login');
-            $data[7] = $request->request->get('last_password_change');
-            $data[8] = $request->request->get('date_registration');
 
             $user = $form->getData();
-
             $entityManager = $this->getDoctrine()->getManager();
 
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
-            $repositoryUser -> insert($values);
+            print_r($values);
+            $uid = $repositoryUser->getQuantity();
+            $email=$values[4];
+            $password=$values[1];
+            $username=$values[0];
 
-           // return $this->forward($this->generateUrl('user'));
-           // return $this->redirectToRoute('/user');
+            $repositoryUser->registerUser($uid,$email,$password,$username);
+            $repositoryUser->insert($values);
+
+
+
+            // return $this->forward($this->generateUrl('user'));
+           // return $this->redirectToRoute('/userList');
         }
 
         return $this->render('userAdd.html.twig', [
@@ -79,39 +65,77 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/userList")
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("/userList", name="userList")
      */
     public function userListCreate() {
+        $users = new UserRepository();
+        $title = "User List";
+
         $userInformation= new UserRepository();
         $id = $userInformation -> getQuantity();
+        if ($id > 0) {
+            for ($i = 0; $i < $id; $i++) {
+                $users = $userInformation->getUser($i);
 
-        for( $i = 0; $i <$id;$i++) {
-            $users = $userInformation->getUser($i);
+                $password = $userInformation->getUserPasswordFromAuthentication($users['email']);
 
-            $tplArray[$i] = array (
-                'id' => $i,
-                'username' => $users['username'],
-                'password' => $users['password'],
-                'first_name' => $users['first_name'],
-                'last_name' => $users['last_name'],
-                'email' => $users['email'],
-                'role' => $users['role'],
-                'last_login' => $users['last_login']['date'],
-                'last_password_change' => $users['last_password_change']['date'],
-                'date_registration' => $users['date_registration']['date']
-            );
+                $tplArray[$i] = array(
+                    'id' => $i,
+                    'username' => $users['username'],
+                    'password' => $password,
+                    'first_name' => $users['first_name'],
+                    'last_name' => $users['last_name'],
+                    'email' => $users['email'],
+                    'role' => $users['role'],
+                    'class' => $users['class'],
+                    'last_login' => $users['last_login']['date'],
+                    'last_password_change' => $users['last_password_change']['date'],
+                    'date_registration' => $users['date_registration']['date']
+                );
+                return $this->render( 'userList.html.twig', array (
+                    'data' => $tplArray,
+                    'title' => $title,
+                ) );
+            }
+        }else {
+            $info = "Brak rekordów w bazie danych";
+        /*    $tplArray[] = array(
+                'id' => '',
+                'username' => '',
+                'password' => '',
+                'first_name' => '',
+                'last_name' => '',
+                'email' => '',
+                'role' => '',
+                'class' => '',
+                'last_login' => '',
+                'last_password_change' => '',
+                'date_registration' => ''
+            );*/
+            return $this->render( 'emptyEntity.html.twig', array (
+                'information' => $info,
+                'title' => $title,
+                'idInfo' => 'brak'
+            ) );
         }
-        return $this->render( 'userList.html.twig', array (
-            'data' => $tplArray
-        ) );
+
+
     }
 
     /**
-     * @Route("/userDelete")
+     * @Route("/userDelete/{userId}", name="userDelete")
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function userDelete() {
+    public function userDelete(Request $request) {
+        $id = $request->attributes->get('userId');
+        print_r($id);
+        $repo = new UserRepository();
+        if($repo->delete($id))
+            $repo->deleteUserFromAuthentication($id);
 
+        //todo: nie moze usunac gdy istnieja powiazania
+
+        return $this->redirectToRoute('userList');
     }
 }

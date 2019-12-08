@@ -1,1 +1,43 @@
-{% include 'menu.html.twig' %}
+{# templates/questionList.html.twig #}
+{% extends 'base.html.twig' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
+    <nav> Learning Materials Group Id {{ learningMaterialsGroupId }}</nav>
+<div class="sign">
+    <a href="{{ path('learningMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId}) }}" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add new learning material
+    </a>
+</div>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Learning materials group id</td>
+        <td>Name</td>
+        <td>Name of content</td>
+        <td>Is required</td>
+        <td></td>
+    </tr>
+    {% for action in data %}
+        <tr>
+            <td> {{ action.id|default('undefined') }}  </td>
+            <td> {{ action.learning_materials_group_id|default('') }}</td>
+            <td> {{ action.name|default('undefined') }}  </td>
+            <td> {{ action.name_of_content|default('undefined') }}  </td>
+            <td> {{ action.is_required|default('undefined') }}  </td>
+
+
+            <td><div class="sign">
+                    <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterial': action.id }) }}" title="delete learning material">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                    </a>
+                    <a href="#" title="edit learning materials group">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% endfor%}
+</table>
+{% endblock %}

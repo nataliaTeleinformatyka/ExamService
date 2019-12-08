@@ -1,17 +1,24 @@
 {# templates/examList.html.twig #}
+{% extends 'base.html.twig' %}
+{% block menu %}
 {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
+<div class="container">
 <div class="sign">
     <a href="admin/exam" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
     </a>
 </div>
 <table>
-    <tr>
+    <tr class="informationRow">
         <td>Id</td>
         <td>Name</td>
         <td>Learning required</td>
         <td>Minimum questions</td>
         <td>Maximum attempts</td>
+        <td>Duration of exam</td>
+        <td>Created by (user id)</td>
         <td>Start date</td>
         <td>End date</td>
         <td>Additional Information</td>
@@ -24,6 +31,8 @@
         <td> {{ action.learning_required|default('undefined') }} </td>
         <td> {{ action.min_questions|default('') }} </td>
         <td> {{ action.max_attempts|default('') }} </td>
+        <td> {{ action.duration_of_exam|default('') }}</td>
+        <td> {{ action.created_by|default('') }}</td>
         <td> {{ action.start_date|default('') }}</td>
         <td> {{ action.end_date|default('') }}</td>
         <td> {{ action.additional_information|default('') }}</td>
@@ -42,3 +51,5 @@
     </tr>
     {% endfor%}
 </table>
+</div>
+{% endblock %}

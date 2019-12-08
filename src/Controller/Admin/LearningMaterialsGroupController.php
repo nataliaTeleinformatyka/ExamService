@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LearningMaterialsGroupController extends AbstractController
 {
     /**
-     * @Route("/learningMaterialsGroup")
+     * @Route("/learningMaterialsGroup", name="learningMaterialsGroup")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -41,10 +41,10 @@ class LearningMaterialsGroupController extends AbstractController
 
             $values = $group->getAllInformation();
             $repositoryExam = new LearningMaterialsGroupRepository();
+
             $repositoryExam->insert($values);
 
-            // return $this->forward($this->generateUrl('user'));
-            // return $this->redirectToRoute('/user');
+             return $this->redirectToRoute('learningMaterialsGroupList');
         }
 
         return $this->render('learningMaterialsGroupAdd.html.twig', [
@@ -52,15 +52,15 @@ class LearningMaterialsGroupController extends AbstractController
         ]);
     }
     /**
-     * @Route("/learningMaterialsGroupList")
+     * @Route("/learningMaterialsGroupList", name="learningMaterialsGroupList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examListCreate() {
+    public function learningMaterialsGroupListCreate() {
         $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
         $id = $learningMaterialsGroupInformation -> getQuantity();
         if($id>0) {
             for ($i = 0; $i < $id; $i++) {
-                $learningMaterialsGroup = $learningMaterialsGroupInformation->getExam($i);
+                $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($i);
 
                 $tplArray[$i] = array(
                     'id' => $i,
@@ -79,5 +79,19 @@ class LearningMaterialsGroupController extends AbstractController
         return $this->render( 'LearningMaterialsGroupList.html.twig', array (
             'data' => $tplArray
         ) );
+    }
+    /**
+     * @param Request $request
+     * @Route("/deleteGroup/{learningMaterialsGroup}", name="deleteGroup")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteGroup(Request $request)
+    {
+        $id = $request->attributes->get('learningMaterialsGroup');
+        $repo = new LearningMaterialsGroupRepository();
+        $repo->delete($id);
+        //todo: nie usuwac gdy sa powiazania
+        //todo: wyswietlanie, gdy brak grup
+        return $this->redirectToRoute('learningMaterialsGroupList');
     }
 }

@@ -1,5 +1,8 @@
 {# templates/userAdd.html.twig #}
-{% include 'menu.html.twig' %}
-{% block user_add %}
+{% extends 'base.html.twig' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
     {{ form(form) }}
 {% endblock %}

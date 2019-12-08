@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class QuestionController extends AbstractController
 {
      /**
-     * @Route("question/{idExam}", name="question")
+     * @Route("question/{examId}", name="question")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -27,7 +27,7 @@ class QuestionController extends AbstractController
     {
         $repository = $this->getDoctrine()->getRepository(Question::class);
         $question = new Question([]);
-        $idExam = $request->attributes->get('idExam');
+        $examId = $request->attributes->get('examId');
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 
@@ -37,7 +37,7 @@ class QuestionController extends AbstractController
             $data[2] = $request->request->get('is_multichoice');
             $data[3] = $request->request->get('is_file');
 
-            $idExamValue = $request->attributes->get('idExam');
+            $idExamValue = $request->attributes->get('examId');
 
             $question = $form->getData();
 
@@ -49,14 +49,14 @@ class QuestionController extends AbstractController
             $repositoryExam->insert($idExamValue, $values);
 
             return $this->redirectToRoute('questionList', [
-                'id' => $idExam,
+                'id' => $examId,
             ]);
         }
 
         return $this->render('questionAdd.html.twig', [
             'form' => $form->createView(),
             'title' => 'Questions to exam ',
-            'idExam' => $idExam
+            'idExam' => $examId
         ]);
     }
 
@@ -67,13 +67,13 @@ class QuestionController extends AbstractController
      */
     public function questionListCreate(Request $request) {
         $questionInformation= new QuestionRepository();
-        $idExam = $request->attributes->get('id');
+        $examId = $request->attributes->get('id');
 
-        $idQuestion = $questionInformation -> getQuantity($idExam);
+        $idQuestion = $questionInformation -> getQuantity($examId);
 
         if($idQuestion>0) {
             for ($i = 0; $i < $idQuestion; $i++) {
-                $questions = $questionInformation->getQuestion($idExam,$i);
+                $questions = $questionInformation->getQuestion($examId,$i);
                 if ($questions['is_multichoice'] == 1) {
                     $is_required = "true";
                 } else {
@@ -87,7 +87,7 @@ class QuestionController extends AbstractController
 
                 $tplArray[$i] = array(
                     'id' => $i,
-                    'id_exam' => $questions['id_exam'],
+                    'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                     'max_answers' => $questions['max_answers'],
                     'is_multichoice' => $is_required,
@@ -97,7 +97,7 @@ class QuestionController extends AbstractController
         } else {
             $tplArray = array(
                 'id' => 0,
-                'id_exam' => 0,
+                'exam_id' => 0,
                 'content' => 0,
                 'max_answers' => 0,
                 'is_multichoice' => 0,
@@ -106,7 +106,7 @@ class QuestionController extends AbstractController
         }
         return $this->render( 'questionList.html.twig', array (
             'data' => $tplArray,
-            'idExam' => $idExam
+            'examId' => $examId
         ) );
     }
     /**

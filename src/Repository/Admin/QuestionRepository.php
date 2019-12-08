@@ -64,7 +64,7 @@ class QuestionRepository
 
         $examReference->getChild($idExam)
             ->getChild("Question")->getChild($questionId)->set([
-                'id_exam' => $idExam,
+                'exam_id' => $idExam,
                 'content' => $data[0],
                 'max_answers' => $data[1],
                 'is_multichoice' => $data[2],
@@ -75,9 +75,6 @@ class QuestionRepository
 
     public function delete(int $idExam, int $questionId)
     {
-        if (empty($questionId) /*|| isset($userId)*/) {
-            return false;
-        }
         $examReference = $this->database->getReference("Exam");
 
         try {

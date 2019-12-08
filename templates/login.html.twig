@@ -1,16 +1,17 @@
-{% include 'base.html.twig' %}
 {# templates/login.html.twig #}
+{% extends 'base.html.twig' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
 {% block body %}
     <body>
     {% if errors %}
-        {{ errors.messageKey }}
+        {{ errors }}
     {% endif %}
-    {% block login %}
         <div class="signIn"> LOGOWANIE
         {{ form(form) }}
         Jeśli nie pamiętasz hasła kliknij w link aktywacyjny
         </div>
     </body>
-    {%  endblock %}
 {% endblock %}
 

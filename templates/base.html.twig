@@ -7,10 +7,12 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-            {{ encore_entry_link_tags('app') }}
+           {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
     <body style="background-color: #AAAAAA">
+    {% block menu %}
+    {% endblock %}
         {% block body %}
             <nav>
                 <div class="container log">
@@ -25,5 +27,7 @@
             </nav>
         {% endblock %}
         {% block javascripts %}{% endblock %}
+        <footer>
+        </footer>
     </body>
 </html>

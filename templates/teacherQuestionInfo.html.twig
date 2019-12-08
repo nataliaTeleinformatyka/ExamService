@@ -1,0 +1,34 @@
+{# templates/examList.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            Informacje o pytaniu:
+                <p><b>Content :</b> {{ content|default('undefined') }}</p>
+                <p><b>Maximum answers :</b> {{ max_answers|default('undefined') }}</p>
+                <p><b>Is multichoice :</b> {{ is_multichoice|default('undefined') }}</p>
+                <p><b>Is file :</b> {{ is_file|default('undefined') }}</p>
+    </div>
+        <div>
+            Lista odpowiedzi dla egzaminu:
+            {% for answer in answer_data %}
+            <p><b>Content :</b> {{ answer.content|default('') }}
+                <b>Is true :</b> {{ answer.is_true|default('') }}
+                <b>Is active :</b> {{ answer.is_active|default('') }}
+                <a href="{{ path('deleteAnswer', { 'exam': exam_id, 'question': question_id, 'answer': answer.id}) }}" title="delete answer">
+                    <span class="glyphicon glyphicon-remove-sign"></span>
+                </a>
+            </p>
+            {% endfor %}
+        </div>
+        <div class="sign">
+            <a href="{{ path('answer', { 'examId': exam_id, 'questionId': question_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new answer
+            </a>
+            <a href="{{ path('question', { 'examId': exam_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new question
+            </a>
+        </div>
+    </div>
+{% endblock %}

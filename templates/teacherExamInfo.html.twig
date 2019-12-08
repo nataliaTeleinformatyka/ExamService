@@ -1,0 +1,31 @@
+{# templates/examList.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            {% for action in data %}
+                <p><b>Name :</b> {{ action.name|default('undefined') }}</p>
+                <p><b>Learning_required :</b> {{ action.learning_required|default('undefined') }}</p>
+                <p><b>Min_questions :</b> {{ action.min_questions|default('undefined') }}</p>
+                <p><b>Max_attempts :</b> {{ action.max_attempts|default('undefined') }}</p>
+                <p><b>Duration_of_exam</b> : {{ action.duration_of_exam|default('undefined') }}</p>
+                <p><b>Start_date :</b> {{ action.start_date|default('undefined') }}</p>
+                <p><b>End_date :</b> {{ action.end_date|default('undefined') }}</p>
+                <p><b>Additional_information :</b> {{ action.additional_information|default('undefined') }}</p>
+            {% endfor%}
+        </div>
+        <div>
+            Lista pytań dla egzaminu:
+            {% for question in question_data %}
+                <p><a href="{{ path('teacherQuestionInfo', { 'exam': question.exam_id, 'question': question.id}) }}"> {{ question.content|default('') }} </a></p>
+            {% endfor %}
+        </div>
+        <div>
+            Grupy materiałów naukowych przypisanych do egzaminu:
+        </div>
+        <div>
+            Lista użytkowników przypisanych do egzaminu:
+        </div>
+    </div>
+{% endblock %}

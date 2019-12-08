@@ -32,7 +32,7 @@ class Question extends Entity  implements EquatableInterface
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
-    private $id_exam;
+    private $exam_id;
     /**
      * @Assert\NotBlank
      * @Assert\Type("String")
@@ -40,21 +40,6 @@ class Question extends Entity  implements EquatableInterface
      */
     private $content;
 
-    /**
-     * @return mixed
-     */
-    public function getIdExam()
-    {
-        return $this->id_exam;
-    }
-
-    /**
-     * @param mixed $id_exam
-     */
-    public function setIdExam($id_exam): void
-    {
-        $this->id_exam = $id_exam;
-    }
     /**
      * @Assert\NotBlank
      * @Assert\Type("Integer")
@@ -88,6 +73,21 @@ class Question extends Entity  implements EquatableInterface
         $this->id = $id;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getIdExam()
+    {
+        return $this->id_exam;
+    }
+
+    /**
+     * @param mixed $id_exam
+     */
+    public function setIdExam($id_exam): void
+    {
+        $this->id_exam = $id_exam;
+    }
     /**
      * @return mixed
      */

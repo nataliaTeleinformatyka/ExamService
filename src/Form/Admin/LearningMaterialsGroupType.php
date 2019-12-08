@@ -11,7 +11,8 @@ namespace App\Form\Admin;
 
 use App\Entity\Admin\Exam;
 use App\Entity\Admin\LearningMaterialsGroup;
-use App\Repository\ExamRepository;
+use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\LearningMaterialsGroupRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -27,18 +28,22 @@ class LearningMaterialsGroupType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $exams = new ExamRepository();
-        $values=$exams->getAllExams();
-    print_r($values);
-        $builder
-            ->add('name_of_group', TextType::class)
-            ->add('exam_id', ChoiceType::class, [
-                'choices'  => [
-                    'No' => false, //todo: wyswietlanie istniejacych egzaminow Id-Name
-                ]])
-            ->add('save', SubmitType::class, ['label' => 'Add Learning Materials Group'])
-            ->setMethod('POST')
-            ->getForm();
+        $learningMaterialsGroups = new LearningMaterialsGroupRepository();
+
+        for ($i = 0; $i < $learningMaterialsGroups->getQuantity(); $i++) {
+            $values = $learningMaterialsGroups->getLearningMaterialsGroup($i);
+            $names[$i] = $values['name'];
+            $ids[$i]=$values['exam_id'];
+        }
+            $builder
+                ->add('name_of_group', TextType::class)
+                ->add('exam_id', ChoiceType::class, [
+                    'choices' => $ids //todo: ."-".$names wyswietlanie nazwy egzaminu
+                ])
+                ->add('save', SubmitType::class, ['label' => 'Add Learning Materials Group'])
+                ->setMethod('POST')
+                ->getForm();
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

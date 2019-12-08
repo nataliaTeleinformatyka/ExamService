@@ -66,7 +66,17 @@ class Exam extends Entity  implements  EquatableInterface
      * @ORM\Column(type="datetime")
      */
    private $end_date;
-
+    /**
+     * @Assert\Type("\Datetime")
+     * @ORM\Column(type="datetime")
+     */
+   private $duration_of_exam;
+   //User Id who made exam
+    /**
+     * @Assert\Type("\Integer")
+     * @ORM\Column(type="integer")
+     */
+   private $created_by;
     /**
      * @return integer
      */
@@ -195,9 +205,41 @@ class Exam extends Entity  implements  EquatableInterface
         $this->end_date = $end_date;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getDurationOfExam()
+    {
+        return $this->duration_of_exam;
+    }
+
+    /**
+     * @param mixed $duration_of_exam
+     */
+    public function setDurationOfExam($duration_of_exam): void
+    {
+        $this->duration_of_exam = $duration_of_exam;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedBy()
+    {
+        return $this->created_by;
+    }
+
+    /**
+     * @param mixed $created_by
+     */
+    public function setCreatedBy($created_by): void
+    {
+        $this->created_by = $created_by;
+    }
+
     public function getAllInformation(){
         $data = [$this->name,$this->learning_required,$this->additional_information,$this->min_questions,$this->max_attempts,
-            $this->start_date,$this->end_date];
+            $this->start_date,$this->end_date,$this->duration_of_exam,$this->created_by];
         return $data;
     }
 

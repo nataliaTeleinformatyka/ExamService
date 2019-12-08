@@ -28,22 +28,6 @@ class LearningMaterialsGroup extends Entity  implements  EquatableInterface
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @return mixed
-     */
-    public function getExamId()
-    {
-        return $this->exam_id;
-    }
-
-    /**
-     * @param mixed $exam_id
-     */
-    public function setExamId($exam_id): void
-    {
-        $this->exam_id = $exam_id;
-    }
     /**
      * @Assert\NotBlank
      * @Assert\Type("String")
@@ -51,6 +35,7 @@ class LearningMaterialsGroup extends Entity  implements  EquatableInterface
      */
     private $name_of_group;
     /**
+     * @Assert\NotBlank
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
@@ -87,6 +72,25 @@ class LearningMaterialsGroup extends Entity  implements  EquatableInterface
         $this->name_of_group = $name_of_group;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getExamId()
+    {
+        return $this->exam_id;
+    }
+
+    /**
+     * @param mixed $exam_id
+     */
+    public function setExamId($exam_id): void
+    {
+        $this->exam_id = $exam_id;
+    }
+    public function getAllInformation(){
+        $data = [$this->id,$this->exam_id,$this->name_of_group];
+        return $data;
+    }
 
     /**
      * The equality comparison should neither be done by referential equality
