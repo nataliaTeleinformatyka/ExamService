@@ -9,6 +9,7 @@
 namespace App\Repository\Admin;
 
 
+use App\Entity\Admin\LearningMaterialsGroup;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -35,7 +36,6 @@ class LearningMaterialsGroupRepository
 
     public function getLearningMaterialsGroup(int $materialsGroupId)
     {
-        //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
         try {
             if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
                 return $this->reference->getChild($materialsGroupId)->getValue();
@@ -69,7 +69,7 @@ class LearningMaterialsGroupRepository
 
     public function insert(array $data)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
 
@@ -78,12 +78,22 @@ class LearningMaterialsGroupRepository
         $this->reference
             ->getChild($materialsGroupId)->set([
                 'learning_materials_groups_id' => $materialsGroupId,
-                'exam_id' => $data[1],
-                'name_of_group' => $data[2],
+                'name_of_group' => $data[1],
             ]);
         return true;
     }
+    public function update(array $data,int $groupId)
+    {
+        if (empty($data)) {
+            return false;
+        }
 
+        $this->reference
+            ->getChild($groupId)->update([
+                'name_of_group' => $data[1],
+            ]);
+        return true;
+    }
     public function delete(int $materialsGroupId)
     {
         try {
@@ -103,5 +113,11 @@ class LearningMaterialsGroupRepository
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {
         }
+    }
+    public function find(int $groupId){
+        $information = $this->reference->getChild($groupId)->getValue();
+        $info = new LearningMaterialsGroup([]);
+        $info->setNameOfGroup($information['name_of_group']);
+        return $info;
     }
 }

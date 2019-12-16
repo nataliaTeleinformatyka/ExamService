@@ -19,6 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
+   /* public function adminDashboard()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // or add an optional message - seen by developers
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');
+    }*/
     /**
      * @Route("/user", name="user")
      * @param Request $request
@@ -68,21 +75,21 @@ class UserController extends AbstractController
      * @Route("/userList", name="userList")
      */
     public function userListCreate() {
-        $users = new UserRepository();
-        $title = "User List";
 
         $userInformation= new UserRepository();
         $id = $userInformation -> getQuantity();
         if ($id > 0) {
+            $info=true;
             for ($i = 0; $i < $id; $i++) {
                 $users = $userInformation->getUser($i);
 
-                $password = $userInformation->getUserPasswordFromAuthentication($users['email']);
-
+                $password[$i] = $userInformation->getUserPasswordFromAuthentication($users['email']);
+                $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);
+                print_r($lastLogin[$i]);
                 $tplArray[$i] = array(
                     'id' => $i,
                     'username' => $users['username'],
-                    'password' => $password,
+                    'password' => $password[$i],
                     'first_name' => $users['first_name'],
                     'last_name' => $users['last_name'],
                     'email' => $users['email'],
@@ -92,14 +99,11 @@ class UserController extends AbstractController
                     'last_password_change' => $users['last_password_change']['date'],
                     'date_registration' => $users['date_registration']['date']
                 );
-                return $this->render( 'userList.html.twig', array (
-                    'data' => $tplArray,
-                    'title' => $title,
-                ) );
+
             }
         }else {
-            $info = "Brak rekordów w bazie danych";
-        /*    $tplArray[] = array(
+            $info = false;
+            $tplArray[] = array(
                 'id' => '',
                 'username' => '',
                 'password' => '',
@@ -111,14 +115,12 @@ class UserController extends AbstractController
                 'last_login' => '',
                 'last_password_change' => '',
                 'date_registration' => ''
-            );*/
-            return $this->render( 'emptyEntity.html.twig', array (
-                'information' => $info,
-                'title' => $title,
-                'idInfo' => 'brak'
-            ) );
+            );
         }
-
+        return $this->render( 'userList.html.twig', array (
+            'data' => $tplArray,
+            'information' => $info,
+        ) );
 
     }
 

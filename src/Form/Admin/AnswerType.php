@@ -23,6 +23,7 @@ class AnswerType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+    //todo: min one answer must be active and true
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

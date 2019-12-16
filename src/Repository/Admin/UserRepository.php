@@ -70,6 +70,21 @@ class UserRepository
         $data= $user->toArray();
         return $data['passwordHash'];
     }
+    public function getUserIdFromAuthentication(String $email){
+        $user = $this->auth->getUserByEmail($email);
+        $data= $user->toArray();
+        return $data['uid'];
+    }
+    public function getUserLastLoginFromAuthentication(String $email){
+        $user = $this->auth->getUserByEmail($email);
+        $data= $user->toArray();
+        $metadata= $data['metadata']->toArray();
+       /* foreach($metadata as &$blog) {
+            $blogs = get_object_vars($blog);*/
+            $date = $metadata['lastLoginAt'];
+    //    }
+        return $date;
+    }
 
     public function deleteUserFromAuthentication(int $id){
         $this->auth->deleteUser(strval($id));
@@ -135,8 +150,7 @@ class UserRepository
         }
     }
 
-    public function getQuantity()
-    {
+    public function getQuantity() {
         try {
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {

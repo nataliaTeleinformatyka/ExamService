@@ -28,12 +28,11 @@ class UserExamRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getUserExam(int $userId, int $examId)
+    public function getUserExam(int $userExamId)
     {
-        //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
         try {
-            if ($this->reference->getSnapshot()->getChild($examId)->hasChild($userId)) {
-                return $this->reference->getChild($examId)->getChild($userId)->getValue();
+            if ($this->reference->getSnapshot()->hasChild($userExamId)) {
+                return $this->reference->getChild($userExamId)->getValue();
             } else {
                 return 0;
             }
@@ -42,55 +41,29 @@ class UserExamRepository
         }
     }
 
-
-   /* public function getAllExams()
-    {
-        $examId = $this->getQuantity();
-        if (empty($examId) /*|| isset($userId)*//*) {
-            return 0;
-        }
-        for ($i = 0; $i < $examId; $i++) {
-            try {
-                if ($this->reference->getSnapshot()->hasChild($i)) {
-                    $data[$i] = $this->reference->getChild($i)->getValue();
-                    return $data;
-                } else {
-                    return 0;
-                }
-            } catch (ApiException $e) {
-
-            }
-        }
-    }*/
-
     public function insert(array $data)
     {
         if (empty($data) /*|| isset($data)*/) {
             return false;
         }
-
         $actualUserExamId = $this->getQuantity();
-        //todo: egzamin -> user -> reszta
         $this->reference
             ->getChild($actualUserExamId)->set([
-                //$actualUserId => [
+                'user_exam_id' => $actualUserExamId,
                 'user_id' => $data[0],
                 'exam_id' => $data[1],
-                '$date_of_resolve_exam' => $data[2],
+                //'$date_of_resolve_exam' => NULL,
                 'start_access_time' => $data[3],
                 'end_access_time' => $data[4],
             ]);
         return true;
     }
 
-    public function delete(int $userId,int $examId)
+    public function delete(int $userExamId)
     {
-        if (empty($userId /* || $examId */) /*|| isset($userId)*/) {
-            return false;
-        }
         try {
-            if ($this->reference->getSnapshot()->getChild($examId)->hasChild($userId)) {
-                $this->reference->getChild($examId)->getChild($userId)->remove();
+            if ($this->reference->getSnapshot()->hasChild($userExamId)) {
+                $this->reference->getChild($userExamId)->remove();
                 return true;
             } else {
                 return false;
@@ -104,6 +77,17 @@ class UserExamRepository
         try {
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {
+        }
+    }
+    public function isUserExamForExamId(int $examId)
+    {
+        for ($i = 0; $i < $this->getQuantity(); $i++) {
+            $userExam = $this->getUserExam($i);
+            if ($userExam['exam_id'] == $examId) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

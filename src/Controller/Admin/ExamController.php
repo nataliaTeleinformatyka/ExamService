@@ -10,8 +10,12 @@ namespace App\Controller\Admin;
 
 
 use App\Entity\Admin\Exam;
+use App\Entity\Admin\User;
 use App\Form\Admin\ExamType;
 use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\QuestionRepository;
+use App\Repository\Admin\UserExamRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,13 +23,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class ExamController extends AbstractController
 {
     /**
-     * @Route("/exam", name="exam")
+     * @Route("exam", name="exam")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Exam::class);
+        //$repository = $this->getDoctrine()->getRepository(Exam::class);
         $exam = new Exam([]);
 
         $form = $this->createForm(ExamType::class, $exam);
@@ -56,9 +60,12 @@ class ExamController extends AbstractController
      */
     public function examListCreate()
     {
+        print_r($_SESSION['user_id']);
+        print_r($_SESSION['role']);
         $examInformation = new ExamRepository();
         $id = $examInformation->getQuantity();
         if ($id > 0) {
+            $info = true;
             for ($i = 0; $i < $id; $i++) {
                 $exams = $examInformation->getExam($i);
                 if ($exams['learning_required'] == 1) {
@@ -66,12 +73,11 @@ class ExamController extends AbstractController
                 } else {
                     $is_required = false;
                 }
-                print_r($exams);
                 $tplArray[$i] = array(
                     'id' => $i,
                     'name' => $exams['name'],
                     'learning_required' => $is_required,
-                    'min_questions' => $exams['min_questions'],
+                    'max_questions' => $exams['max_questions'],
                     'max_attempts' => $exams['max_attempts'],
                     'duration_of_exam' => $exams['duration_of_exam']['date'], //todo: only time!!
                     'created_by' => $exams['created_by'],
@@ -81,11 +87,12 @@ class ExamController extends AbstractController
                 );
             }
         } else {
+            $info = false;
             $tplArray = array(
                 'id' => "",
                 'name' => "",
                 'learning_required' => "",
-                'min_questions' => "",
+                'max_questions' => "",
                 'max_attempts' => "",
                 'duration_of_exam' => "",
                 'created_by' => "",
@@ -94,41 +101,79 @@ class ExamController extends AbstractController
                 'additional_information' => ""
             );
         }
+        if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
+            $infoDelete = $_SESSION['information'];
+        } else {
+            $infoDelete = "";
+        }
+        $_SESSION['information'] = array();
         return $this->render('examList.html.twig', array(
-            'data' => $tplArray
+            'data' => $tplArray,
+            'information' => $info,
+            'infoDelete' => $infoDelete
+
         ));
     }
-
+//* @ParamConverter("POST", class="Entity:Exam")
     /**
      * @param Request $request
      * @param Exam $exam
+
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @Route("/edit/{exam}", name="edit")
+     * @Route("editExam/{id}", name="editExam")
      */
-    public function editExam(Request $request/*, Exam $exam*/)
+    public function editExam(Request $request, Exam $exam)
     {
-        $repository = $this->getDoctrine()->getRepository(Exam::class);
-        /* $id = $request->attributes->get('exam');
-         print_r($id);
+       // $repository = $this->getDoctrine()->getRepository(Exam::class);
+         /*print_r($id);
          $examEn= new Exam([]);
          $examrepo = new ExamRepository();
          $efxam = $examrepo->getExam($id);
          print_r($efxam);*/
-        $exam = new Exam([]);
+      //  $exam = new Exam([]);
 
+        $examInformation = new ExamRepository();
+        $examId = (int)$request->attributes->get('id');
+        $exams = $examInformation->getExam($examId);
+     //   print_r($exams);
+        //print_r($_SESSION['user_id']);
+        //print_r($examId);
+      //  print_r($exams['exam_id']);
+        $examInfoArray = array(
+           // 'id' => $exams['exam_id'],
+            'name' => $exams['name'],
+            'learning_required' => $exams['learning_required'],
+            'max_questions' => $exams['max_questions'],
+            'max_attempts' => $exams['max_attempts'],
+            'duration_of_exam' => $exams['duration_of_exam']['date'],
+            'start_date' => $exams['start_date']['date'],
+            'end_date' => $exams['end_date']['date'],
+            'additional_information' => $exams['additional_information']
+        );
+      //  $exam->setId($examId);
+        //$exam->setName($exams['name']);
+        //print_r($exam);
         $form = $this->createForm(ExamType::class, $exam);
         $form->handleRequest($request);
-
-
+      //  var_dump($form);
+        $exams = $form->getData();
+        //print_r($exams);
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->flush();
+            $exams = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            $examValue = $request->attributes->get('id');
+            print_r($examValue);
 
-            return $this->redirectToRoute('edit', [
-                'name' => $exam->getName(),
-            ]);
+            $values = $exam->getAllInformation();
+            $repositoryExam = new ExamRepository();
+            $repositoryExam->update($values,$examId);
+            print_r($values);
+           // return $this->redirectToRoute('examList');
         }
-        return $this->render('examEdit.html.twig', [
-            'form' => $form->createView()
+        return $this->render('examAdd.html.twig', [
+            'form' => $form->createView(),
+            'examInformation' =>$examInfoArray,
+            'examId' => $examId
         ]);
     }
 
@@ -141,10 +186,20 @@ class ExamController extends AbstractController
     {
         $id = $request->attributes->get('exam');
         $repo = new ExamRepository();
-        $repo->delete($id);
-        //todo: redirect to examList nie usuwa zapytania ktore jest jako 1
-        //todo: zapytanie czy chce usunac egzamin gdy sa powiazane question i answers
-        //todo: nie mozna usunac egzaminu, gdy jest powiazanie userexam, result
+        $questionRepo = new QuestionRepository();
+        $userExamRepo = new UserExamRepository();
+
+        $isQuestion = $questionRepo->getQuantity($id);
+        $isUserExam = $userExamRepo->isUserExamForExamId($id);
+        if($isQuestion !=0 or $isUserExam==false){
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
+
+        } else {
+            $repo->delete($id);
+            $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
+
+        }
+
 
         return $this->redirectToRoute('examList');
     }

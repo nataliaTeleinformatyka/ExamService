@@ -1,33 +1,35 @@
 {# templates/questionList.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'base.html' %}
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
 {% block body %}
 <div class="sign">
-    <a href="learningMaterialsGroup" class="btn btn-info btn-lg">
+    <a href="{{ path('learningMaterialsGroup') }}" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new learning materials group
     </a>
 </div>
+    {% for error in infoDelete %}
+        {{ error.message }}
+    {% endfor %}
+{% if information==true %}
 <table>
     <tr>
         <td>Id</td>
         <td>Name of Group</td>
-        <td>Exam Id</td>
         <td></td>
     </tr>
     {% for action in data %}
+        {% if action.id !="" or action.id=="0" %}
         <tr>
             <td> {{ action.id|default('undefined') }}  </td>
             <td> {{ action.name_of_group|default('undefined') }}  </td>
-            <td> {{ action.exam_id|default('undefined') }}  </td>
-
 
             <td><div class="sign">
                     <a href="{{ path('deleteGroup', { 'learningMaterialsGroup': action.id }) }}" title="delete learning materials group">
                         <span class="glyphicon glyphicon-remove-sign"></span>
                     </a>
-                    <a href="#" title="edit learning materials group">
+                    <a href="{{ path('editLearningMaterialsGroup', { 'id': action.id }) }}" title="edit learning materials group">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                     <a href="{{ path('learningMaterialList', { 'learningMaterialsGroupId': action.id }) }}" title="learning materials list">
@@ -36,6 +38,9 @@
                 </div>
             </td>
         </tr>
+        {% endif %}
     {% endfor%}
 </table>
+{% endif %}
+
 {% endblock %}

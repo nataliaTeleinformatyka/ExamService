@@ -13,6 +13,7 @@ use App\Entity\Admin\Exam;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -37,7 +38,7 @@ class ExamType extends AbstractType
                         'Yes' => true,
                         'No' => false,
                     ]])
-            ->add('min_questions', IntegerType::class)
+            ->add('max_questions', IntegerType::class)
             ->add('max_attempts', IntegerType::class)
             ->add('duration_of_exam', TimeType::class)
             ->add('start_date', DateType::class)

@@ -16,6 +16,8 @@ security:
             security: false
         main:
             anonymous: true
+       # logout:
+           #     path:   logout
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 
@@ -29,3 +31,4 @@ security:
         # - { path: ^/profile, roles: ROLE_TEACHER }
         # - { path: ^/profile, roles: ROLE_STUDENT }
         # - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }

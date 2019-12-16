@@ -9,6 +9,7 @@
 namespace App\Repository\Admin;
 
 
+use App\Entity\Admin\Exam;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -36,7 +37,6 @@ class ExamRepository
 
     public function getExam(int $examId)
     {
-        //  if(empty($userId) /*|| isset($userId)*/) { return false; } // jesli damy to wowczas nie pobiera 1 rekordu bazy
         try {
             if ($this->reference->getSnapshot()->hasChild($examId)) {
                 return $this->reference->getChild($examId)->getValue();
@@ -82,7 +82,7 @@ class ExamRepository
             'name' => $data[0],
             'learning_required' => $data[1],
             'additional_information' => $data[2],
-            'min_questions' => $data[3],
+            'max_questions' => $data[3],
             'max_attempts' => $data[4],
             'start_date' => $data[5],
             'end_date' => $data[6],
@@ -91,12 +91,27 @@ class ExamRepository
         ]);
         return true;
     }
+    public function update(array $data, int $id) {
+        if (empty($data) /*|| isset($data)*/) {
+            return false;
+        }
+
+        $this->reference
+            ->getChild($id)->update([
+                'name' => $data[0],
+                'learning_required' => $data[1],
+                'additional_information' => $data[2],
+                'max_questions' => $data[3],
+                'max_attempts' => $data[4],
+                'start_date' => $data[5],
+                'end_date' => $data[6],
+                'duration_of_exam' => $data[7]
+            ]);
+        return true;
+    }
 
     public function delete(int $examId)
     {
-        if (empty($examId) /*|| isset($userId)*/) {
-            return false;
-        }
         try {
             if ($this->reference->getSnapshot()->hasChild($examId)) {
                 $this->reference->getChild($examId)->remove();
@@ -115,13 +130,20 @@ class ExamRepository
         } catch (ApiException $e) {
         }
     }
-
-
-    public function find($exam_id){
-
-
-
+    public function find(int $examId){
+        $information = $this->reference->getChild($examId)->getValue();
+        $exam = new Exam([]);
+        $exam->setName($information['name']);
+        $exam->setId($information['exam_id']);
+        $exam->setAdditionalInformation($information['additional_information']);
+        $exam->setCreatedBy($information['created_by']);
+    //    $exam->setDurationOfExam($information['duration_of_exam']);
+      //  $exam->setEndDate($information['end_date']);
+    //    $exam->setStartDate($information['start_date']);
+        $exam->setMaxQuestions($information['max_questions']);
+        $exam->setMaxAttempts($information['max_attempts']);
+        $exam->setLearningRequired($information['learning_required']);
+        return $exam;
     }
-
 
 }

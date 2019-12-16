@@ -51,6 +51,10 @@ class LearningMaterial extends Entity  implements  EquatableInterface
      * @ORM\Column(type="boolean")
      */
     private $is_required;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $attachment;
 
     /**
      * @return mixed
@@ -130,6 +134,22 @@ class LearningMaterial extends Entity  implements  EquatableInterface
     public function setLearningMaterialsGroupId($learningMaterialsGroupId): void
     {
         $this->learningMaterialsGroupId = $learningMaterialsGroupId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttachment()
+    {
+        return $this->attachment;
+    }
+
+    /**
+     * @param mixed $attachment
+     */
+    public function setAttachment($attachment): void
+    {
+        $this->attachment = $attachment;
     }
 
     public function getAllInformation(){

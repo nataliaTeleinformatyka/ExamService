@@ -36,7 +36,6 @@ class Exam extends Entity  implements  EquatableInterface
      */
    private $name;
     /**
-     * @Assert\NotBlank
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */
@@ -50,7 +49,7 @@ class Exam extends Entity  implements  EquatableInterface
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
-   private $min_questions;
+   private $max_questions;
     /**
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
@@ -144,17 +143,17 @@ class Exam extends Entity  implements  EquatableInterface
     /**
      * @return integer
      */
-    public function getMinQuestions()
+    public function getMaxQuestions()
     {
-        return $this->min_questions;
+        return $this->max_questions;
     }
 
     /**
-     * @param integer $min_questions
+     * @param integer $max_questions
      */
-    public function setMinQuestions($min_questions): void
+    public function setMaxQuestions($max_questions): void
     {
-        $this->min_questions = $min_questions;
+        $this->max_questions = $max_questions;
     }
 
     /**
@@ -238,7 +237,7 @@ class Exam extends Entity  implements  EquatableInterface
     }
 
     public function getAllInformation(){
-        $data = [$this->name,$this->learning_required,$this->additional_information,$this->min_questions,$this->max_attempts,
+        $data = [$this->name,$this->learning_required,$this->additional_information,$this->max_questions,$this->max_attempts,
             $this->start_date,$this->end_date,$this->duration_of_exam,$this->created_by];
         return $data;
     }

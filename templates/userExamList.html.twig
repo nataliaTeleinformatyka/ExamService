@@ -1,0 +1,49 @@
+{# templates/examList.html.twig #}
+{% extends 'base.html' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="sign">
+        <a href="{{ path('userExam') }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
+        </a>
+    </div>
+    {% for error in infoDelete %}
+        {{ error.message }}
+    {% endfor %}
+    {% if information==true %}
+    <table>
+        <tr>
+            <td>User id</td>
+            <td>Exam id</td>
+            <td>Date of resolve exam</td>
+            <td>Start access time</td>
+            <td>End access time</td>
+            <td></td>
+        </tr>
+        {% for action in data %}
+            {% if action.exam_id !="" or action.exam_id=="0" %}
+            <tr>
+                <td> {{ action.user_id|default('') }}  </td>
+                <td> {{ action.exam_id|default('') }}  </td>
+                <td> {{ action.date_of_resolve_exam|default('') }} </td>
+                <td> {{ action.start_access_time|default('') }}</td>
+                <td> {{ action.end_access_time|default('') }}</td>
+                <td><div class="sign">
+                        <a href="{{ path('deleteUserExam', { 'userexamId': action.user_exam_id}) }}">
+                            <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
+                        </a>
+                        <a href="#">
+                            <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor%}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

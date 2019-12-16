@@ -21,13 +21,34 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Result extends Entity  implements  EquatableInterface
 {
     /**
-     * @Assert\NotBlank
+     * @Assert\Type("Integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $user_id;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $exam_id;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $number_of_attempt;
+    /**
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
     private $points;
     /**
-     * @Assert\NotBlank
      * @Assert\Type("Boolean")
      * @ORM\Column(type="boolean")
      */

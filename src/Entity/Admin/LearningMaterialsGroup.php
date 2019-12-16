@@ -35,12 +35,6 @@ class LearningMaterialsGroup extends Entity  implements  EquatableInterface
      */
     private $name_of_group;
     /**
-     * @Assert\NotBlank
-     * @Assert\Type("Integer")
-     * @ORM\Column(type="integer")
-     */
-    private $exam_id;
-    /**
      * @return mixed
      */
     public function getId()
@@ -72,23 +66,9 @@ class LearningMaterialsGroup extends Entity  implements  EquatableInterface
         $this->name_of_group = $name_of_group;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getExamId()
-    {
-        return $this->exam_id;
-    }
 
-    /**
-     * @param mixed $exam_id
-     */
-    public function setExamId($exam_id): void
-    {
-        $this->exam_id = $exam_id;
-    }
     public function getAllInformation(){
-        $data = [$this->id,$this->exam_id,$this->name_of_group];
+        $data = [$this->id,$this->name_of_group];
         return $data;
     }
 

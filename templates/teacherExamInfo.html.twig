@@ -1,5 +1,5 @@
 {# templates/examList.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'base.html' %}
 
 {% block body %}
     <div class="container">
@@ -23,9 +23,15 @@
         </div>
         <div>
             Grupy materiałów naukowych przypisanych do egzaminu:
+            {% for materials_group in materials_group_data %}
+                <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': materials_group.exam_id}) }}"> {{ materials_group.name_of_group|default('') }} </a></p>
+            {% endfor %}
         </div>
         <div>
             Lista użytkowników przypisanych do egzaminu:
+            {% for user_data in user_info_data %}
+                <p>{{ user_data.first_name|default('') }}  {{ user_data.last_name|default('')}} - Klasa {{ user_data.class|default('') }} Adres e-mail: {{ user_data.email|default('')}}</p>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

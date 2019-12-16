@@ -1,47 +1,62 @@
 {# templates/questionList.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'base.html' %}
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
 {% block body %}
-<nav>Exam Id {{ examId }}</nav>
-<div class="sign">
+    <div class="container">
+    <div class="sign">
     <a href="{{ path('question', { 'examId': examId}) }}" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new question
     </a>
-</div>
-<table>
+    </div>
+        {% for error in infoDelete %}
+      {{ error.message }}
+        {% endfor %}
+    {% if information==true %}
+    <table>
     <tr>
         <td>Id</td>
         <td>Content</td>
         <td>Maximum answers</td>
         <td>Is multichoice</td>
-        <td>Is file</td>
+        <td>Name of file</td>
+        <td></td>
+
     </tr>
     {% for action in data %}
+        {% if action.id !="" or action.id=="0" %}
         <tr>
             <td> {{ action.id|default('') }}  </td>
             <td> {{ action.content|default('') }}  </td>
             <td> {{ action.max_answers|default('') }} </td>
             <td> {{ action.is_multichoice|default('') }} </td>
-            <td> {{ action.is_file|default('') }} </td>
+            <td> {{ action.name_of_file|default('') }} </td>
 
             <td><div class="sign">
                         <a href="{{ path('deleteQuestion', { 'exam' : examId, 'question': action.id }) }}" title="delete question">
                             <span class="glyphicon glyphicon-remove-sign"></span>
                         </a>
-                        <a href="#" title="edit question">
+                        <a href="{{ path('editQuestion', { 'exam_id' : examId, 'id': action.id }) }}" title="edit question">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
                         <a href="{{ path('answerList', { 'questionId' : action.id, 'examId': action.exam_id }) }}" title="Answer list">
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
-                        <a href="#">
-                            <span class="glyphicon glyphicon-file" title="File list"></span>
+                        <a href="{{ path('downloadFile', { 'exam': examId, 'question' : action.id  }) }}">
+                            <span class="glyphicon glyphicon-file" title="File"></span>
                         </a>
                 </div>
+
             </td>
         </tr>
+        {% endif %}
     {% endfor%}
 </table>
+    {% endif %}
+        <button type="button" class="btn btn-default btn-sm">
+            <a href="{{ path('examList') }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
+
+    </div>
 {% endblock %}

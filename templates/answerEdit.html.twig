@@ -1,0 +1,12 @@
+{# templates/answerAdd.html.twig #}
+{% extends 'base.html' %}
+{% block menu %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block body %}
+{{ form_start(form) }}
+    {{ form_row(form.content) }}
+    {{ form_row(form.is_active) }}
+    {{ form_row(form.is_true) }}
+
+{% endblock %}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+{%block head%}
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Serwis Egzaminacyjny{% endblock %}</title>
@@ -10,7 +11,17 @@
            {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
-    <body style="background-color: #AAAAAA">
+{%endblock%}
+    <body>
+    {% block authentication %}
+
+    HELLO username
+    <div class="sign">
+        <a href="{{ path('logout') }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-log-out"></span> Log out
+        </a>
+    </div>
+    {% endblock %}
     {% block menu %}
     {% endblock %}
         {% block body %}
@@ -19,7 +30,7 @@
                     <a href="#">
                         <span class="glyphicon glyphicon-log-in">Username</span>
                     </a>
-                    <a href="/logout">
+                    <a href="#">
                         <span class="glyphicon glyphicon-log-out">Sign out</span>
                     </a>
 
@@ -28,6 +39,8 @@
         {% endblock %}
         {% block javascripts %}{% endblock %}
         <footer>
+            <hr>
+            Praca inżynierska Teleinformatyka 2020
         </footer>
     </body>
 </html>

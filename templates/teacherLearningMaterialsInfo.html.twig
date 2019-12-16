@@ -1,0 +1,14 @@
+{# templates/examList.html.twig #}
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            {% for action in learning_materials_data %}
+                <p><b>Name :</b> {{ action.name|default('undefined') }}
+                <b>Name of content :</b> {{ action.name_of_content|default('undefined') }}
+                <b>Is required :</b> {{ action.is_required|default('undefined') }}</p>
+            {% endfor%}
+        </div>
+    </div>
+{% endblock %}

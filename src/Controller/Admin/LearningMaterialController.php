@@ -13,6 +13,7 @@ use App\Entity\Admin\LearningMaterial;
 use App\Form\Admin\LearningMaterialType;
 use App\Repository\Admin\LearningMaterialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -40,17 +41,16 @@ class LearningMaterialController  extends AbstractController
             $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
 
             $entityManager = $this->getDoctrine()->getManager();
-           // $file = $form['attachment']->getData();
-
 
             $values = $material->getAllInformation();
             $repositoryMaterial = new LearningMaterialRepository();
-            print_r($values);
-            $repositoryMaterial->insert($learningMaterialsGroupId,$values);
+            $file = $form['attachment']->getData();
 
-            return $this->redirectToRoute('learningMaterialList',[
+            $repositoryMaterial->insert($learningMaterialsGroupId,$values,$file);
+
+           /* return $this->redirectToRoute('learningMaterialList',[
                 "learningMaterialsGroupId" => $learningMaterialsGroupId
-            ]);
+            ]);*/
         }
 
         return $this->render('learningMaterialAdd.html.twig', [
@@ -68,20 +68,25 @@ class LearningMaterialController  extends AbstractController
     public function learningMaterialListCreate(Request $request) {
         $learningMaterialInformation= new LearningMaterialRepository();
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
-
+        $_SESSION['group_id'] = "";
         $id = $learningMaterialInformation -> getQuantity($learningMaterialsGroupId);
 
 
         if($id>0) {
+            $info = true;
             for ($i = 0; $i < $id; $i++) {
                 $learningMaterial = $learningMaterialInformation->getLearningMaterial($learningMaterialsGroupId,$i);
+           if($learningMaterial['id']!=$i) {
+//todo: pomijac rekord 0 gdy usuniety
+                    print_r($learningMaterial);
+                }
                 if($learningMaterial['is_required'] == true) {
                     $is_required = "true";
                 } else {
                     $is_required="false";
                 }
                 $tplArray[$i] = array(
-                    'id' => $i,
+                    'id' => $learningMaterial['id'],
                     'learning_materials_group_id' => $learningMaterial['learning_materials_group_id'],
                     'name' => $learningMaterial['name'],
                     'name_of_content' => $learningMaterial['name_of_content'],
@@ -89,6 +94,7 @@ class LearningMaterialController  extends AbstractController
                 );
             }
         } else {
+            $info=false;
             $tplArray = array(
                 'id' => 0,
                 'learning_materials_group_id' => 0,
@@ -98,12 +104,62 @@ class LearningMaterialController  extends AbstractController
 
             );
         }
+      //  $learningMaterialInformation->get_file($learningMaterial['name_of_content']);
+
         return $this->render( 'learningMaterialList.html.twig', array (
             'data' => $tplArray,
-            'learningMaterialsGroupId' => $learningMaterialsGroupId
+            'learningMaterialsGroupId' => $learningMaterialsGroupId,
+            'information' => $info
 
         ) );
     }
+    /**
+     * @param Request $request
+     * @param LearningMaterial $learningMaterial
+
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("editLearningMaterial/{groupId}/{id}", name="editLearningMaterial")
+     */
+    public function editExam(Request $request, LearningMaterial $learningMaterial)
+    {
+        $materialInformation = new LearningMaterialRepository();
+        $materialId = (int)$request->attributes->get('id');
+        $materialGroupId = (int)$request->attributes->get('groupId');
+        $_SESSION['group_id'] = $materialGroupId;
+
+        $materials = $materialInformation->getLearningMaterial($materialGroupId, $materialId);
+
+        $examInfoArray = array(
+            'id' => $materials['id'],
+            'learning_materials_group_id' => $materials['learning_materials_group_id'],
+            'name' => $materials['name'],
+            'name_of_content' => $materials['name_of_content'],
+            'is_required' => $materials['is_required'],
+
+        );
+
+        $form = $this->createForm(LearningMaterialType::class, $learningMaterial);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+       /*     $exams = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            $examValue = $request->attributes->get('id');
+            print_r($examValue);
+
+            $values = $exam->getAllInformation();
+            $repositoryExam = new ExamRepository();
+            $repositoryExam->update($values,$examId);
+            print_r($values);
+            // return $this->redirectToRoute('examList');*/
+        }
+        return $this->render('learningMaterialAdd.html.twig', [
+            'form' => $form->createView(),
+            'examInformation' =>$examInfoArray,
+        ]);
+    }
+
+
     /**
      * @param Request $request
      * @Route("/deleteMaterial/{learningMaterialsGroupId}/{learningMaterial}", name="deleteMaterial")
@@ -114,7 +170,9 @@ class LearningMaterialController  extends AbstractController
         $id = $request->attributes->get('learningMaterial');
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
         $repo = new LearningMaterialRepository();
-        $repo->delete($learningMaterialsGroupId,$id);
+        $info = $repo->getLearningMaterial($learningMaterialsGroupId,$id);
+        $filename = $info['name_of_content'];
+        $repo->delete($learningMaterialsGroupId,$id,$filename);
         //todo: nie usuwac gdy sa powiazania
         //todo: wyswietlanie, gdy brak
 

@@ -12,11 +12,13 @@ namespace App\Form\Admin;
 use App\Entity\Admin\Question;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class QuestionType extends AbstractType
 {
@@ -35,12 +37,25 @@ class QuestionType extends AbstractType
                         'Yes' => true,
                         'No' => false,
                     ]])
-            ->add('is_file', ChoiceType::class,
-                [
-                    'choices'  => [
-                        'Yes' => true,
-                        'No' => false,
-                    ]])
+            ->add('file', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                            "video/wmv",
+                            "video/avi",
+                            "audio/mpeg3"
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid PDF document,image : jpeg, jpg, png, video: wmv, avi or audio: mp3',
+                    ])
+                ]])
             ->add('save', SubmitType::class, ['label' => 'Add Question'])
             ->setMethod('POST')
             ->getForm();

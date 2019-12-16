@@ -1,21 +1,26 @@
 {# templates/examList.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'base.html' %}
 {% block menu %}
 {% include 'menu.html.twig' %}
 {% endblock %}
 {% block body %}
 <div class="container">
 <div class="sign">
-    <a href="admin/exam" class="btn btn-info btn-lg">
+    <a href="{{ path('exam') }}" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
     </a>
 </div>
+    {% for error in infoDelete %}
+        {{ error.message }}
+    {% endfor %}
+
+    {% if information==true %}
 <table>
     <tr class="informationRow">
         <td>Id</td>
         <td>Name</td>
         <td>Learning required</td>
-        <td>Minimum questions</td>
+        <td>Maximum questions</td>
         <td>Maximum attempts</td>
         <td>Duration of exam</td>
         <td>Created by (user id)</td>
@@ -25,11 +30,12 @@
         <td></td>
     </tr>
     {% for action in data %}
-    <tr>
+        {% if action.id !="" or action.id=="0" %}
+        <tr>
         <td> {{ action.id|default('undefined') }}  </td>
         <td> {{ action.name|default('undefined') }}  </td>
         <td> {{ action.learning_required|default('undefined') }} </td>
-        <td> {{ action.min_questions|default('') }} </td>
+        <td> {{ action.max_questions|default('') }} </td>
         <td> {{ action.max_attempts|default('') }} </td>
         <td> {{ action.duration_of_exam|default('') }}</td>
         <td> {{ action.created_by|default('') }}</td>
@@ -40,7 +46,7 @@
                 <a href="{{ path('delete', { 'exam': action.id }) }}">
                     <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
                 </a>
-                <a href="{{ path('edit', { 'exam': action.id }) }}">
+                <a href="{{ path('editExam', { 'id': action.id }) }}">
                     <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
                 </a>
                 <a href="{{ path('questionList', { 'id': action.id }) }}" title="Question list">
@@ -49,7 +55,9 @@
         </div>
         </td>
     </tr>
+        {% endif %}
     {% endfor%}
 </table>
+    {% endif %}
 </div>
 {% endblock %}

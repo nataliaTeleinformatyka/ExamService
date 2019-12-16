@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class LearningMaterialType extends AbstractType
 {
@@ -29,8 +30,26 @@ class LearningMaterialType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('name_of_content', TextType::class)
-          //  ->add('attachment', FileType::class)
+            ->add('attachment', FileType::class, [
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                            "video/wmv",
+                            "video/avi",
+                            "audio/mpeg3"
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid PDF document,image : jpeg, jpg, png, video: wmv, avi or audio: mp3',
+        ])
+    ],
+            ])
             ->add('is_required', ChoiceType::class, [
                 'choices'  => [
                     'Yes' => true,

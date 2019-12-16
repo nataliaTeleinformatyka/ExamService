@@ -52,11 +52,14 @@ class Question extends Entity  implements EquatableInterface
      */
     private $is_multichoice;
     /**
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
+     * @Assert\Type("String")
+     * @ORM\Column(type="string")
      */
-    private $is_file;
-
+    private $name_of_file;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $file;
     /**
      * @return mixed
      */
@@ -78,15 +81,15 @@ class Question extends Entity  implements EquatableInterface
      */
     public function getIdExam()
     {
-        return $this->id_exam;
+        return $this->exam_id;
     }
 
     /**
-     * @param mixed $id_exam
+     * @param mixed $exam_id
      */
-    public function setIdExam($id_exam): void
+    public function setIdExam($exam_id): void
     {
-        $this->id_exam = $id_exam;
+        $this->exam_id = $exam_id;
     }
     /**
      * @return mixed
@@ -139,21 +142,55 @@ class Question extends Entity  implements EquatableInterface
     /**
      * @return mixed
      */
-    public function getisFile()
+    public function getExamId()
     {
-        return $this->is_file;
+        return $this->exam_id;
     }
 
     /**
-     * @param mixed $is_file
+     * @param mixed $exam_id
      */
-    public function setIsFile($is_file): void
+    public function setExamId($exam_id): void
     {
-        $this->is_file = $is_file;
+        $this->exam_id = $exam_id;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getNameOfFile()
+    {
+        return $this->name_of_file;
+    }
+
+    /**
+     * @param mixed $name_of_file
+     */
+    public function setNameOfFile($name_of_file): void
+    {
+        $this->name_of_file = $name_of_file;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param mixed $file
+     */
+    public function setFile($file): void
+    {
+        $this->file = $file;
+    }
+
+
+
     public function getAllInformation(){
-        $data = [$this->content,$this->max_answers,$this->is_multichoice,$this->is_file];
+        $data = [$this->content,$this->max_answers,$this->is_multichoice,$this->name_of_file];
         return $data;
     }
 

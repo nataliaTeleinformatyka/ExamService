@@ -14,7 +14,10 @@ use App\Entity\Admin\Exam;
 use App\Form\Admin\ExamType;
 use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\LearningMaterialsGroupRepository;
 use App\Repository\Admin\QuestionRepository;
+use App\Repository\Admin\UserExamRepository;
+use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,7 +41,6 @@ class ExamInformationController extends AbstractController
                     } else {
                         $is_required = false;
                     }
-                    print_r($exams);
                     $tplArray[$i] = array(
                         'id' => $i,
                         'name' => $exams['name'],
@@ -103,23 +105,70 @@ class ExamInformationController extends AbstractController
         if($idQuestion>0) {
             for ($i = 0; $i < $idQuestion; $i++) {
                 $questions = $questionInformation->getQuestion($examId,$i);
-                $tplArray[$i] = array(
+                $questionArray[$i] = array(
                     'id' => $i,
                     'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                 );
             }
         } else {
-            $tplArray = array(
+            $questionArray = array(
                 'id' => 0,
                 'exam_id' => 0,
                 'content' => 0,
             );
         }
+        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
+        $id = $learningMaterialsGroupInformation -> getQuantity();
+        if($id>0) {
+            for ($i = 0; $i < $id; $i++) {
+                $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($i);
+                if ($learningMaterialsGroup['exam_id'] == $examId){
+                    $materialsGroupArray[$i] = array(
+                        'id' => $i,
+                        'name_of_group' => $learningMaterialsGroup['name_of_group'],
+                        'exam_id' => $learningMaterialsGroup['exam_id'],
+                    );
+                }
+            }
+        } else {
+            $materialsGroupArray = array(
+                'id' => "",
+                'name_of_group' => "",
+                'exam_id' => "",
 
+            );
+        }
+
+        $userInformation= new UserRepository();
+        $userId = $userInformation -> getQuantity();
+        if ($userId > 0) {
+            $userExamInformation = new UserExamRepository();
+            $userExamId = $userExamInformation -> getQuantity();
+            if ($userExamId > 0) {
+                $k =0;
+                for ($i = 0; $i < $userExamId; $i++) {
+                    $userExam = $userExamInformation->getUserExam($i);
+                    if($userExam['exam_id'] == $examId) {
+                        $users = $userInformation->getUser($i);
+                        $userExamArray[$k] = array(
+                            'user_id' => $userExam['user_id'],
+                            'first_name' => $users['first_name'],
+                            'last_name' => $users['last_name'],
+                            'class' => $users['class'],
+                            'email' => $users['email']
+                        );
+                        $k++;
+                    }
+                }
+            }
+            print_r($userExamArray);
+        }
         return $this->render('teacherExamInfo.html.twig', array(
             'data' => $examInfoArray,
-            'question_data' => $tplArray
+            'question_data' => $questionArray,
+            'materials_group_data'=> $materialsGroupArray,
+            'user_info_data' => $userExamArray
         ));
 
     }

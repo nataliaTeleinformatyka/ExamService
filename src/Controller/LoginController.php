@@ -6,7 +6,7 @@
  * Time: 17:55
  */
 
-namespace App\Controller\Admin;
+namespace App\Controller;
 
 
 use App\Entity\Admin\User;
@@ -19,7 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Twig_Environment;
 
 class LoginController  extends AbstractController
 {
@@ -37,17 +39,7 @@ class LoginController  extends AbstractController
         $userRepository = new UserRepository();
         $errors = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
-        // $lastUsername = $authenticationUtils->getLastUsername();
-        /*$form = $this->createForm(LoginType::class, $user);
-        $form->handleRequest($request);*/
 
-        /*$form = $this->createFormBuilder($user)
-            ->add("username",TextType::class)
-            ->add("password",PasswordType::class)
-            ->add("submit",SubmitType::class, array('label' => 'Sign in'))
-            ->getForm();
-        $form->handleRequest($request);*/
         if ($form->isSubmitted() && $form->isValid()) {
             //$user = $this->getDoctrine()->getRepository(UserProvider::class)->loadUserByUsername($request->request->get('login'));
             $info = $form->getData();
@@ -56,13 +48,26 @@ class LoginController  extends AbstractController
 
             $email = $user->getEmail();
             $password = $user->getPassword();
+            $id = $userRepository->getUserIdFromAuthentication($email);
+
+            $information = $userRepository->getUser($id);
             try {
                 $goodLog = $userRepository->checkPassword($email, $password);
+                session_destroy();
+                session_start();
+                $_SESSION['user_id']=$id;
+                $_SESSION['role'] = $information['role'];
+                $_SESSION['username']=$information['username'];
+             //   $token = new UsernamePasswordToken($email, $password, 'main', $information['role']);
+
+            //    $context = $this->get('security.context');
+             //  $context->setToken($token);
+                return $this->redirectToRoute('userList');
+
             }catch (InvalidPassword $e) {
                     $errors = $e->getMessage();
             }
             //todo; last login change in database or download from authentication
-            //return $this->redirectToRoute('userList');
         }
         return $this->render('login.html.twig', [
             'form' => $form->createView(),
@@ -83,10 +88,12 @@ class LoginController  extends AbstractController
             'form' => $form->createView(),
             'errors' => $errors,
         ]);
-    }
+    }*/
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout() : Response {}
+    public function logout() : Response {
+        return $this->redirectToRoute('login');
+    }
 
 }

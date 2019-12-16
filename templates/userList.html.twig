@@ -1,12 +1,10 @@
 {# templates/userList.html.twig #}
-{% extends 'base.html.twig' %}
+{% extends 'base.html' %}
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
 {% block body %}
 <div class="container">
-    <title>{{ title }}</title>
-    <div>{{ title }}</div>
 <div class="sign">
     <a href="{{ path('user') }}" class="btn btn-info btn-lg">
         <span class="glyphicon glyphicon-plus-sign"></span> Add new user
@@ -29,6 +27,7 @@
         <td></td>
     </tr>
     {% for action in data %}
+        {% if( information == true) %}
         <tr>
             <td> {{ action.id|default('undefined') }}  </td>
             <td> {{ action.username|default('undefined') }}  </td>
@@ -48,6 +47,7 @@
                 </div>
             </td>
         </tr>
+        {% endif %}
     {% endfor%}
 </table>
 </div>

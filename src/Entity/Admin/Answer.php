@@ -40,6 +40,23 @@ class Answer extends Entity  implements  EquatableInterface
     private $question_id;
 
     /**
+     * @Assert\NotBlank
+     * @Assert\Type("String")
+     * @ORM\Column(type="string")
+     */
+    private $content;
+    /**
+     * @Assert\Type("Boolean")
+     * @ORM\Column(type="boolean")
+     */
+    private $is_true;
+    /**
+     * @Assert\Type("Boolean")
+     * @ORM\Column(type="boolean")
+     */
+    private $is_active;
+
+    /**
      * @return mixed
      */
     public function getExamId()
@@ -70,25 +87,6 @@ class Answer extends Entity  implements  EquatableInterface
     {
         $this->question_id = $question_id;
     }
-
-    /**
-     * @Assert\NotBlank
-     * @Assert\Type("String")
-     * @ORM\Column(type="string")
-     */
-    private $content;
-    /**
-     * @Assert\NotBlank
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
-     */
-    private $is_true;
-    /**
-     * @Assert\NotBlank
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
-     */
-    private $is_active;
 
     /**
      * @return mixed

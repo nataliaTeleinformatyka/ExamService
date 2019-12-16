@@ -28,18 +28,9 @@ class LearningMaterialsGroupType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $learningMaterialsGroups = new LearningMaterialsGroupRepository();
-
-        for ($i = 0; $i < $learningMaterialsGroups->getQuantity(); $i++) {
-            $values = $learningMaterialsGroups->getLearningMaterialsGroup($i);
-            $names[$i] = $values['name'];
-            $ids[$i]=$values['exam_id'];
-        }
             $builder
                 ->add('name_of_group', TextType::class)
-                ->add('exam_id', ChoiceType::class, [
-                    'choices' => $ids //todo: ."-".$names wyswietlanie nazwy egzaminu
-                ])
+
                 ->add('save', SubmitType::class, ['label' => 'Add Learning Materials Group'])
                 ->setMethod('POST')
                 ->getForm();

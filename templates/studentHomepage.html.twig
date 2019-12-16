@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            {% for action in data %}
+                {% if information==true %}
+                <p><a href="{{ path('studentExamStartInfo', { 'userExamId': action.user_exam_id}) }}">
+                        {{ action.exam_name|default('') }} {{ action.access_period|default('') }}  - Pozostało prób: </a></p>
+                {% endif %}
+            {% endfor%}
+        </div>
+    </div>
+
+{% endblock %}

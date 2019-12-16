@@ -9,6 +9,7 @@
 namespace App\Controller\Admin;
 
 
+use App\Entity\Admin\Exam;
 use App\Entity\Admin\UserExam;
 use App\Form\Admin\UserExamType;
 use App\Repository\Admin\UserExamRepository;
@@ -19,35 +20,26 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserExamController  extends AbstractController
 {
     /**
-     * @Route("/userExam", name="userExam")
+     * @Route("userExam", name="userExam")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(UserExam::class);
+        //$repository = $this->getDoctrine()->getRepository(UserExam::class);
         $exam = new UserExam([]);
 
         $form = $this->createForm(UserExamType::class, $exam);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-        /*    $data[0] = $request->request->get('name');
-            $data[1] = $request->request->get('learning_required');
-            $data[2] = $request->request->get('min_questions');
-            $data[3] = $request->request->get('max_attempts');
-            $data[4] = $request->request->get('start_date');
-            $data[5] = $request->request->get('end_date');
-            $data[6] = $request->request->get('additional_information');*/
-
             $userExam = $form->getData();
 
             $entityManager = $this->getDoctrine()->getManager();
 
             $values = $exam->getAllInformation();
             $repositoryExam = new UserExamRepository();
-            $repositoryExam->insert($values);
+           // $repositoryExam->insert($values);
 
             // return $this->forward($this->generateUrl('user'));
             //return $this->redirectToRoute('userExamList');
@@ -55,6 +47,7 @@ class UserExamController  extends AbstractController
 
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
+
         ]);
     }
 
@@ -67,28 +60,55 @@ class UserExamController  extends AbstractController
         $examInformation = new UserExamRepository();
         $id = $examInformation->getQuantity();
         if ($id > 0) {
+            $info = true;
             for ($i = 0; $i < $id; $i++) {
                 $userExam = $examInformation->getUserExam($i);
-
+                if($userExam['start_access_time']=="NULL") {
+                    $startDate = " ";
+                } else {
+                    $startDate = $userExam['start_access_time'];
+                }
+                if($userExam['end_access_time']=="NULL"){
+                    $endDate = " ";
+                } else {
+                    $endDate=$userExam['end_access_time'];
+                }
+                if($userExam['date_of_resolve_exam'] == "NULL"){
+                    $resolveDate = " ";
+                } else {
+                    $resolveDate=$userExam['date_of_resolve_exam'];
+                }
                 $tplArray[$i] = array(
+                    'user_exam_id' => $userExam['user_exam_id'],
                     'user_id' => $userExam['user_id'],
                     'exam_id' => $userExam['exam_id'],
-                    'date_of_resolve_exam' => $userExam['date_of_resolve_exam'],
-                    'start_access_time' => $userExam['start_access_time']['date'],
-                    'end_access_time' => $userExam['end_access_time']['date']
+                    'date_of_resolve_exam' => $resolveDate,
+                    'start_access_time' => $startDate,
+                    'end_access_time' => $endDate
                 );
             }
         } else {
+            $info = false;
             $tplArray = array(
-                'user_id' => 0,
-                'exam_id' => 0,
-                'date_of_resolve_exam' => 0,
-                'start_access_time' => 0,
-                'end_access_time' => 0
+                'user_exam_id' => "",
+                'user_id' => "",
+                'exam_id' => "",
+                'date_of_resolve_exam' => "",
+                'start_access_time' => "",
+                'end_access_time' => ""
             );
         }
+        print_r($userExam['user_id']);
+        if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
+            $infoDelete = $_SESSION['information'];
+        } else {
+            $infoDelete = "";
+        }
+        $_SESSION['information'] = array();
         return $this->render('userExamList.html.twig', array(
-            'data' => $tplArray
+            'data' => $tplArray,
+            'infoDelete' => $infoDelete,
+            'information' => $info
         ));
     }
 
@@ -127,16 +147,23 @@ class UserExamController  extends AbstractController
 
     /**
      * @param Request $request
-     * @Route("/deleteUserExam/{userId}/{examId}", name="deleteUserExam")
+     * @Route("/deleteUserExam/userExamId", name="deleteUserExam")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteExam(Request $request)
     {
-        $userId = $request->attributes->get('user_id');
-        $examId  = $request->attributes->get('exam_id');
+        $userExamId = $request->attributes->get('userExamId');
         $repo = new UserExamRepository();
-        $repo->delete($userId,$examId);
-        //todo: redirect to examList nie usuwa zapytania ktore jest jako 1
+        /*if($isAnswer !=0 ){
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
+
+        } else {
+            $repo->delete($examId, $questionId);
+            $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
+
+        }*/
+        $repo->delete($userExamId);
+
         //todo: zapytanie czy chce usunac egzamin gdy sa powiazane question i answers
         //todo: nie mozna usunac egzaminu, gdy jest powiazanie userexam, result
 

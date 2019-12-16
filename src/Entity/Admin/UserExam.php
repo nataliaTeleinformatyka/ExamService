@@ -22,16 +22,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserExam extends Entity  implements  EquatableInterface
 {
     /**
-    * @Assert\Type("Integer")
-    * @ORM\Column(type="integer")
-    */
-    private $user_id;
-
+     * @Assert\Type("Integer")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $user_exam_id;
     /**
      * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
     private $exam_id;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $user_id;
     /**
      * @Assert\Type("Datetime")
      * @ORM\Column(type="datetime")
@@ -47,6 +53,22 @@ class UserExam extends Entity  implements  EquatableInterface
      * @ORM\Column(type="datetime")
      */
     private $end_access_time;
+
+    /**
+     * @return mixed
+     */
+    public function getUserExamId()
+    {
+        return $this->user_exam_id;
+    }
+
+    /**
+     * @param mixed $user_exam_id
+     */
+    public function setUserExamId($user_exam_id): void
+    {
+        $this->user_exam_id = $user_exam_id;
+    }
 
     /**
      * @return mixed
