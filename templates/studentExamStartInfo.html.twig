@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
+
 Exam name : {{ exam_name }}
 
 
@@ -10,7 +11,7 @@ Exam name : {{ exam_name }}
 
     </div>
     <div class="buttons">
-        <a href="{{ path('studentExam', { 'userExamId': user_exam_id}) }}" class="btn btn-info btn-lg">
+        <a href="{{ path('studentExam', { 'userExamId' : user_exam_id }) }}" class="btn btn-info btn-lg">
             <span class="glyphicon glyphicon-plus-sign"></span> Start Exam
         </a>
     </div>

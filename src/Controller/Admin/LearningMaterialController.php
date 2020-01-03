@@ -85,6 +85,7 @@ class LearningMaterialController  extends AbstractController
                 } else {
                     $is_required="false";
                 }
+                print_r($learningMaterialInformation->get_file($learningMaterial['name_of_content']));
                 $tplArray[$i] = array(
                     'id' => $learningMaterial['id'],
                     'learning_materials_group_id' => $learningMaterial['learning_materials_group_id'],

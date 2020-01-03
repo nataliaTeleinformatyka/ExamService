@@ -14,6 +14,7 @@ use App\Entity\Admin\Exam;
 use App\Form\Admin\ExamType;
 use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\LearningMaterialsGroupExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupRepository;
 use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\UserExamRepository;
@@ -45,7 +46,7 @@ class ExamInformationController extends AbstractController
                         'id' => $i,
                         'name' => $exams['name'],
                         'learning_required' => $is_required,
-                        'min_questions' => $exams['min_questions'],
+                        'max_questions' => $exams['max_questions'],
                         'max_attempts' => $exams['max_attempts'],
                         'duration_of_exam' => $exams['duration_of_exam']['date'], //todo: only time!!
                         'start_date' => $exams['start_date']['date'],
@@ -59,7 +60,7 @@ class ExamInformationController extends AbstractController
                     'id' => "",
                     'name' => "",
                     'learning_required' => "",
-                    'min_questions' => "",
+                    'max_questions' => "",
                     'max_attempts' => "",
                     'duration_of_exam' => "",
                     'start_date' => "",
@@ -92,7 +93,7 @@ class ExamInformationController extends AbstractController
             'id' => $examId,
             'name' => $exams['name'],
             'learning_required' => $is_required,
-            'min_questions' => $exams['min_questions'],
+            'max_questions' => $exams['max_questions'],
             'max_attempts' => $exams['max_attempts'],
             'duration_of_exam' => $exams['duration_of_exam']['date'], //todo: only time!!
             'start_date' => $exams['start_date']['date'],
@@ -118,27 +119,28 @@ class ExamInformationController extends AbstractController
                 'content' => 0,
             );
         }
-        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
-        $id = $learningMaterialsGroupInformation -> getQuantity();
+        $learningMaterialsGroupExamInformation = new LearningMaterialsGroupExamRepository();
+        $id = $learningMaterialsGroupExamInformation->getQuantity();
         if($id>0) {
             for ($i = 0; $i < $id; $i++) {
-                $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($i);
-                if ($learningMaterialsGroup['exam_id'] == $examId){
-                    $materialsGroupArray[$i] = array(
-                        'id' => $i,
-                        'name_of_group' => $learningMaterialsGroup['name_of_group'],
-                        'exam_id' => $learningMaterialsGroup['exam_id'],
-                    );
+                $learningMaterialsGroupExam = $learningMaterialsGroupExamInformation->getLearningMaterialsGroupExam($i);
+                if ($learningMaterialsGroupExam['exam_id'] == $examId){
+
+                        $learning_materials_group_id = $learningMaterialsGroupExam['learning_materials_group_id'];
+                        $exam_id = $learningMaterialsGroupExam['exam_id'];
                 }
             }
         } else {
-            $materialsGroupArray = array(
-                'id' => "",
-                'name_of_group' => "",
-                'exam_id' => "",
 
-            );
+                $learning_materials_group_id = "";
+                $exam_id = "";
         }
+        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
+        $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($learning_materials_group_id);
+                    $materialsGroupArray = array(
+                        'id' => $learningMaterialsGroup['learning_materials_groups_id'],
+                        'name_of_group' => $learningMaterialsGroup['name_of_group'],
+                    );
 
         $userInformation= new UserRepository();
         $userId = $userInformation -> getQuantity();
@@ -162,13 +164,13 @@ class ExamInformationController extends AbstractController
                     }
                 }
             }
-            print_r($userExamArray);
         }
         return $this->render('teacherExamInfo.html.twig', array(
             'data' => $examInfoArray,
             'question_data' => $questionArray,
             'materials_group_data'=> $materialsGroupArray,
-            'user_info_data' => $userExamArray
+            'user_info_data' => $userExamArray,
+            'exam_id' => $exam_id
         ));
 
     }

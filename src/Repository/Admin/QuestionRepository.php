@@ -67,7 +67,6 @@ class QuestionRepository
         $questionId = $this->getQuantity($idExam);
         $examReference = $this->database->getReference("Exam");
 
-
         $examReference->getChild($idExam)
             ->getChild("Question")->getChild($questionId)->set([
                 'id' => $questionId,

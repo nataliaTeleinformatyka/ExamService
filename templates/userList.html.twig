@@ -40,11 +40,10 @@
             <td> {{ action.last_login|default('undefined') }}</td>
             <td> {{ action.last_password_change|default('undefined') }}</td>
             <td> {{ action.date_registration|default('undefined') }}</td>
-            <td><div class="sign"> <a href="{{ path('userDelete', { 'userId': action.id }) }}">
+            <td> <a href="{{ path('userDelete', { 'userId': action.id }) }}">
                     <span class="glyphicon glyphicon-remove-sign"></span>
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
-                </div>
             </td>
         </tr>
         {% endif %}

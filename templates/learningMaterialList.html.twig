@@ -10,24 +10,24 @@
             <span class="glyphicon glyphicon-plus-sign"></span> Add new learning material
         </a>
     </div>
-    <div class="container-fluid">
+    <div class="container containerBody">
         <div class="row border">
             <div class="col-md-1">Id</div>
             <div class="col-md-2">Learning materials group id</div>
             <div class="col-md-1">Name</div>
             <div class="col-md-3">Name of content</div>
-            <div class="col-md-1">Is required</div>
+            <div class="col-md-2">Is required</div>
             <div class="col-md-1"></div>
         </div>
-        <div class="row">
+        <div class="row border">
             {% for action in data %}
                 {% if( information == true) %}
                     <div class="col-md-1">{{ action.id|default('') }}  </div>
                     <div class="col-md-2">{{ action.learning_materials_group_id|default('') }}</div>
                     <div class="col-md-1">{{ action.name|default('') }}  </div>
                     <div class="col-md-3">{{ action.name_of_content|default('') }}  </div>
-                    <div class="col-md-1">{{ action.is_required|default('') }}  </div>
-                    <div class="col-md-1 sign">
+                    <div class="col-md-2">{{ action.is_required|default('') }}  </div>
+                    <div class="col-md-1">
                         <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterial': action.id }) }}" title="delete learning material">
                             <span class="glyphicon glyphicon-remove-sign"></span>
                         </a>

@@ -40,3 +40,7 @@ class LoginType extends AbstractType
     }
 }
 //php -S 127.0.0.1:8000 -t public
+//yarn encore dev --watch
+//yarn encore dev
+// php bin/console cache:pool:clear cache.global_clearer
+//php bin/console cache:pool:list

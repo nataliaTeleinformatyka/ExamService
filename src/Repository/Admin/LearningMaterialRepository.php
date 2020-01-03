@@ -97,7 +97,13 @@ class LearningMaterialRepository {
 
     public function get_file(string $filename){
 //todo: get files from database
-       return $this->bucket->object($filename);
+    //    mkdir (".../Downloads/Exam", 0777);
+   //     touch($filename);
+ //  $rootPath="../Downloads".'/'.$filename;
+   // $localFile = new File($rootPath,"imageName.txt");
+
+       //return $this->bucket->object($filename)->info();//->downloadToFile();
+        return $this->bucket->object($filename)->info();
     }
 
 

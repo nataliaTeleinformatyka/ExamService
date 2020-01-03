@@ -18,16 +18,16 @@
         <div>
             Lista pytań dla egzaminu:
             {% for question in question_data %}
-                <p><a href="{{ path('teacherQuestionInfo', { 'exam': question.exam_id, 'question': question.id}) }}"> {{ question.content|default('') }} </a></p>
+                <p><a href="{{ path('teacherQuestionInfo', { 'exam': exam_id, 'question': question.id}) }}"> {{ question.content|default('') }} </a></p>
             {% endfor %}
         </div>
-        <div>
+        <div class="teacherInfo">
             Grupy materiałów naukowych przypisanych do egzaminu:
             {% for materials_group in materials_group_data %}
-                <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': materials_group.exam_id}) }}"> {{ materials_group.name_of_group|default('') }} </a></p>
+                <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': exam_id}) }}"> {{ materials_group.name_of_group|default('') }} </a></p>
             {% endfor %}
         </div>
-        <div>
+        <div class="teacherInfo">
             Lista użytkowników przypisanych do egzaminu:
             {% for user_data in user_info_data %}
                 <p>{{ user_data.first_name|default('') }}  {{ user_data.last_name|default('')}} - Klasa {{ user_data.class|default('') }} Adres e-mail: {{ user_data.email|default('')}}</p>

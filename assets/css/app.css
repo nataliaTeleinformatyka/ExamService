@@ -5,19 +5,17 @@ body {
     height:100%;
 }
 .border {
-    width: 100px;
-    height: 100px;
     border: 2px solid black;
 }
 table {
     border-collapse: collapse;
 }
-#container {
+.containerBody {
     min-height:100%;
     position:relative;
 }
 
-table, th, td {
+table, tr, td {
     font-family: sans-serif;
     font-size: 12px;
     border: 1px solid #cde;
@@ -25,18 +23,26 @@ table, th, td {
     border-spacing: 0 1px;
     text-align: left;
 }
-
+tr {
+    background: #7dabee;
+    padding: 5px;
+}
+td {
+    padding: 5px;
+}
 .sign {
     text-align: left;
-    margin-left: 500px;
-}
-.footer {
+    }
+footer {
     position:absolute;
     bottom:0;
     width:100%;
     height:60px;
-    background: #595656;
+    background: #3b3939;
 }
 tr.informationRow {
     background-color: #916319;
+}
+.teacherInfo {
+    background-color: #f6f6f6;
 }
