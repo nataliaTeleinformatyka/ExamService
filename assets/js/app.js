@@ -53,7 +53,7 @@ for(let i=0;i<getCookie("amountOfAnswers"+id);i++){
     buttonAnswer.innerHTML = getCookie("answerContent"+id+i);
     var body = document.getElementsByTagName("body")[0];
     body. appendChild(button);*/
-   
+
 }
 
 
