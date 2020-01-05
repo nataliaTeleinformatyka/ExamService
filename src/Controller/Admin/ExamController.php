@@ -60,8 +60,7 @@ class ExamController extends AbstractController
      */
     public function examListCreate()
     {
-        print_r($_SESSION['user_id']);
-        print_r($_SESSION['role']);
+
         $examInformation = new ExamRepository();
         $id = $examInformation->getQuantity();
         if ($id > 0) {

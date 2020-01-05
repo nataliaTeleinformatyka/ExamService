@@ -53,23 +53,33 @@ class StudentExamController extends AbstractController
         if($questionsAmount <= $maxQuestions){
             for($i=0;$i<$questionsAmount;$i++) {
                 $questions = $questionRepo->getQuestion($examId, $i);
-                setcookie("questionId".$i, $questions['id'] );
-                setcookie("questionIsMultichoice".$i, $questions['is_multichoice'] );
-                setcookie("questionMaxAnswers".$i, $questions['max_answers'] );
-                setcookie("questionNameOfFile".$i, $questions['name_of_file'] );
-                setcookie("questionContent".$i, $questions['content'] );
+                if( $questions['id']==$i) {
+                    print_r("AKKAKAKA
+                 " . $questions['id']);
+                    setcookie("questionId" . $i, $i/*$questions['id']*/);
+                    setcookie("questionIsMultichoice" . $i, $questions['is_multichoice']);
+                    setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
+                    setcookie("questionNameOfFile" . $i, $questions['name_of_file']);
+                    setcookie("questionContent" . $i, $questions['content']);
+                    print_r($questions);
+                    $questionId[$i] = $questions['id'];
 
-                $questionId[$i] = $questions['id'];
+                }
+
                 if($questions['id'] != NULL or $questions['id']=="0"){
                     $answersAmount= $answerRepo->getQuantity($examId,$questions['id']);
+                    $amount = 0;
                     for ($k = 0; $k < $answersAmount; $k++) {
                         $answerContent = $answerRepo->getAnswer($examId, $questions['id'], $k);
-                         setcookie("answerId".$questions['id'].$k, $k); // (numer pytania,numer odpowiedzi);
-                         setcookie("answerContent".$questions['id'].$k, $answerContent['content']);
-                         setcookie("answerIsTrue".$questions['id'].$k, $answerContent['is_true']);
-                         setcookie("answerIsActive".$questions['id'].$k, $answerContent['is_active']);
-                         setcookie("amountOfAnswers".$questions['id'],$answersAmount);
+                        if($answerContent['is_true'] or $answerContent['is_active']) {
+                            $amount++;
+                            setcookie("answerId" . $i/*$questions['id']*/ . $k, $k); // (numer pytania,numer odpowiedzi);
+                            setcookie("answerContent" . $i/*$questions['id']*/ . $k, $answerContent['content']);
+                            setcookie("amountOfAnswers" .$i/* $questions['id']*/, $amount);
+                        }
                     } //todo: nie wysylac czy poprawna odpowiedz, wysylac wszystkie true+aktywne(do max answers)
+                    //todo: answer must be active jezeli ma byc wyswietllona, true musi byc active  and true
+
                 }
             }
         } else {
@@ -84,13 +94,15 @@ class StudentExamController extends AbstractController
                 //$questionContent = $content[$numbers[$j]];
             }
         }
+        setcookie("questionAmount", $questionsAmount);
 
 
-        $fp = fopen("FILENAME", "w");
+
+       /* $fp = fopen("FILENAME", "w");
         //$isFile = file_exists("questions.json");
         fputs($fp, json_encode($questions));
         fclose($fp);
-        $dane = fread(fopen("FILENAME", "r"), filesize("FILENAME"));
+        $dane = fread(fopen("FILENAME", "r"), filesize("FILENAME"));*/
 
         return $this->render('studentExam.html', array(
         ));
