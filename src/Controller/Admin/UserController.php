@@ -34,8 +34,8 @@ class UserController extends AbstractController
     public function new(Request $request)
     {
         //todo: jesli admin to moze dodac wszystkich, jesli nauczyciel to moze dodac tylko uczniow
-
-        $repository = $this->getDoctrine()->getRepository(User::class);
+//todo: redirect, potwierdz haslo
+       // $repository = $this->getDoctrine()->getRepository(User::class);
         $user = new User([]);
         $user->setLastPasswordChange(new \DateTime('now'));
         $user->setLastLogin(new \DateTime('now'));
@@ -51,13 +51,11 @@ class UserController extends AbstractController
 
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
-            print_r($values);
             $uid = $repositoryUser->getQuantity();
             $email=$values[4];
             $password=$values[1];
-            $username=$values[0];
 
-            $repositoryUser->registerUser($uid,$email,$password,$username);
+            $repositoryUser->registerUser($uid,$email,$password);
             $repositoryUser->insert($values);
 
 
@@ -83,18 +81,18 @@ class UserController extends AbstractController
             for ($i = 0; $i < $id; $i++) {
                 $users = $userInformation->getUser($i);
 
-                $password[$i] = $userInformation->getUserPasswordFromAuthentication($users['email']);
-                $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);
-                print_r($lastLogin[$i]);
+                //$password[$i] = $userInformation->getUserPasswordFromAuthentication($users['email']);
+               // $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);
+              //  print_r($lastLogin[$i]);
                 $tplArray[$i] = array(
                     'id' => $i,
-                    'username' => $users['username'],
-                    'password' => $password[$i],
+                    //'username' => $users['username'],
+                    //'password' => $password[$i],
                     'first_name' => $users['first_name'],
                     'last_name' => $users['last_name'],
                     'email' => $users['email'],
                     'role' => $users['role'],
-                    'class' => $users['class'],
+                    'group_of_students' => $users['group_of_students'],
                     'last_login' => $users['last_login']['date'],
                     'last_password_change' => $users['last_password_change']['date'],
                     'date_registration' => $users['date_registration']['date']
@@ -105,13 +103,13 @@ class UserController extends AbstractController
             $info = false;
             $tplArray[] = array(
                 'id' => '',
-                'username' => '',
-                'password' => '',
+              //  'username' => '',
+              //  'password' => '',
                 'first_name' => '',
                 'last_name' => '',
                 'email' => '',
                 'role' => '',
-                'class' => '',
+                'group_of_students' => '',
                 'last_login' => '',
                 'last_password_change' => '',
                 'date_registration' => ''

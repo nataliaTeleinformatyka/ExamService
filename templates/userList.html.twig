@@ -14,13 +14,11 @@
 <table>
     <tr>
         <td>Id</td>
-        <td>Username</td>
-        <td>Password</td>
         <td>First name</td>
         <td>Last name</td>
         <td>Email</td>
         <td>Role</td>
-        <td>Class</td>
+        <td>Group of students</td>
         <td>Last login</td>
         <td>Last password change</td>
         <td>Date Registration</td>
@@ -30,13 +28,11 @@
         {% if( information == true) %}
         <tr>
             <td> {{ action.id|default('undefined') }}  </td>
-            <td> {{ action.username|default('undefined') }}  </td>
-            <td> {{ action.password|default('undefined') }}  </td>
             <td> {{ action.first_name|default('undefined') }} </td>
             <td> {{ action.last_name|default('undefined') }} </td>
             <td> {{ action.email|default('undefined') }}</td>
             <td> {{ action.role|default('undefined') }}</td>
-            <td> {{ action.class|default('') }}</td>
+            <td> {{ action.group_of_students|default('') }}</td>
             <td> {{ action.last_login|default('undefined') }}</td>
             <td> {{ action.last_password_change|default('undefined') }}</td>
             <td> {{ action.date_registration|default('undefined') }}</td>

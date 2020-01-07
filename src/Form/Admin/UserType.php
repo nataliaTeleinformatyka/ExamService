@@ -28,7 +28,6 @@ class UserType extends AbstractType {
     {
         //todo:password min 6 znakow
         $builder
-            ->add('username', TextType::class)
             ->add('password', PasswordType::class)
             ->add('first_name', TextType::class)
             ->add('last_name', TextType::class)
@@ -39,7 +38,7 @@ class UserType extends AbstractType {
                     'Teacher' => 'teacher',
                     'Student' => 'student',
                 ]])
-            ->add('class', TextType::class) //todo:ograniczenie - klasa gdy wczesniej wybrano role student,inaczej niewidoczne
+            ->add('group_of_students', TextType::class) //todo:ograniczenie - klasa gdy wczesniej wybrano role student,inaczej niewidoczne
             ->add('save', SubmitType::class, ['label' => 'Add User'])
             ->setMethod('POST')
             ->setAction('')

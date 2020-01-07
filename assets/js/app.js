@@ -42,7 +42,7 @@ let id=0;
 setValues(0);
 
 console.log(cookies);
-document.getElementById("timer").innerHTML = hour;
+//document.getElementById("timer").innerHTML = hour;
 nextButton.addEventListener('click', nextQuestion);
 /*
 for(let i=0;i<getCookie("amountOfAnswers"+id);i++) {
@@ -51,6 +51,7 @@ for(let i=0;i<getCookie("amountOfAnswers"+id);i++) {
 
 
 function nextQuestion() {
+    checkForm();
     deleteCheckboxAnswers();
     deleteCheckboxAnswers();
     deleteCheckboxAnswers();
@@ -61,6 +62,7 @@ function nextQuestion() {
 
 function endExam() {
     console.log("koniec");
+    location.href = "http://127.0.0.1:8000/result";
 }
 
 function getCookie(cname) {
@@ -82,16 +84,16 @@ function setValues(id){
     console.log("ilosc pytan"+ getCookie("questionAmount"));
     console.log("numer id teraz: "+ id);
 
-    if(id<getCookie("questionAmount")) {
+    if(id<=getCookie("questionAmount")) {
+        console.log("ilosc "+ getCookie("questionAmount")+ " tresc " + getCookie("questionContent"+id));
+
         if (getCookie("questionContent" + id) == "") {
-            console.log("brak takiego numeru pyt ");
+            console.log("brak takiego numeru pytania ");
            // id++;
             document.cookie = "questionAmount="+ (getCookie("questionAmount")-1);
-            console.log("QQQQ" + getCookie("questionAmount"));
             id++;
             setValues(id);
         } else {
-            console.log("question teraz jesy "+getCookie("questionContent"+id));
             questionId.innerHTML = "Pytanie numer: " + numberQuestion;
             questionContent.innerHTML = "Treść: " + getCookie("questionContent" + id);
             numberQuestion++;
@@ -104,30 +106,48 @@ function setValues(id){
             nextButton.removeEventListener('click',nextQuestion);
             nextButton.innerHTML="End and save";
             nextButton.addEventListener('click',endExam);
-            console.log('uuuuuuuuuuuuuuu');
         }
+    } else {
+        nextButton.removeEventListener('click',nextQuestion);
+        nextButton.innerHTML="End and save";
+        nextButton.addEventListener('click',endExam);
     }
 }
 function createCheckboxAnswers(id,i){
-    let checkbox = document.createElement('input');
-    let label = document.createElement('label');
-    let answer = document.getElementById("answers");
+        let checkbox = document.createElement('input');
+        let label = document.createElement('label');
+        let answer = document.getElementById("answers");
 
-    checkbox.type = "checkbox";
-    checkbox.name = "answer";
-    checkbox.id = i;
-    checkbox.value=getCookie("answerContent"+id+i);
-    label.innerHTML = getCookie("answerContent"+id+i);
-    label.id = i;
-    label.name = "label";
-    answer.appendChild(checkbox);
-    answer.appendChild(label);
-    let br = document.createElement("br");
-    br.id=i;
-    answer.appendChild(br);
+        checkbox.type = "checkbox";
+        checkbox.name = "answer";
+        checkbox.id = i;
+        checkbox.value = getCookie("answerContent" + id + i);
+        label.innerHTML = getCookie("answerContent" + id + i);
+        label.id = i;
+        label.name = "label";
+        answer.appendChild(checkbox);
+        answer.appendChild(label);
+        let br = document.createElement("br");
+        br.id = i;
+        answer.appendChild(br);
 }
 function deleteCheckboxAnswers() {
     for(let i=0;i<getCookie("amountOfAnswers"+id);i++) {
         document.getElementById("answers").removeChild(document.getElementById(i));
+    }
+}
+function checkForm(id) {
+    console.log("dlugosc "+ document.getElementById("answers").length);
+    if (document.getElementById("answers").length != null) {
+        for (let i = 0; i < document.getElementById("answers").length; i++) {
+            if (document.getElementById("answers")[i].checked) {
+                console.log("wartosc " + document.getElementById("answers")[i].value);
+
+                // alert(document.getElementById("answers").value);
+           //     document.cookie = "userAnswer"+id+i+"="+document.getElementById("answers")[i].value;
+
+
+            }
+        }
     }
 }

@@ -46,14 +46,14 @@ class UserRepository
         $this->reference = $this->database->getReference($this->dbname/*'src/Entity/User.php'*/);
     }
 
-    public function registerUser(int $uid,String $email,String $password,String $username){
+    public function registerUser(int $uid,String $email,String $password){
 
             $userProperties = [
                 'uid' => $uid,
                 'email' => $email,
                 'emailVerified' => false,
                 'password' => $password,
-                'displayName' => $username,
+                'displayName' => $email
             ];
 
             $createdUser = $this->auth->createUser($userProperties);
@@ -65,26 +65,26 @@ class UserRepository
       return $users;
     }
 
-    public function getUserPasswordFromAuthentication(String $email){
+  /*  public function getUserPasswordFromAuthentication(String $email){
         $user = $this->auth->getUserByEmail($email);
         $data= $user->toArray();
         return $data['passwordHash'];
-    }
+    }*/
     public function getUserIdFromAuthentication(String $email){
         $user = $this->auth->getUserByEmail($email);
         $data= $user->toArray();
         return $data['uid'];
     }
-    public function getUserLastLoginFromAuthentication(String $email){
+   /* public function getUserLastLoginFromAuthentication(String $email){
         $user = $this->auth->getUserByEmail($email);
         $data= $user->toArray();
         $metadata= $data['metadata']->toArray();
        /* foreach($metadata as &$blog) {
             $blogs = get_object_vars($blog);*/
-            $date = $metadata['lastLoginAt'];
+     /*       $date = $metadata['lastLoginAt'];
     //    }
         return $date;
-    }
+    }*/
 
     public function deleteUserFromAuthentication(int $id){
         $this->auth->deleteUser(strval($id));
@@ -125,15 +125,14 @@ class UserRepository
 
        $actualUserId = $this->getQuantity();
        $this->reference->getChild($actualUserId)->set([
-           'username' => $data[0],
-           'first_name' => $data[2],
-           'last_name' => $data[3],
-           'email' => $data[4],
-           'role' => $data[5],
-           'last_login' => $data[6],
-           'last_password_change' => $data[7],
-           'date_registration' => $data[8],
-           'class' => $data[9]
+           'first_name' => $data[1],
+           'last_name' => $data[2],
+           'email' => $data[3],
+           'role' => $data[4],
+           'last_login' => $data[5],
+           'last_password_change' => $data[6],
+           'date_registration' => $data[7],
+           'group_of_students' => $data[8]
        ]);
        return true;
    }

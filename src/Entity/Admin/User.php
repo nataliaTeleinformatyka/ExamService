@@ -29,11 +29,6 @@ class User extends Entity //implements UserInterface
      * * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
-    private $username;
-    /**
-     * * @Assert\Type("String")
-     * @ORM\Column(type="string")
-     */
     private $password;
     /**
      * * @Assert\Type("String")
@@ -74,7 +69,7 @@ class User extends Entity //implements UserInterface
      * * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
-    private $class;
+    private $group_of_students;
     /**
      * @return int
      */
@@ -188,22 +183,22 @@ class User extends Entity //implements UserInterface
     /**
      * @return mixed
      */
-    public function getClass()
+    public function getGroupOfStudents()
     {
-        return $this->class;
+        return $this->group_of_students;
     }
 
     /**
-     * @param mixed $class
+     * @param $group_of_students
      */
-    public function setClass($class): void
+    public function setGroupOfStudents($group_of_students): void
     {
-        $this->class = $class;
+        $this->group_of_students = $group_of_students;
     }
 
     public function getAllInformation(){
-        $data = [$this->username,$this->password,$this->first_name,$this->last_name,$this->email,$this->role,
-            $this->last_login,$this->last_password_change,$this->date_registration,$this->class];
+        $data = [$this->password,$this->first_name,$this->last_name,$this->email,$this->role,
+            $this->last_login,$this->last_password_change,$this->date_registration,$this->group_of_students];
         return $data;
     }
     /**

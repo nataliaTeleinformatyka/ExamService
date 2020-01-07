@@ -53,7 +53,11 @@ class Result extends Entity  implements  EquatableInterface
      * @ORM\Column(type="boolean")
      */
     private $is_passed;
-
+    /**
+     * @Assert\Type("\DateTime")
+     * @ORM\Column(type="datetime")
+     */
+    private $date_of_resolve_exam;
 
     /**
      * @return mixed
@@ -74,7 +78,7 @@ class Result extends Entity  implements  EquatableInterface
     /**
      * @return mixed
      */
-    public function getisPassed()
+    public function getIsPassed()
     {
         return $this->is_passed;
     }
@@ -87,6 +91,90 @@ class Result extends Entity  implements  EquatableInterface
         $this->is_passed = $is_passed;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @param mixed $user_id
+     */
+    public function setUserId($user_id): void
+    {
+        $this->user_id = $user_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getExamId()
+    {
+        return $this->exam_id;
+    }
+
+    /**
+     * @param mixed $exam_id
+     */
+    public function setExamId($exam_id): void
+    {
+        $this->exam_id = $exam_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNumberOfAttempt()
+    {
+        return $this->number_of_attempt;
+    }
+
+    /**
+     * @param mixed $number_of_attempt
+     */
+    public function setNumberOfAttempt($number_of_attempt): void
+    {
+        $this->number_of_attempt = $number_of_attempt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateOfResolveExam()
+    {
+        return $this->date_of_resolve_exam;
+    }
+
+    /**
+     * @param mixed $date_of_resolve_exam
+     */
+    public function setDateOfResolveExam($date_of_resolve_exam): void
+    {
+        $this->date_of_resolve_exam = $date_of_resolve_exam;
+    }
+    public function getAllInformation(){
+        $data = [$this->user_id,$this->exam_id,$this->number_of_attempt,$this->points,$this->is_passed,
+            $this->date_of_resolve_exam];
+        return $data;
+    }
     /**
      * The equality comparison should neither be done by referential equality
      * nor by comparing identities (i.e. getId() === getId()).

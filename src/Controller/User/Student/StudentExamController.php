@@ -54,8 +54,6 @@ class StudentExamController extends AbstractController
             for($i=0;$i<$questionsAmount;$i++) {
                 $questions = $questionRepo->getQuestion($examId, $i);
                 if( $questions['id']==$i) {
-                    print_r("AKKAKAKA
-                 " . $questions['id']);
                     setcookie("questionId" . $i, $i/*$questions['id']*/);
                     setcookie("questionIsMultichoice" . $i, $questions['is_multichoice']);
                     setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
@@ -95,6 +93,7 @@ class StudentExamController extends AbstractController
             }
         }
         setcookie("questionAmount", $questionsAmount);
+
 
 
 
