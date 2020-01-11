@@ -1,0 +1,23 @@
+{# templates/teacherUserList.html.twig #}
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container">
+        <div class="signClass">
+            <a href="{{ path('exam')}}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nowego studenta
+            </a>
+        </div>
+        <div class="list">
+            <p>Lista użytkowników : </p>
+            <div>
+                {% for user_data in data %}
+                    <p>{{ user_data.first_name|default('') }}  {{ user_data.last_name|default('')}} - Klasa {{ user_data.group_of_students|default('') }} Adres e-mail: {{ user_data.email|default('')}}
+                        <a href="{{ path('userDelete', { 'userId': user_data.id|default('')}) }}" title="Usuń">
+                            <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+                        </a></p>
+                {% endfor%}
+            </div>
+        </div>
+    </div>
+{% endblock %}

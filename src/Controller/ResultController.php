@@ -24,11 +24,28 @@ class ResultController extends AbstractController
      */
     public function new(Request $request)
     {
+      // session_start();
+        $r = $request;
+        print_r($_COOKIE['questionsAmount']);
+        print_r($r);
         //$repository = $this->getDoctrine()->getRepository(Exam::class);
-        $result = new Result([]);
-        print_r($_COOKIE['questionAmount']);
-$data = "UUUU RESULT CONYTOLLER";
+        //$result = new Result([]);
+        //print_r($_COOKIE['questionAmount']);
 
+
+
+$data = "UUUU RESULT CONYTOLLER";
+       // print_r($_SESSION['questionsAmount']);
+    //    print_r($_COOKIE['questionsAmount']);
+       for($i=0;$i<$_SESSION['questionsAmount'];$i++){
+
+       // $answersAmount = $_COOKIE['userAnswerAmount'];
+        /*if($answersAmount!=0) {
+            for ($j = 0; $j < $answersAmount; $j++) {
+                print_r($_COOKIE['userAnswer'] . $i . $j);
+            }
+        }*/
+    }
       //  $_COOKIE['questionAmount'];
         return $this->render('studentResult.html.twig', array(
             'data' => $data
@@ -137,10 +154,10 @@ $data = "UUUU RESULT CONYTOLLER";
 */
     /**
      * @param Request $request
-     * @Route("/delete/{result}", name="delete")
+     * @Route("/deleteResult/{result}", name="deleteResult")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteExam(Request $request)
+    public function deleteResult(Request $request)
     {
         $id = $request->attributes->get('result');
         $repo = new ResultRepository();

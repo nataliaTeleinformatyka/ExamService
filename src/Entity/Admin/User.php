@@ -206,17 +206,6 @@ class User extends Entity //implements UserInterface
      *
      * @see UserInterface
      */
-    public function getUsername(): string
-    {
-        return (string) $this->username;
-    }
-
-    public function setUsername(string $username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
 
 
     public function getRoles()
@@ -232,8 +221,8 @@ class User extends Entity //implements UserInterface
             case 'admin':
                 $role = 'ROLE_ADMIN';
                 break;
-            case 'teacher':
-                $role = 'ROLE_TEACHER';
+            case 'professor':
+                $role = 'ROLE_PROFESSOR';
                 break;
             case 'student':
                 $role = 'ROLE_STUDENT';

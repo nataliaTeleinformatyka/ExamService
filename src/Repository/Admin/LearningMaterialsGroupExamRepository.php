@@ -102,4 +102,17 @@ class LearningMaterialsGroupExamRepository
         $info->setExamId($information['exam_id']);
         return $info;
     }
+    public function findByGroupId(int $learningMaterialsGroupId) {
+        $amount = $this->getQuantity();
+        for($i=0;$i<$amount;$i++) {
+            $information = $this->reference->getChild($i)->getValue();
+            if($information['learning_materials_group_id'] == $learningMaterialsGroupId) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+    }
 }

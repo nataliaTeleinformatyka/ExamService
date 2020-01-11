@@ -26,22 +26,27 @@
     </tr>
     {% for action in data %}
         {% if( information == true) %}
-        <tr>
-            <td> {{ action.id|default('undefined') }}  </td>
-            <td> {{ action.first_name|default('undefined') }} </td>
-            <td> {{ action.last_name|default('undefined') }} </td>
-            <td> {{ action.email|default('undefined') }}</td>
-            <td> {{ action.role|default('undefined') }}</td>
+            {% if action.id !="" or action.id=="0" %}
+            <tr>
+            <td> {{ action.id|default('') }}  </td>
+            <td> {{ action.first_name|default('') }} </td>
+            <td> {{ action.last_name|default('') }} </td>
+            <td> {{ action.email|default('') }}</td>
+            <td> {{ action.role|default('') }}</td>
             <td> {{ action.group_of_students|default('') }}</td>
-            <td> {{ action.last_login|default('undefined') }}</td>
-            <td> {{ action.last_password_change|default('undefined') }}</td>
-            <td> {{ action.date_registration|default('undefined') }}</td>
+            <td> {{ action.last_login|default('') }}</td>
+            <td> {{ action.last_password_change|default('') }}</td>
+            <td> {{ action.date_registration|default('') }}</td>
             <td> <a href="{{ path('userDelete', { 'userId': action.id }) }}">
                     <span class="glyphicon glyphicon-remove-sign"></span>
-                    <span class="glyphicon glyphicon-pencil"></span>
                 </a>
+                <a href="{{ path('editUser', { 'id': action.id }) }}">
+                <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+
             </td>
         </tr>
+            {% endif %}
         {% endif %}
     {% endfor%}
 </table>

@@ -26,28 +26,28 @@ class UserExamController  extends AbstractController
      */
     public function new(Request $request)
     {
-        //$repository = $this->getDoctrine()->getRepository(UserExam::class);
+        //$repository = $this->getDoctrine()->getRepository(Exam::class);
         $exam = new UserExam([]);
 
         $form = $this->createForm(UserExamType::class, $exam);
         $form->handleRequest($request);
-
+        $exam = $form->getData();
+        print_r($exam);
         if ($form->isSubmitted() && $form->isValid()) {
-            $userExam = $form->getData();
+
+            $exam = $form->getData();
 
             $entityManager = $this->getDoctrine()->getManager();
 
             $values = $exam->getAllInformation();
             $repositoryExam = new UserExamRepository();
-           // $repositoryExam->insert($values);
+            $repositoryExam->insert($values);
 
-            // return $this->forward($this->generateUrl('user'));
-            //return $this->redirectToRoute('userExamList');
+            return $this->redirectToRoute('userExamList');
         }
 
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
-
         ]);
     }
 
@@ -55,7 +55,7 @@ class UserExamController  extends AbstractController
      * @Route("userExamList", name="userExamList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examListCreate()
+    public function userExamListCreate()
     {
         $examInformation = new UserExamRepository();
         $id = $examInformation->getQuantity();
@@ -114,43 +114,51 @@ class UserExamController  extends AbstractController
 
     /**
      * @param Request $request
-     * @param Exam $exam
+     * @param UserExam $userExam
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @Route("/edit/{exam}", name="edit")
+     * @Route("userExamEdit/{userExamId}", name="userExamEdit")
      */
-    public function editExam(Request $request/*, Exam $exam*/)
-    {
-        $repository = $this->getDoctrine()->getRepository(UserExam::class);
-        /* $id = $request->attributes->get('exam');
-         print_r($id);
-         $examEn= new Exam([]);
-         $examrepo = new ExamRepository();
-         $efxam = $examrepo->getExam($id);
-         print_r($efxam);*/
-        $exam = new UserExam([]);
+    public function editUserExam(Request $request, UserExam $userExam) {
 
-        $form = $this->createForm(UserExamType::class, $exam);
+        $examInformation = new UserExamRepository();
+        $userExamId = (int)$request->attributes->get('userExamId');
+        $userExams = $examInformation->getUserExam($userExamId);
+
+        $examInfoArray = array(
+            'user_exam_id' => $userExams['user_exam_id'],
+            'user_id' => $userExams['user_id'],
+            'exam_id' => $userExams['exam_id'],
+            'start_access_time' => $userExams['start_access_time'],
+            'end_access_time' => $userExams['end_access_time']
+        );
+
+        $form = $this->createForm(UserExamType::class, $userExam);
         $form->handleRequest($request);
 
+            if ($form->isSubmitted() && $form->isValid()) {
+            $exams = $form->getData();
+            $entityManager = $this->getDoctrine()->getManager();
+            $examValue = $request->attributes->get('id');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $repository->flush();
+            $values = $userExam->getAllInformation();
+            $repositoryExam = new UserExamRepository();
+            $repositoryExam->update($values,$userExamId);
 
-            return $this->redirectToRoute('edit', [
-                'name' => $exam->getName(),
-            ]);
+            // return $this->redirectToRoute('examList');
         }
-        return $this->render('examEdit.html.twig', [
-            'form' => $form->createView()
+        return $this->render('userExamAdd.html.twig', [
+            'form' => $form->createView(),
+            'examInformation' =>$examInfoArray,
+            'userExamId' => $userExamId
         ]);
     }
 
     /**
      * @param Request $request
-     * @Route("/deleteUserExam/userExamId", name="deleteUserExam")
+     * @Route("/deleteUserExam/{userExamId}", name="deleteUserExam")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteExam(Request $request)
+    public function deleteUserExam(Request $request)
     {
         $userExamId = $request->attributes->get('userExamId');
         $repo = new UserExamRepository();

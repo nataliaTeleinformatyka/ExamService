@@ -9,6 +9,7 @@
 namespace App\Repository\Admin;
 
 
+use App\Entity\Admin\UserExam;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -52,7 +53,7 @@ class UserExamRepository
                 'user_exam_id' => $actualUserExamId,
                 'user_id' => $data[0],
                 'exam_id' => $data[1],
-                //'$date_of_resolve_exam' => NULL,
+                //'date_of_resolve_exam' => NULL,
                 'start_access_time' => $data[3],
                 'end_access_time' => $data[4],
             ]);
@@ -89,5 +90,29 @@ class UserExamRepository
                 return false;
             }
         }
+    }
+
+    public function update(array $data, int $id) {
+        if (empty($data) /*|| isset($data)*/) {
+            return false;
+        }
+
+        $this->reference
+            ->getChild($id)->update([
+                'date_of_resolve_exam' => $data[0],
+                'start_access_time' => $data[1],
+                'end_access_time' => $data[2],
+            ]);
+        return true;
+    }
+
+    public function find(int $userExamId){
+        $information = $this->reference->getChild($userExamId)->getValue();
+        $userExam = new UserExam([]);
+       // $userExam->setDateOfResolveExam($information['date_of_resolve_exam']);
+        //$userExam->setStartAccessTime($information['start_access_time']);
+        //$userExam->setEndAccessTime($information['end_access_time']);
+
+        return $userExam;
     }
 }

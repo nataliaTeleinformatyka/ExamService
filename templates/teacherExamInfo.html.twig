@@ -1,37 +1,73 @@
-{# templates/examList.html.twig #}
+{# templates/teacherExamInfo.html.twig #}
 {% extends 'base.html' %}
 
 {% block body %}
     <div class="container">
-        <div>
-            {% for action in data %}
-                <p><b>Name :</b> {{ action.name|default('undefined') }}</p>
-                <p><b>Learning_required :</b> {{ action.learning_required|default('undefined') }}</p>
-                <p><b>Min_questions :</b> {{ action.min_questions|default('undefined') }}</p>
-                <p><b>Max_attempts :</b> {{ action.max_attempts|default('undefined') }}</p>
-                <p><b>Duration_of_exam</b> : {{ action.duration_of_exam|default('undefined') }}</p>
-                <p><b>Start_date :</b> {{ action.start_date|default('undefined') }}</p>
-                <p><b>End_date :</b> {{ action.end_date|default('undefined') }}</p>
-                <p><b>Additional_information :</b> {{ action.additional_information|default('undefined') }}</p>
-            {% endfor%}
+        <div class="signClass">
+            <a href="{{ path('delete', { 'exam': exam_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-remove-sign"></span> Usuń egzamin
+            </a>
+            <a href="{{ path('question', { 'examId': exam_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nowe pytanie
+            </a>
+            <a href="{{ path('userExam') }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Przypisz użytkownika do egzaminu
+            </a>
+            <a href="{{ path('learningMaterialsGroupExam') }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Przypisz grupę materiałów naukowych do egzaminu
+            </a>
         </div>
         <div>
-            Lista pytań dla egzaminu:
+            {% for action in data %}
+                <p><b>Nazwa egzaminu :</b> {{ action.name|default('undefined') }}</p>
+                <p><b>Czy materiały naukowe są wymagane :</b> {{ action.learning_required|default('undefined') }}</p>
+                <p><b>Maksymalna liczba pytań :</b> {{ action.max_questions|default('undefined') }}</p>
+                <p><b>Maksymalna liczba prób :</b> {{ action.max_attempts|default('undefined') }}</p>
+                <p><b>Czas trwania egzaminu</b> : {{ action.duration_of_exam|default('undefined') }}</p>
+                <p><b>Data rozpoczęcia dostępu do egzaminu :</b> {{ action.start_date|default('undefined') }}</p>
+                <p><b>Data zakończenia dostępu do egzaminu :</b> {{ action.end_date|default('undefined') }}</p>
+                <p><b>Dodatkowe informacje :</b> {{ action.additional_information|default('undefined') }}</p>
+            {% endfor%}
+        </div>
+        <div class="teacherInfo">
+            <b>Lista pytań dla egzaminu:</b>
             {% for question in question_data %}
                 <p><a href="{{ path('teacherQuestionInfo', { 'exam': exam_id, 'question': question.id}) }}"> {{ question.content|default('') }} </a></p>
             {% endfor %}
         </div>
         <div class="teacherInfo">
-            Grupy materiałów naukowych przypisanych do egzaminu:
-            {% for materials_group in materials_group_data %}
-                <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': exam_id}) }}"> {{ materials_group.name_of_group|default('') }} </a></p>
-            {% endfor %}
+            <b>Grupy materiałów naukowych przypisanych do egzaminu:</b>
+            <a href="#">
+                <span class="glyphicon glyphicon-sort"></span>
+            </a>
+            {% if informationMaterialGroupExam==true %}
+                {% for materials_group in materials_group_data %}
+                    <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': exam_id}) }}"> {{ materials_group.name_of_group }} </a>
+                    <a href="#" title="Usuń">
+                        <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+                    </a></p>
+                {% endfor %}
+            {% endif %}
+
         </div>
         <div class="teacherInfo">
-            Lista użytkowników przypisanych do egzaminu:
-            {% for user_data in user_info_data %}
-                <p>{{ user_data.first_name|default('') }}  {{ user_data.last_name|default('')}} - Klasa {{ user_data.class|default('') }} Adres e-mail: {{ user_data.email|default('')}}</p>
-            {% endfor %}
+            <b>Lista użytkowników przypisanych do egzaminu:</b>
+            {% if informationUserExam==true %}
+                {% for user_data in user_info_data %}
+                    <p>{{ user_data.first_name|default('') }}  {{ user_data.last_name|default('')}} - Klasa {{ user_data.group_of_students|default('') }} Adres e-mail: {{ user_data.email|default('')}}
+                    <a href="{{ path('deleteUserExam', { 'userExamId': user_data.user_exam_id|default('')}) }}" title="Usuń">
+                        <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+                    </a></p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="teacherInfo">
+            <b>Lista wyników dla danego egzaminu:</b>
+
+            <a href="#" title="Usuń">
+                <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+            </a>
+
         </div>
     </div>
 {% endblock %}

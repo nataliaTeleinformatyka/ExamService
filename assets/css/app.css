@@ -38,11 +38,33 @@ footer {
     bottom:0;
     width:100%;
     height:60px;
-    background: #3b3939;
+    background: #837f7f;
 }
 tr.informationRow {
     background-color: #916319;
 }
 .teacherInfo {
     background-color: #f6f6f6;
+    width: 48%;
+    float: left;
+    margin: 5px;
+    text-align: center;
+}
+.signClass {
+    float:right;
+    margin-top: 25px;
+}
+.list {
+    background-color: #e1ddd3;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    text-align: center;
+}
+.information {
+    background-color: #b6b8f8;
+    margin-top: 75px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }

@@ -50,19 +50,36 @@ class LoginController  extends AbstractController
             $password = $user->getPassword();
             $id = $userRepository->getUserIdFromAuthentication($email);
 
-            $information = $userRepository->getUser($id);
+            $information = $userRepository->getUserByEmail($email);
+print_r("SPRAWDZAM ");
             try {
+                print_r("TUTAJ");
                 $goodLog = $userRepository->checkPassword($email, $password);
                 session_destroy();
                 session_start();
                 $_SESSION['user_id']=$id;
                 $_SESSION['role'] = $information['role'];
-                $_SESSION['username']=$information['username'];
+                $_SESSION['email']=$information['email'];
              //   $token = new UsernamePasswordToken($email, $password, 'main', $information['role']);
-
             //    $context = $this->get('security.context');
              //  $context->setToken($token);
-                return $this->redirectToRoute('userList');
+                print_r($_SESSION['role']);
+                switch ($_SESSION['role']) {
+                    case "ROLE_ADMIN": {
+                        return $this->redirectToRoute('userList');
+                        break;
+
+                    }
+                    case "ROLE_PROFESSOR": {
+                        return $this->redirectToRoute('teacherExamList');
+                        break;
+
+                    }
+                    case "ROLE_STUDENT": {
+                        return $this->redirectToRoute('studentHomepage');
+                        break;
+                    }
+                }
 
             }catch (InvalidPassword $e) {
                     $errors = $e->getMessage();

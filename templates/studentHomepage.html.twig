@@ -8,7 +8,8 @@
                 <p><a href="{{ path('studentExamStartInfo', { 'userExamId': action.user_exam_id}) }}">
                         {{ action.exam_name|default('') }} {{ action.access_period|default('') }}  - Pozostało prób: </a></p>
                 {% endif %}
-            {% endfor%}
+            {% endfor %}
+
         </div>
     </div>
 

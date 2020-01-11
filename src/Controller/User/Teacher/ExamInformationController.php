@@ -10,9 +10,6 @@ namespace App\Controller\User\Teacher;
 
 
 
-use App\Entity\Admin\Exam;
-use App\Form\Admin\ExamType;
-use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupRepository;
@@ -36,19 +33,22 @@ class ExamInformationController extends AbstractController
         if ($id > 0) {
             for ($i = 0; $i < $id; $i++) {
                 $exams = $examInformation->getExam($i);
-                if ($exams['created_by'] == 0){ //todo: Pobieranie id uzytkownika z sesji
+                if ($exams['created_by'] == 0/*$_SESSION['user_id']*/){ //todo: Pobieranie id uzytkownika z sesji
                     if ($exams['learning_required'] == 1) {
                         $is_required = true;
                     } else {
                         $is_required = false;
                     }
+                    $durationOfExam = $exams['duration_of_exam'];
+                    $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
+
                     $tplArray[$i] = array(
                         'id' => $i,
                         'name' => $exams['name'],
                         'learning_required' => $is_required,
                         'max_questions' => $exams['max_questions'],
                         'max_attempts' => $exams['max_attempts'],
-                        'duration_of_exam' => $exams['duration_of_exam']['date'], //todo: only time!!
+                        'duration_of_exam' => $accessTime." minut",
                         'start_date' => $exams['start_date']['date'],
                         'end_date' => $exams['end_date']['date'],
                         'additional_information' => $exams['additional_information']
@@ -85,19 +85,20 @@ class ExamInformationController extends AbstractController
         $examId = $request->attributes->get('exam');
         $exams = $examInformation->getExam($examId);
         if ($exams['learning_required'] == 1) {
-            $is_required = true;
+            $is_required = "Tak";
         } else {
-            $is_required = false;
+            $is_required = "Nie";
         }
+
         $examInfoArray[0] = array(
             'id' => $examId,
             'name' => $exams['name'],
             'learning_required' => $is_required,
             'max_questions' => $exams['max_questions'],
             'max_attempts' => $exams['max_attempts'],
-            'duration_of_exam' => $exams['duration_of_exam']['date'], //todo: only time!!
-            'start_date' => $exams['start_date']['date'],
-            'end_date' => $exams['end_date']['date'],
+            'duration_of_exam' => date("H",strtotime($exams['duration_of_exam']['date']))*60 + date("i",strtotime($exams['duration_of_exam']['date']))." minut",
+            'start_date' => date("Y-m-d",strtotime( $exams['start_date']['date'])),
+            'end_date' => date("Y-m-d",strtotime( $exams['end_date']['date'])),
             'additional_information' => $exams['additional_information']
         );
 
@@ -119,28 +120,32 @@ class ExamInformationController extends AbstractController
                 'content' => 0,
             );
         }
+
         $learningMaterialsGroupExamInformation = new LearningMaterialsGroupExamRepository();
+        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
         $id = $learningMaterialsGroupExamInformation->getQuantity();
         if($id>0) {
+            $informationMaterialGroupExam = false;
             for ($i = 0; $i < $id; $i++) {
+                $amount=0;
                 $learningMaterialsGroupExam = $learningMaterialsGroupExamInformation->getLearningMaterialsGroupExam($i);
                 if ($learningMaterialsGroupExam['exam_id'] == $examId){
+                    $informationMaterialGroupExam = true;
+                    $learning_materials_group_id = $learningMaterialsGroupExam['learning_materials_group_id'];
+                    $exam_id = $learningMaterialsGroupExam['exam_id'];
 
-                        $learning_materials_group_id = $learningMaterialsGroupExam['learning_materials_group_id'];
-                        $exam_id = $learningMaterialsGroupExam['exam_id'];
-                }
-            }
-        } else {
-
-                $learning_materials_group_id = "";
-                $exam_id = "";
-        }
-        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
-        $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($learning_materials_group_id);
-                    $materialsGroupArray = array(
+                    $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($learning_materials_group_id);
+                    $materialsGroupArray[$amount] = array(
                         'id' => $learningMaterialsGroup['learning_materials_groups_id'],
                         'name_of_group' => $learningMaterialsGroup['name_of_group'],
                     );
+                    $amount++;
+                }
+            }
+        } else {
+                $learning_materials_group_id = "";
+                $exam_id = "";
+        }
 
         $userInformation= new UserRepository();
         $userId = $userInformation -> getQuantity();
@@ -152,15 +157,20 @@ class ExamInformationController extends AbstractController
                 for ($i = 0; $i < $userExamId; $i++) {
                     $userExam = $userExamInformation->getUserExam($i);
                     if($userExam['exam_id'] == $examId) {
-                        $users = $userInformation->getUser($i);
+                        $informationUserExam = true;
+                        $users = $userInformation->getUser($userExam['user_id']);
+                        print_r($users);
                         $userExamArray[$k] = array(
+                            'user_exam_id' => $userExamId,
                             'user_id' => $userExam['user_id'],
                             'first_name' => $users['first_name'],
                             'last_name' => $users['last_name'],
-                            'class' => $users['class'],
+                            'group_of_students' => $users['group_of_students'],
                             'email' => $users['email']
                         );
                         $k++;
+                    } else {
+                        $informationUserExam = false;
                     }
                 }
             }
@@ -170,27 +180,10 @@ class ExamInformationController extends AbstractController
             'question_data' => $questionArray,
             'materials_group_data'=> $materialsGroupArray,
             'user_info_data' => $userExamArray,
-            'exam_id' => $exam_id
+            'exam_id' => $exam_id,
+            'informationMaterialGroupExam' => $informationMaterialGroupExam,
+            'informationUserExam' => $informationUserExam,
         ));
 
-    }
-
-
-
-    /**
-     * @param Request $request
-     * @Route("/delete/{exam}", name="deleteByTeacher")
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function deleteExam(Request $request)
-    {
-        $id = $request->attributes->get('exam');
-        $repo = new ExamRepository();
-        $repo->delete($id);
-        //todo: redirect to examList nie usuwa zapytania ktore jest jako 1
-        //todo: zapytanie czy chce usunac egzamin gdy sa powiazane question i answers
-        //todo: nie mozna usunac egzaminu, gdy jest powiazanie userexam, result
-
-        return $this->redirectToRoute('teacherExamList');
     }
 }

@@ -137,9 +137,9 @@ class ExamRepository
         $exam->setId($information['exam_id']);
         $exam->setAdditionalInformation($information['additional_information']);
         $exam->setCreatedBy($information['created_by']);
-    //    $exam->setDurationOfExam($information['duration_of_exam']);
-      //  $exam->setEndDate($information['end_date']);
-    //    $exam->setStartDate($information['start_date']);
+        //$exam->setDurationOfExam(date("H",strtotime($information['duration_of_exam']['date']))*60 + date("i",strtotime($information['duration_of_exam']['date'])));
+        //$exam->setEndDate($information['end_date']);
+       // $exam->setStartDate($information['start_date']);
         $exam->setMaxQuestions($information['max_questions']);
         $exam->setMaxAttempts($information['max_attempts']);
         $exam->setLearningRequired($information['learning_required']);

@@ -47,11 +47,6 @@ class Question extends Entity  implements EquatableInterface
      */
     private $max_answers;
     /**
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
-     */
-    private $is_multichoice;
-    /**
      * @Assert\Type("String")
      * @ORM\Column(type="string")
      */
@@ -126,22 +121,6 @@ class Question extends Entity  implements EquatableInterface
     /**
      * @return mixed
      */
-    public function getisMultichoice()
-    {
-        return $this->is_multichoice;
-    }
-
-    /**
-     * @param mixed $is_multichoice
-     */
-    public function setIsMultichoice($is_multichoice): void
-    {
-        $this->is_multichoice = $is_multichoice;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getExamId()
     {
         return $this->exam_id;
@@ -190,7 +169,7 @@ class Question extends Entity  implements EquatableInterface
 
 
     public function getAllInformation(){
-        $data = [$this->content,$this->max_answers,$this->is_multichoice,$this->name_of_file];
+        $data = [$this->content,$this->max_answers,$this->name_of_file];
         return $data;
     }
 

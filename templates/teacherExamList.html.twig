@@ -3,17 +3,19 @@
 
 {% block body %}
     <div class="container">
-        <div class="sign">
-            <a href="exam" class="btn btn-info btn-lg">
+        <div class="signClass">
+            <a href="{{ path('exam')}}" class="btn btn-info btn-lg">
                 <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
             </a>
         </div>
-        <p>Lista dostępnych egzaminów : </p>
-        <div>
-            {% for action in data %}
-                <p><a href="{{ path('teacherExamInfo', { 'exam': action.id}) }}">
-                        {{ action.name|default('undefined') }} </a></p>
-            {% endfor%}
+        <div class="list">
+            <p>Lista dostępnych egzaminów : </p>
+            <div>
+                {% for action in data %}
+                    <p><a href="{{ path('teacherExamInfo', { 'exam': action.id}) }}">
+                            {{ action.name|default('undefined') }} </a></p>
+                {% endfor%}
+            </div>
         </div>
     </div>
 {% endblock %}

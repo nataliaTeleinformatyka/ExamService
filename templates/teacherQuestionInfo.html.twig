@@ -1,34 +1,33 @@
-{# templates/examList.html.twig #}
+{# templates/teacherQuestionInfo.html.twig #}
 {% extends 'base.html' %}
 
 {% block body %}
     <div class="container">
-        <div>
-            Informacje o pytaniu:
-                <p><b>Content :</b> {{ content|default('undefined') }}</p>
-                <p><b>Maximum answers :</b> {{ max_answers|default('undefined') }}</p>
-                <p><b>Is multichoice :</b> {{ is_multichoice|default('undefined') }}</p>
-                <p><b>Is file :</b> {{ is_file|default('undefined') }}</p>
-    </div>
-        <div>
-            Lista odpowiedzi dla egzaminu:
+        <div class="signClass">
+            <a href="{{ path('deleteQuestion', { 'exam': exam_id, 'question': question_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-remove-sign"></span> Usuń pytanie
+            </a>
+            <a href="{{ path('answer', { 'examId': exam_id, 'questionId': question_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nową odpowiedź
+            </a>
+        </div>
+        <div class="information">
+            <b>Informacje o pytaniu:</b>
+                <p><b>Treść pytania :</b> {{ content|default('undefined') }}</p>
+                <p><b>Maksymalna ilość odpowiedzi :</b> {{ max_answers|default('undefined') }}</p>
+                <p><b>Nazwa pliku :</b> {{ name_of_file|default('undefined') }}</p>
+        </div>
+        <div class="list">
+            <b>Lista odpowiedzi dla egzaminu:</b>
             {% for answer in answer_data %}
-            <p><b>Content :</b> {{ answer.content|default('') }}
-                <b>Is true :</b> {{ answer.is_true|default('') }}
-                <b>Is active :</b> {{ answer.is_active|default('') }}
-                <a href="{{ path('deleteAnswer', { 'exam': exam_id, 'question': question_id, 'answer': answer.id}) }}" title="delete answer">
-                    <span class="glyphicon glyphicon-remove-sign"></span>
+            <p><b>Treść :</b> {{ answer.content|default('') }}
+                <b>Czy prawidłowa :</b> {{ answer.is_true|default('') }}
+                <b>Czy aktywna :</b> {{ answer.is_active|default('') }}
+                <a href="{{ path('deleteAnswer', { 'exam': exam_id, 'question': question_id, 'answer': answer.id}) }}" title="Usuń odpowiedź">
+                    <span class="glyphicon glyphicon-remove-sign"></span> Usuń
                 </a>
             </p>
             {% endfor %}
-        </div>
-        <div class="sign">
-            <a href="{{ path('answer', { 'examId': exam_id, 'questionId': question_id}) }}" class="btn btn-info btn-lg">
-                <span class="glyphicon glyphicon-plus-sign"></span> Add new answer
-            </a>
-            <a href="{{ path('question', { 'examId': exam_id}) }}" class="btn btn-info btn-lg">
-                <span class="glyphicon glyphicon-plus-sign"></span> Add new question
-            </a>
         </div>
     </div>
 {% endblock %}

@@ -73,7 +73,6 @@ class QuestionRepository
                 'exam_id' => $idExam,
                 'content' => $data[0],
                 'max_answers' => $data[1],
-                'is_multichoice' => $data[2],
                 'name_of_file' => $filename
             ]);
         return true;
@@ -139,7 +138,6 @@ class QuestionRepository
                 ->getChild("Question")->getChild($questionId)->update([
                 'content' => $data[0],
                 'max_answers' => $data[1],
-                'is_multichoice' => $data[2],
                 'name_of_file' => $filename
             ]);
         return true;
@@ -151,7 +149,6 @@ class QuestionRepository
         $question = new Question([]);
         $question->setContent($information['content']);
         $question->setMaxAnswers($information['max_answers']);
-        $question->setIsMultichoice($information['is_multichoice']);
         $question->setNameOfFile($information['name_of_file']);
 
         return $question;

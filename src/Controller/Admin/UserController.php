@@ -47,14 +47,14 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
+            //$entityManager = $this->getDoctrine()->getManager();
 
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
             $uid = $repositoryUser->getQuantity();
-            $email=$values[4];
-            $password=$values[1];
 
+            $email=$values[3];
+            $password=$values[0];
             $repositoryUser->registerUser($uid,$email,$password);
             $repositoryUser->insert($values);
 
@@ -85,9 +85,7 @@ class UserController extends AbstractController
                // $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);
               //  print_r($lastLogin[$i]);
                 $tplArray[$i] = array(
-                    'id' => $i,
-                    //'username' => $users['username'],
-                    //'password' => $password[$i],
+                    'id' => $users['id'],
                     'first_name' => $users['first_name'],
                     'last_name' => $users['last_name'],
                     'email' => $users['email'],
@@ -103,8 +101,6 @@ class UserController extends AbstractController
             $info = false;
             $tplArray[] = array(
                 'id' => '',
-              //  'username' => '',
-              //  'password' => '',
                 'first_name' => '',
                 'last_name' => '',
                 'email' => '',
@@ -131,11 +127,82 @@ class UserController extends AbstractController
         $id = $request->attributes->get('userId');
         print_r($id);
         $repo = new UserRepository();
+        $userInfo = $repo->getUser($id);
+        $email = $userInfo['email'];
         if($repo->delete($id))
-            $repo->deleteUserFromAuthentication($id);
+            $repo->deleteUserFromAuthenticationByEmail($email);
 
-        //todo: nie moze usunac gdy istnieja powiazania
+        //todo: nie moze usunac gdy istnieja powiazania userexam
 
         return $this->redirectToRoute('userList');
+    }
+
+    /**
+     * @param Request $request
+     * @param User $user
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("editUser/{id}", name="editUser")
+     */
+    public function editUser(Request $request, User $user)
+    {
+       //  $repository = $this->getDoctrine()->getRepository(User::class);
+        /*print_r($id);
+        $examEn= new Exam([]);
+        $examrepo = new ExamRepository();
+        $efxam = $examrepo->getExam($id);
+        print_r($efxam);*/
+        //  $exam = new Exam([]);
+        $userInformation = new UserRepository();
+        $userId = (int)$request->attributes->get('id');
+        $users = $userInformation->getUser($userId);
+        //   print_r($exams);
+        //print_r($_SESSION['user_id']);
+        //print_r($examId);
+        //  print_r($exams['exam_id']);
+        $userInfoArray = array(
+            'id' => $users['id'],
+            'first_name' => $users['first_name'],
+            'last_name' => $users['last_name'],
+            'email' => $users['email'],
+            'role' => $users['role'],
+            'group_of_students' => $users['group_of_students'],
+            'last_login' => $users['last_login']['date'],
+            'last_password_change' => $users['last_password_change']['date'],
+            'date_registration' => $users['date_registration']['date']
+        );
+
+
+        setcookie("info","edit",time()+60*2);
+            //$_COOKIE['info'] = "editStudent";
+//            $_COOKIE['info'] = "edit";
+
+
+
+
+        //  $exam->setId($examId);
+        //$exam->setName($exams['name']);
+        //print_r($exam);
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+        //  var_dump($form);
+        //$exams = $form->getData();
+        //print_r($exams);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userInfo = $form->getData();
+       //     $entityManager = $this->getDoctrine()->getManager();
+            $examValue = $request->attributes->get('id');
+            print_r($examValue);
+
+            //$values = $user->getAllInformation();
+            $repositoryExam = new UserRepository();
+          //  $repositoryExam->update($values,$userId);
+          //  print_r($values);
+            // return $this->redirectToRoute('examList');
+        }
+        return $this->render('userAdd.html.twig', [
+            'form' => $form->createView(),
+            'userInformation' =>$userInfoArray,
+            'userId' => $userId
+        ]);
     }
 }

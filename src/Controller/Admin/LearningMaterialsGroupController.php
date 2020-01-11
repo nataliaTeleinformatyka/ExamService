@@ -12,6 +12,7 @@ namespace App\Controller\Admin;
 use App\Entity\Admin\LearningMaterialsGroup;
 use App\Form\Admin\LearningMaterialsGroupType;
 use App\Repository\Admin\LearningMaterialRepository;
+use App\Repository\Admin\LearningMaterialsGroupExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -135,15 +136,28 @@ class LearningMaterialsGroupController extends AbstractController
         $id = $request->attributes->get('learningMaterialsGroup');
         $repo = new LearningMaterialsGroupRepository();
         $learningMaterialRepo = new LearningMaterialRepository();
-        $isMaterial = $learningMaterialRepo->getQuantity($id);
-        if($isMaterial){
-            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
+        $learningMaterialsGroupExam = new LearningMaterialsGroupExamRepository();
+        $isLearningMaterialsGroupExam = $learningMaterialsGroupExam->findByGroupId($id);
 
+        $isMaterial = $learningMaterialRepo->getQuantity($id);
+        if($isMaterial or $isLearningMaterialsGroupExam){
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {
             $repo->delete($id);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
 
         }
-        return $this->redirectToRoute('learningMaterialsGroupList');
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN" : {
+                return $this->redirectToRoute('learningMaterialsGroupList');
+                break;
+            }
+            case "ROLE_TEACHER" : {
+                return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                    'groupId' => $id
+                ]);
+                break;
+            }
+        }
     }
 }

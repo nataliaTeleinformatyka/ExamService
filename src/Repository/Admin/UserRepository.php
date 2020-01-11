@@ -85,7 +85,13 @@ class UserRepository
     //    }
         return $date;
     }*/
-
+    public function deleteUserFromAuthenticationByEmail(string $email){
+        $user = $this->auth->getUserByEmail($email);
+        $id = $user->uid;
+        print_r("ID: ".$user->uid);
+        $this->auth->deleteUser(strval($id));
+        return true;
+    }
     public function deleteUserFromAuthentication(int $id){
         $this->auth->deleteUser(strval($id));
         return true;
@@ -119,12 +125,23 @@ class UserRepository
 
        }
    }
+    public function getUserByEmail(string $email) {
+        $amount = $this->getQuantity();
+        for($i=0;$i<$amount;$i++) {
+            $userInfo = $this->reference->getChild($i)->getValue();
 
+            if($userInfo['email'] == $email) {
+                return $userInfo;
+            }
+        }
+        return 0;
+    }
    public function insert(array $data) {
        if(empty($data) /*|| isset($data)*/) { return false; }
 
        $actualUserId = $this->getQuantity();
        $this->reference->getChild($actualUserId)->set([
+           'id' => $actualUserId,
            'first_name' => $data[1],
            'last_name' => $data[2],
            'email' => $data[3],
@@ -136,6 +153,20 @@ class UserRepository
        ]);
        return true;
    }
+
+    public function update(array $data, int $id) {
+        if (empty($data) /*|| isset($data)*/) {
+            return false;
+        }
+
+        $this->reference
+            ->getChild($id)->update([
+                'first_name' => $data[1],
+                'last_name' => $data[2],
+                'group_of_students' => $data[8]
+            ]);
+        return true;
+    }
 
     public function delete(int $userId) {
         try {
@@ -154,5 +185,17 @@ class UserRepository
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {
         }
+    }
+
+    public function find(int $userId){
+        $information = $this->reference->getChild($userId)->getValue();
+        $user = new User([]);
+        $user->setFirstName($information['first_name']);
+        $user->setLastName($information['last_name']);
+        $user->setEmail($information['email']);
+        $user->setRoles($information['role']);
+        $user->setGroupOfStudents($information['group_of_students']);
+
+        return $user;
     }
 }

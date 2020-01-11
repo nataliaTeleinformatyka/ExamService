@@ -19,6 +19,7 @@ class LearningMaterialsInformationController extends AbstractController
 {
     /**
      * @Route("teacherLearningMaterialsInfo/{groupId}", name="teacherLearningMaterialsInfo")
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function learningMaterialsListCreate(Request $request)
@@ -37,7 +38,6 @@ class LearningMaterialsInformationController extends AbstractController
                 }
                     $learningMaterialsArray[$i] = array(
                         'id' => $i,
-                        'learning_materials_group_id' => $learningMaterials['learning_materials_group_id'],
                         'name' => $learningMaterials['name'],
                         'name_of_content' => $learningMaterials['name_of_content'],
                         'is_required' => $is_required
@@ -46,15 +46,23 @@ class LearningMaterialsInformationController extends AbstractController
         } else {
             $learningMaterialsArray = array(
                 'id' => 0,
-                'learning_materials_group_id' => 0,
                 'name' => 0,
                 'name_of_content' => 0,
                 'is_required' => 0
 
             );
         }
+        if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
+            $infoDelete = $_SESSION['information'];
+        } else {
+            $infoDelete = "";
+        }
+        $_SESSION['information'] = array();
         return $this->render('teacherLearningMaterialsInfo.html.twig', array(
-            'learning_materials_data' => $learningMaterialsArray
+            'learning_materials_data' => $learningMaterialsArray,
+            'learning_materials_group_id' => $learningMaterials['learning_materials_group_id'],
+            'info_delete' => $infoDelete
+
         ));
 
     }

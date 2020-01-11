@@ -3,11 +3,22 @@
 
 {% block body %}
     <div class="container">
-        <div>
+    <div class="signClass">
+        <a href="{{ path('deleteGroup', { 'learningMaterialsGroup': learning_materials_group_id}) }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-remove-sign"></span> Usuń grupę materiałów naukowych
+        </a>
+    </div>
+        <div class="list">
+            {% for error in infoDelete %}
+                {{ error.message }}
+            {% endfor %}
             {% for action in learning_materials_data %}
                 <p><b>Name :</b> {{ action.name|default('undefined') }}
                 <b>Name of content :</b> {{ action.name_of_content|default('undefined') }}
-                <b>Is required :</b> {{ action.is_required|default('undefined') }}</p>
+                <b>Is required :</b> {{ action.is_required|default('undefined') }}
+                    <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learning_materials_group_id, 'learningMaterial': action.id}) }}" title="Usuń materiał">
+                        <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+                    </a></p>
             {% endfor%}
         </div>
     </div>

@@ -29,32 +29,27 @@ class QuestionInformationController extends AbstractController
 
         $questionInformation= new QuestionRepository();
         $questions = $questionInformation->getQuestion($examId,$questionId);
-        if ($questions['is_multichoice'] == 1) {
-            $is_required = "true";
-        } else {
-            $is_required = "false";
-        }
-        if ($questions['is_file'] == 1) {
-            $is_required_file = "true";
-        } else {
-            $is_required_file = "false";
-        }
-
         $answerInformation= new AnswerRepository();
         $answerId = $answerInformation -> getQuantity($examId,$questionId);
+
+        if($questions['name_of_file']==""){
+            $nameOfFile = "Brak pliku";
+        } else {
+            $nameOfFile = $questions['name_of_file'];
+        }
 
         if($answerId>0) {
             for ($i = 0; $i < $answerId; $i++) {
                 $answers = $answerInformation->getAnswer($examId,$questionId,$i);
                 if ($answers['is_true'] == 1) {
-                    $is_required = "true";
+                    $is_required = "Tak";
                 } else {
-                    $is_required = "false";
+                    $is_required = "Nie";
                 }
                 if ($answers['is_active'] == 1) {
-                    $is_required_active = "true";
+                    $is_required_active = "Tak";
                 } else {
-                    $is_required_active = "false";
+                    $is_required_active = "Nie";
                 }
 
                 $answerArray[$i] = array(
@@ -73,14 +68,12 @@ class QuestionInformationController extends AbstractController
             );
         }
 
-
         return $this->render('teacherQuestionInfo.html.twig', array(
             'question_id' => $questionId,
             'exam_id' => $questions['exam_id'],
             'content' => $questions['content'],
             'max_answers' => $questions['max_answers'],
-            'is_multichoice' => $is_required,
-            'is_file' => $is_required_file,
+            'name_of_file' => $nameOfFile,
             'answer_data' => $answerArray
         ));
 

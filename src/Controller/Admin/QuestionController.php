@@ -48,7 +48,6 @@ class QuestionController extends AbstractController
                 $filename = $repositoryQuestion->uploadFile($file);
             }
 
-
             $repositoryQuestion->insert($idExamValue, $values,$filename);
 
             return $this->redirectToRoute('questionList', [
@@ -80,18 +79,12 @@ class QuestionController extends AbstractController
             for ($i = 0; $i < $idQuestion; $i++) {
                 $questions = $questionInformation->getQuestion($examId,$i);
 
-                if ($questions['is_multichoice'] == 1) {
-                    $is_required = "true";
-                } else {
-                    $is_required = "false";
-                }
 
                 $tplArray[$i] = array(
                     'id' => $questions['id'],
                     'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                     'max_answers' => $questions['max_answers'],
-                    'is_multichoice' => $is_required,
                     'name_of_file' => $questions['name_of_file'],
                 );
             }
@@ -102,7 +95,6 @@ class QuestionController extends AbstractController
                 'exam_id' => '',
                 'content' => '',
                 'max_answers' => '',
-                'is_multichoice' => '',
                 'name_of_file' => '',
             );
         }
@@ -140,7 +132,6 @@ class QuestionController extends AbstractController
         $isAnswer = $answerRepo->getQuantity($examId,$questionId);
         if($isAnswer !=0 ){
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
-
         } else {
             $repo->delete($examId, $questionId);
             $repo->deleteFile($filename);
@@ -172,7 +163,6 @@ class QuestionController extends AbstractController
         $questionInfoArray = array(
             'content' => $questions['content'],
             'max_answers' => $questions['max_answers'],
-            'is_multichoice' => $questions['is_multichoice'],
             'name_of_file' => $questions['name_of_file'],
         );
 

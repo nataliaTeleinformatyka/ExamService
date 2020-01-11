@@ -1,13 +1,13 @@
-{# templates/examList.html.twig #}
+{# templates/userExamList.html.twig #}
 {% extends 'base.html' %}
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
 {% block body %}
 <div class="container">
-    <div class="sign">
+    <div class="signClass">
         <a href="{{ path('userExam') }}" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
+            <span class="glyphicon glyphicon-plus-sign"></span> Add new user exam
         </a>
     </div>
     {% for error in infoDelete %}
@@ -32,10 +32,10 @@
                 <td> {{ action.start_access_time|default('') }}</td>
                 <td> {{ action.end_access_time|default('') }}</td>
                 <td><div class="sign">
-                        <a href="{{ path('deleteUserExam', { 'userexamId': action.user_exam_id}) }}">
+                        <a href="{{ path('deleteUserExam', { 'userExamId': action.user_exam_id}) }}">
                             <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
                         </a>
-                        <a href="#">
+                        <a href="{{ path('editUserExam', { 'userExamId': action.user_exam_id}) }}">
                             <span class="glyphicon glyphicon-pencil" title="edit exam"></span>
                         </a>
                     </div>

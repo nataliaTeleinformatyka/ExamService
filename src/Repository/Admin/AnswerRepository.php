@@ -62,6 +62,7 @@ class AnswerRepository
 
         $examReference->getChild($examId)
             ->getChild("Question")->getChild($questionId)->getChild("Answer")->getChild($actualAnswerId)->set([
+                'id' => $actualAnswerId,
                 'exam_id' => $examId,
                 'question_id' => $questionId,
                 'content' => $data[0],

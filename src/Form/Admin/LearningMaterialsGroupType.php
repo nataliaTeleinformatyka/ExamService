@@ -30,11 +30,9 @@ class LearningMaterialsGroupType extends AbstractType
     {
             $builder
                 ->add('name_of_group', TextType::class)
-
                 ->add('save', SubmitType::class, ['label' => 'Add Learning Materials Group'])
                 ->setMethod('POST')
                 ->getForm();
-
     }
 
     public function configureOptions(OptionsResolver $resolver)

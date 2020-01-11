@@ -31,12 +31,6 @@ class QuestionType extends AbstractType
         $builder
             ->add('content', TextareaType::class)
             ->add('max_answers', IntegerType::class)
-            ->add('is_multichoice', ChoiceType::class,
-                [
-                    'choices'  => [
-                        'Yes' => true,
-                        'No' => false,
-                    ]])
             ->add('file', FileType::class, [
                 'mapped' => false,
                 'required' => false,

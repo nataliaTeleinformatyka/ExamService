@@ -27,61 +27,81 @@ class StudentExamController extends AbstractController
     //jesli mniej active niz wymaganych to losowo pobierane
     public function studentExamCreate(Request $request) {
         $userExamId = $request->attributes->get('userExamId');
+$amount = 0;
 
         $userExamRepo = new UserExamRepository();
-        $userExam = $userExamRepo->getUserExam($userExamId);
-        $examId = $userExam['exam_id'];
-
         $examRepo = new ExamRepository();
         $questionRepo = new QuestionRepository();
         $answerRepo = new AnswerRepository();
 
+        $userExam = $userExamRepo->getUserExam($userExamId);
+        $examId = $userExam['exam_id'];
+
+
         $examInfo=$examRepo->getExam($examId);
         $maxQuestions = $examInfo['max_questions'];
+
         $questionsAmount=$questionRepo->getQuantity($examId);
+
+        $durationOfExam = $examInfo['duration_of_exam'];
+        $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
         for($i=0;$i<$questionsAmount;$i++){
             $questions=$questionRepo->getQuestion($examId,$i);
-            $questionId[$i] = $questions['id'];
-            $isMultichoice[$i] = $questions['is_multichoice'];
-            $maxAnswers[$i] = $questions['max_answers'];
-            $nameOfFile[$i] = $questions['name_of_file'];
-            $content[$i] = $questions['content'];
-
+            if($questions['id'] != NULL or $questions['id']=="0") {
+                $questionId[$amount] = $questions['id'];
+                $isMultichoice[$amount] = $questions['is_multichoice'];
+                $maxAnswers[$amount] = $questions['max_answers'];
+                $nameOfFile[$amount] = $questions['name_of_file'];
+                $content[$amount] = $questions['content'];
+                $amount++;
+            }
         }
 
-        if($questionsAmount <= $maxQuestions){
-            for($i=0;$i<$questionsAmount;$i++) {
-                $questions = $questionRepo->getQuestion($examId, $i);
-                if( $questions['id']==$i) {
-                    setcookie("questionId" . $i, $i/*$questions['id']*/);
-                    setcookie("questionIsMultichoice" . $i, $questions['is_multichoice']);
-                    setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
-                    setcookie("questionNameOfFile" . $i, $questions['name_of_file']);
-                    setcookie("questionContent" . $i, $questions['content']);
-                    print_r($questions);
-                    $questionId[$i] = $questions['id'];
+        if($amount <= $maxQuestions){
+            $numbers=$this->random($amount-1,$amount);
 
+            for($i=0;$i<$amount;$i++)
+            {
+                setcookie("questionId" . $i, $questionId[$numbers[$i]]/*$questions['id']*/);
+                setcookie("questionIsMultichoice" . $i, $isMultichoice[$numbers[$i]]);
+                setcookie("questionMaxAnswers" . $i, $maxAnswers[$numbers[$i]]);
+                setcookie("questionNameOfFile" . $i, $nameOfFile[$numbers[$i]]);
+                setcookie("questionContent" . $i, $content[$numbers[$i]]);
+
+                    $allAnswersAmount= $answerRepo->getQuantity($examId, $questionId[$numbers[$i]]);
+                $answersAmount = 0;
+
+                    for ($k = 0; $k < $allAnswersAmount; $k++) {
+                        $answerInfo = $answerRepo->getAnswer($examId, $questionId[$numbers[$i]], $k);
+                        // if($answerContent['is_true'] or $answerContent['is_active']) {
+                        if ($answerInfo['id'] != NULL or $answerInfo['id'] == "0") {
+                            $answers[$k] = $answerInfo['id'];
+                            $answers[$k] = $answerInfo['content'];
+                            $answersAmount++;
+                        }
+
+                    }
+                    if($answersAmount <= $maxAnswers) {
+                        $answerNumber = $this->random($answersAmount-1, $answersAmount);
+                        print_r($answerNumber);
+                        print_r("answer amount ".$answersAmount);
+                        for ($j = 0; $j < $answersAmount; $j++) {
+                            setcookie("answerId".$i.$j, $answers[$answerNumber[$j]]); // (numer pytania,numer odpowiedzi);
+                            setcookie("answerContent".$i.$j, $answers[$answerNumber[$j]]);
+                        }
+                        setcookie("amountOfAnswers".$i, $answersAmount);
                 }
 
-                if($questions['id'] != NULL or $questions['id']=="0"){
-                    $answersAmount= $answerRepo->getQuantity($examId,$questions['id']);
-                    $amount = 0;
-                    for ($k = 0; $k < $answersAmount; $k++) {
-                        $answerContent = $answerRepo->getAnswer($examId, $questions['id'], $k);
-                        if($answerContent['is_true'] or $answerContent['is_active']) {
-                            $amount++;
-                            setcookie("answerId" . $i/*$questions['id']*/ . $k, $k); // (numer pytania,numer odpowiedzi);
-                            setcookie("answerContent" . $i/*$questions['id']*/ . $k, $answerContent['content']);
-                            setcookie("amountOfAnswers" .$i/* $questions['id']*/, $amount);
-                        }
-                    } //todo: nie wysylac czy poprawna odpowiedz, wysylac wszystkie true+aktywne(do max answers)
+
+                    //todo: nie wysylac czy poprawna odpowiedz, wysylac wszystkie true+aktywne(do max answers)
                     //todo: answer must be active jezeli ma byc wyswietllona, true musi byc active  and true
 
-                }
+
             }
+
         } else {
-            $numbers[] = $this->random($questionsAmount, $maxQuestions);
+            $numbers[] = $this->random($amount-1, $maxQuestions-1);
             for ($j = 0; $j < $maxQuestions; $j++) {
                 $questions = $questionRepo->getQuestion($examId, $j);
                 setcookie("questionId".$j, $questions['id'] );
@@ -92,16 +112,11 @@ class StudentExamController extends AbstractController
                 //$questionContent = $content[$numbers[$j]];
             }
         }
-        setcookie("questionAmount", $questionsAmount);
+        setcookie("questionAmount", $amount);
+        setcookie("accessTime",$accessTime);
+        $_SESSION['questionsAmount'] = $amount;
 
-
-
-
-       /* $fp = fopen("FILENAME", "w");
-        //$isFile = file_exists("questions.json");
-        fputs($fp, json_encode($questions));
-        fclose($fp);
-        $dane = fread(fopen("FILENAME", "r"), filesize("FILENAME"));*/
+        print_r("ZMIENNA SESJI: ".$_SESSION['questionsAmount']);
 
         return $this->render('studentExam.html', array(
         ));
@@ -112,7 +127,7 @@ class StudentExamController extends AbstractController
          $randomNumbers[0] =  rand(0, $amountOfQuestions);
          $amountOfRandomedNumbers = 1;
 
-         for ($i = 0; $i < $maxQuestions; $i++) {
+         for ($i = 1; $i < $maxQuestions; $i++) {
              do {
                  $number = rand(0, $amountOfQuestions);
                  $isRandom = true;
@@ -121,8 +136,8 @@ class StudentExamController extends AbstractController
                      if ($number == $randomNumbers[$j]) $isRandom = false;
                  }
                  if ($isRandom == true) {
-                     $amountOfRandomedNumbers++;
                      $randomNumbers[$amountOfRandomedNumbers] = $number;
+                     $amountOfRandomedNumbers++;
                  }
 
              } while ($isRandom != true);

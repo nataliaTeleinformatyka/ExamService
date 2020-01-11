@@ -29,14 +29,16 @@ class UserExamListController extends AbstractController
              $index = 0;
              for ($i = 0; $i < $id; $i++) {
                  $userExam = $examInformation->getUserExam($i);
-                 print_r($userExam['user_id']);
+                 //print_r($userExam);
+                // print_r($userExam['user_id']);
                  print_r($_SESSION['user_id']);
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
+                     print_r("jestem tutaj");
 
                      $exam = new ExamRepository();
-                     $examInfo = $exam->getExam($i);
+                     $examInfo = $exam->getExam($userExam['exam_id']);
                      $examName = $examInfo['name'];
-
+                    print_r($examInfo);
 
                      if ($userExam['start_access_time'] == "NULL") {
                          $startDate = " ";
@@ -63,7 +65,8 @@ class UserExamListController extends AbstractController
                          //todo class result and dodac tutaj ilosc pozostalych prob
                      );
                      $index++;
-                 }  else {
+                 }  /*else {
+                     print_r("a teraz tttt ");
                      $info = false;
                      $tplArray[$i] = array(
                          'user_id' => '',
@@ -72,7 +75,7 @@ class UserExamListController extends AbstractController
                          'start_access_time' => '',
                          'end_access_time' => ''
                      );
-                 }
+                 }*/
              }
          }
          else {
@@ -85,7 +88,8 @@ class UserExamListController extends AbstractController
             'end_access_time' => ''
         );
     }
-    return $this->render('studentHomepage.html.twig', array(
+    print_r($info);
+        return $this->render('studentHomepage.html.twig', array(
         'data' => $tplArray,
         'information' => $info
     ));

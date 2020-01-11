@@ -121,7 +121,7 @@ class LearningMaterialController  extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editLearningMaterial/{groupId}/{id}", name="editLearningMaterial")
      */
-    public function editExam(Request $request, LearningMaterial $learningMaterial)
+    public function editLearningMaterial(Request $request, LearningMaterial $learningMaterial)
     {
         $materialInformation = new LearningMaterialRepository();
         $materialId = (int)$request->attributes->get('id');
@@ -166,7 +166,7 @@ class LearningMaterialController  extends AbstractController
      * @Route("/deleteMaterial/{learningMaterialsGroupId}/{learningMaterial}", name="deleteMaterial")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteExam(Request $request)
+    public function deleteLearningMaterial(Request $request)
     {
         $id = $request->attributes->get('learningMaterial');
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
@@ -174,8 +174,6 @@ class LearningMaterialController  extends AbstractController
         $info = $repo->getLearningMaterial($learningMaterialsGroupId,$id);
         $filename = $info['name_of_content'];
         $repo->delete($learningMaterialsGroupId,$id,$filename);
-        //todo: nie usuwac gdy sa powiazania
-        //todo: wyswietlanie, gdy brak
 
         return $this->redirectToRoute('learningMaterialList', [
             'learningMaterialsGroupId' => $learningMaterialsGroupId,

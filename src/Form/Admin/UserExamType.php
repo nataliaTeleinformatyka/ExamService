@@ -29,30 +29,31 @@ class UserExamType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $userExams = new UserRepository();
-        for ($i = 0; $i < $userExams->getQuantity(); $i++) {
-            $values = $userExams->getUser($i);
-            $firstName = $values['first_name'];
-            $lastName = $values['last_name']; //todo sprawpdzac i wyswietlac tylko uzytkownikow z rola student
-            $id=$i;
-            $userInfo[$i] = $id." - ".$firstName." ".$lastName;
-            print_r($userInfo);
+        $user = new UserRepository();
+        for ($i = 0; $i < $user->getQuantity(); $i++) {
+            $values = $user->getUser($i);
+            if (($values['id'] != "" or $values['id'] == 0) and $values['role'] == "ROLE_STUDENT") {
+
+                $firstName = $values['first_name'];
+                $lastName = $values['last_name'];
+                $userInfo[$i . " - " . $firstName . " " . $lastName] = $values['id'];
+            }
         }
+
         $exams= new ExamRepository();
         for($j=0;$j<$exams->getQuantity();$i++) {
             $valuesExam = $exams->getExam($i);
             $name = $valuesExam['name'];
-            $id=$valuesExam['exam_id'];
-            $examInfo[$i] = $id." - ".$name;
+            $examInfo[$i." - ".$name] = $valuesExam['exam_id'];
         }
 
         $builder
             ->add('user_id', ChoiceType::class,
                 [
-                    'choices'  => $userInfo ]) //todo wyswietlac zawartosc komorki a nie numer komorki tablicy
+                    'choices'  => $userInfo ])
             ->add('exam_id', ChoiceType::class,
                 [
-                    'choices'  => $examInfo]) //todo wyswietlac zawartosc komorki a nie numer komorki tablicy
+                    'choices'  => $examInfo])
            // ->add('date_of_resolve_exam', DateType::class)
             ->add('start_access_time', DateType::class)
             ->add('end_access_time', DateType::class)
