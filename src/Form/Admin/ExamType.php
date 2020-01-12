@@ -40,7 +40,9 @@ class ExamType extends AbstractType
                     ]])
             ->add('max_questions', IntegerType::class)
             ->add('max_attempts', IntegerType::class)
-            ->add('duration_of_exam', TimeType::class)
+            ->add('duration_of_exam', IntegerType::class, [
+                'help' => 'Must be in minutes.'
+            ])
             ->add('start_date', DateType::class)
             ->add('end_date', DateType::class)
             ->add('additional_information', TextareaType::class)

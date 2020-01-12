@@ -87,6 +87,10 @@ class QuestionController extends AbstractController
                     'max_answers' => $questions['max_answers'],
                     'name_of_file' => $questions['name_of_file'],
                 );
+                if($questions['name_of_file']!="") {
+                    // $questionInformation->downloadFile($questions['name_of_file']);
+                     //print_r($inf);
+                }
             }
         } else {
             $info = false;

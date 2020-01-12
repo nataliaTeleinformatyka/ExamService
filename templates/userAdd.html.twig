@@ -1,5 +1,9 @@
 {# templates/userAdd.html.twig #}
 {% extends 'base.html' %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+
+{% endblock %}
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}

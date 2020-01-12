@@ -44,7 +44,7 @@ $amount = 0;
         $questionsAmount=$questionRepo->getQuantity($examId);
 
         $durationOfExam = $examInfo['duration_of_exam'];
-        $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
+       // $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
         for($i=0;$i<$questionsAmount;$i++){
             $questions=$questionRepo->getQuestion($examId,$i);
@@ -76,7 +76,7 @@ $amount = 0;
                         $answerInfo = $answerRepo->getAnswer($examId, $questionId[$numbers[$i]], $k);
                         // if($answerContent['is_true'] or $answerContent['is_active']) {
                         if ($answerInfo['id'] != NULL or $answerInfo['id'] == "0") {
-                            $answers[$k] = $answerInfo['id'];
+                            $answersId[$k] = $answerInfo['id'];
                             $answers[$k] = $answerInfo['content'];
                             $answersAmount++;
                         }
@@ -87,7 +87,7 @@ $amount = 0;
                         print_r($answerNumber);
                         print_r("answer amount ".$answersAmount);
                         for ($j = 0; $j < $answersAmount; $j++) {
-                            setcookie("answerId".$i.$j, $answers[$answerNumber[$j]]); // (numer pytania,numer odpowiedzi);
+                            setcookie("answerId".$i.$j, $answersId[$answerNumber[$j]]); // (numer pytania,numer odpowiedzi);
                             setcookie("answerContent".$i.$j, $answers[$answerNumber[$j]]);
                         }
                         setcookie("amountOfAnswers".$i, $answersAmount);
@@ -113,8 +113,9 @@ $amount = 0;
             }
         }
         setcookie("questionAmount", $amount);
-        setcookie("accessTime",$accessTime);
+        setcookie("accessTime",$durationOfExam);
         $_SESSION['questionsAmount'] = $amount;
+        $_SESSION['exam_id']= $examId;
 
         print_r("ZMIENNA SESJI: ".$_SESSION['questionsAmount']);
 

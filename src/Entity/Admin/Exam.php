@@ -66,8 +66,8 @@ class Exam extends Entity  implements  EquatableInterface
      */
    private $end_date;
     /**
-     * @Assert\Type("\Datetime")
-     * @ORM\Column(type="datetime")
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
      */
    private $duration_of_exam;
    //User Id who made exam

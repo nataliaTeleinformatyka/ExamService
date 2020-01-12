@@ -4,8 +4,11 @@
 {% block body %}
     <div class="container">
         <div class="signClass">
+            <a href="{{ path('teacherUserList') }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-arrow-right"></span> Lista użytkowników
+            </a>
             <a href="{{ path('exam')}}" class="btn btn-info btn-lg">
-                <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
+                <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nowy egzamin
             </a>
         </div>
         <div class="list">

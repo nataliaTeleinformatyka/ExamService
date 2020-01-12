@@ -21,14 +21,16 @@ class UserInformationController extends AbstractController
      */
     public function userListCreate()
     {
+        $info = false;
         $userInformation = new UserRepository();
         $id = $userInformation->getQuantity();
         if ($id > 0) {
             $amount = 0;
-            $info = true;
             for ($i = 0; $i < $id; $i++) {
                 $user = $userInformation->getUser($i);
                 if ($user['role'] == "ROLE_STUDENT") {
+                    $info = true;
+
                     $tplArray[$amount] = array(
                         'id' => $i,
                         'first_name' => $user['first_name'],
@@ -37,6 +39,14 @@ class UserInformationController extends AbstractController
                         'group_of_students' => $user['group_of_students'],
                     );
                     $amount++;
+                } else {
+                    $tplArray[] = array(
+                        'id' => '',
+                        'first_name' => '',
+                        'last_name' => '',
+                        'email' => '',
+                        'group_of_students' => '',
+                    );
                 }
             }
         } else {
@@ -50,7 +60,8 @@ class UserInformationController extends AbstractController
             );
         }
         return $this->render('teacherUserList.html.twig', array(
-            'data' => $tplArray
+            'data' => $tplArray,
+            'information' => $info
         ));
     }
 }

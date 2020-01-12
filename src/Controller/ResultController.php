@@ -9,6 +9,8 @@
 namespace App\Controller;
 
 use App\Entity\Admin\Result;
+use App\Repository\Admin\AnswerRepository;
+use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\ResultRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,35 +20,68 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResultController extends AbstractController
 {
     /**
-     * @Route("result", name="result")
+     * @Route("studentExam/result", name="result")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request)
     {
-      // session_start();
-        $r = $request;
-        print_r($_COOKIE['questionsAmount']);
-        print_r($r);
-        //$repository = $this->getDoctrine()->getRepository(Exam::class);
-        //$result = new Result([]);
-        //print_r($_COOKIE['questionAmount']);
+        $examId = $_SESSION['exam_id'];
+        $questionAmount = $_SESSION['questionsAmount'];
 
-
+        $answerRepo = new AnswerRepository();
+        $questionRepo = new QuestionRepository();
+        $points =0;
 
 $data = "UUUU RESULT CONYTOLLER";
-       // print_r($_SESSION['questionsAmount']);
-    //    print_r($_COOKIE['questionsAmount']);
-       for($i=0;$i<$_SESSION['questionsAmount'];$i++){
 
-       // $answersAmount = $_COOKIE['userAnswerAmount'];
-        /*if($answersAmount!=0) {
-            for ($j = 0; $j < $answersAmount; $j++) {
-                print_r($_COOKIE['userAnswer'] . $i . $j);
-            }
-        }*/
-    }
-      //  $_COOKIE['questionAmount'];
+       for($i=0;$i<$questionRepo->getQuantity($examId);$i++) {
+           if (isset($_COOKIE['amountOfAnswers' . $i])) {
+               $allAnswersAmountFromExam = $_COOKIE['amountOfAnswers' . $i];
+               $answersAmount = $_COOKIE['userAnswerAmount' . $i];
+
+               $amount = 0;
+               $trueUserAnswer = true;
+
+               for ($k = 0; $k < $questionRepo->getQuantity($examId); $k++) {
+                   if (isset($_COOKIE['answerId' . $i . $k])) {
+                       $answersId[$k] = $_COOKIE['answerId' . $i . $k];
+                       // $answersContent = $_COOKIE['answerContent'.$i.$k];
+                        print_r($examId." I ".$i." answer ".$answersId[$k]);
+
+                       $answer = $answerRepo->getAnswer($examId, $i, $answersId[$k]);
+                        print_r($answer);
+                       if ($answer['is_true']) {
+                           $trueAnswer[$k] = $answer['content'];
+                           $amount++; //ile prawidlowych odpowiedzi w odp wyslanych do usera
+                       }
+                   }
+
+                   if ($answersAmount == $amount) {
+                       //for ($j = 0; $j < $answersAmount; $j++) {
+                       for ($j = 0; $j < $questionRepo->getQuantity($examId); $j++) {
+                           if (isset($_COOKIE['userAnswer' . $i . $j])) {
+                               $userAnswers[$j] = $_COOKIE['userAnswer' . $i . $j];
+                               //for ($m = 0; $m < $amount; $m++) {
+                               //  print_r($userAnswers[$j]);
+                               // print_r(" TRUE ");
+                               //print_r($trueAnswer[$j]);
+                               if ($userAnswers[$j] == $trueAnswer[$j] and $trueUserAnswer == true) {
+                                   $trueUserAnswer = true;
+                                   // print_r(" TAAAK ");
+                               } else {
+                                   $trueUserAnswer = false;
+                                   //   print_r(" NIEEE ");
+                               }
+                               //}
+                           }
+                       }
+                       if ($trueUserAnswer) $points++;
+                   }
+               }
+              // print_r($points);
+           }
+       }
         return $this->render('studentResult.html.twig', array(
             'data' => $data
 

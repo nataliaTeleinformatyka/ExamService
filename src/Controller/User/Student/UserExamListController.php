@@ -12,6 +12,7 @@ namespace App\Controller\User\Student;
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserExamListController extends AbstractController
@@ -25,14 +26,13 @@ class UserExamListController extends AbstractController
          $examInformation = new UserExamRepository();
          $id = $examInformation->getQuantity();
          if ($id > 0) {
-             $info = true;
+             $info=false;
              $index = 0;
              for ($i = 0; $i < $id; $i++) {
                  $userExam = $examInformation->getUserExam($i);
-                 //print_r($userExam);
-                // print_r($userExam['user_id']);
-                 print_r($_SESSION['user_id']);
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
+                     $info = true;
+
                      print_r("jestem tutaj");
 
                      $exam = new ExamRepository();
@@ -65,10 +65,11 @@ class UserExamListController extends AbstractController
                          //todo class result and dodac tutaj ilosc pozostalych prob
                      );
                      $index++;
-                 }  /*else {
-                     print_r("a teraz tttt ");
+                 }/* else {
+                     return $this->redirectToRoute('login');
+                 }  else {
                      $info = false;
-                     $tplArray[$i] = array(
+                     $tplArray = array(
                          'user_id' => '',
                          'exam_id' => '',
                          'date_of_resolve_exam' => '',

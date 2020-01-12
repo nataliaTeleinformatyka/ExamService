@@ -39,8 +39,8 @@ class ExamInformationController extends AbstractController
                     } else {
                         $is_required = false;
                     }
-                    $durationOfExam = $exams['duration_of_exam'];
-                    $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
+                   // $durationOfExam = $exams['duration_of_exam'];
+                    //$accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
                     $tplArray[$i] = array(
                         'id' => $i,
@@ -48,7 +48,7 @@ class ExamInformationController extends AbstractController
                         'learning_required' => $is_required,
                         'max_questions' => $exams['max_questions'],
                         'max_attempts' => $exams['max_attempts'],
-                        'duration_of_exam' => $accessTime." minut",
+                        'duration_of_exam' => $exams['duration_of_exam'], //$accessTime." minut",
                         'start_date' => $exams['start_date']['date'],
                         'end_date' => $exams['end_date']['date'],
                         'additional_information' => $exams['additional_information']
@@ -96,7 +96,7 @@ class ExamInformationController extends AbstractController
             'learning_required' => $is_required,
             'max_questions' => $exams['max_questions'],
             'max_attempts' => $exams['max_attempts'],
-            'duration_of_exam' => date("H",strtotime($exams['duration_of_exam']['date']))*60 + date("i",strtotime($exams['duration_of_exam']['date']))." minut",
+            'duration_of_exam' => $exams['duration_of_exam'],//date("H",strtotime($exams['duration_of_exam']['date']))*60 + date("i",strtotime($exams['duration_of_exam']['date']))." minut",
             'start_date' => date("Y-m-d",strtotime( $exams['start_date']['date'])),
             'end_date' => date("Y-m-d",strtotime( $exams['end_date']['date'])),
             'additional_information' => $exams['additional_information']

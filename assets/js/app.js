@@ -4,6 +4,19 @@ require('../css/app.css');
 var today = new Date();
 var hour = today.getHours();
 
+/*
+
+let role = document.getElementById("user_roles");
+console.log("UUU");
+if(role.value === "student") {
+    console.log("YUPI");
+    //document.getElementById("group_of_students").style.display = "visible";
+
+} else {
+    console.log("BUU");
+    //document.getElementById("group_of_students").style.display = "none";
+
+}*/
 const cookies = document.cookie.split(";");
 
 const questionId = document.getElementById("questionNumber");
@@ -43,16 +56,20 @@ function nextQuestion() {
 
 function endExam() {
     checkForm(id);
-    $.ajax({
+  /*  $.ajax({
         url: 'http://127.0.0.1:8000/result',
         type: "POST",
         dataType:'text',
-        data: {'date': date},
+        data: {'date': "testDZIALANIA"},
         success: function(data){
             console.log("successfully");
         }
-    });
-    location.href = "http://127.0.0.1:8000/result";
+    });*/
+  nextButton.href="result";
+
+  //  let url = Routing.generate('result');
+    //location.href = url;
+    //location.href = "http://127.0.0.1:8000/result";
 }
 
 function getCookie(cname) {

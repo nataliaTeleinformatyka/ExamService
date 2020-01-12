@@ -54,8 +54,15 @@ class QuestionRepository
         }
     }
     public function getFile($filename){
-    return $this->bucket->object($filename);
+        return $this->bucket->object($filename);
+    }
 
+    public function downloadFile($filename) {
+        $object = $this->bucket->object($filename);
+        $object->downloadToFile('/files/'.$filename);
+
+
+        //return $this->bucket->object($filename);
     }
 
 
