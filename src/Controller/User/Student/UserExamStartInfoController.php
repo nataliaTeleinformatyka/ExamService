@@ -21,7 +21,6 @@ class UserExamStartInfoController extends AbstractController
      * @Route("studentExamStartInfo/{userExamId}", name="studentExamStartInfo")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    //todo: dostep do egzaminow user_id = id aktualnego usera, przedzial dostepu, ilosc pozostalych prob
     public function studentExamStartInfoCreate(Request $request) {
         $examInformation = new UserExamRepository();
 
@@ -33,7 +32,6 @@ class UserExamStartInfoController extends AbstractController
         $examInfo = $exam->getExam($userExam['exam_id']);
         $examName = $examInfo['name'];
         $durationOfExam = $examInfo['duration_of_exam'];
-        $time = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
 
         if ($userExam['start_access_time'] == "NULL") {
@@ -41,7 +39,7 @@ class UserExamStartInfoController extends AbstractController
         } else {
             $startDate = $userExam['start_access_time'];
         }
-        print_r($startDate);
+
         if ($userExam['end_access_time'] == "NULL") {
             $endDate = " ";
         } else {
@@ -58,13 +56,12 @@ class UserExamStartInfoController extends AbstractController
             'date_of_resolve_exam' => $resolveDate,
             'start_date' => $startDate,
             'end_date' => $endDate
-            //todo class result and dodac tutaj ilosc pozostalych prob
         );
 
         return $this->render('studentExamStartInfo.html.twig', array(
             'data' => $tplArray,
             'exam_name' => $examName,
-            'time' => $time,
+            'time' => $durationOfExam,
             'user_exam_id' => $userExamId
         ));
     }

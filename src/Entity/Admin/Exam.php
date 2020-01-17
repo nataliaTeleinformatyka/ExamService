@@ -72,10 +72,16 @@ class Exam extends Entity  implements  EquatableInterface
    private $duration_of_exam;
    //User Id who made exam
     /**
-     * @Assert\Type("\Integer")
+     * @Assert\Type("Integer")
      * @ORM\Column(type="integer")
      */
    private $created_by;
+    /**
+     * @Assert\Type("Integer")
+     * @ORM\Column(type="integer")
+     */
+    private $percentage_passed_exam;
+
     /**
      * @return integer
      */
@@ -236,9 +242,25 @@ class Exam extends Entity  implements  EquatableInterface
         $this->created_by = $created_by;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getPercentagePassedExam()
+    {
+        return $this->percentage_passed_exam;
+    }
+
+    /**
+     * @param mixed $percentage_passed_exam
+     */
+    public function setPercentagePassedExam($percentage_passed_exam): void
+    {
+        $this->percentage_passed_exam = $percentage_passed_exam;
+    }
+
     public function getAllInformation(){
         $data = [$this->name,$this->learning_required,$this->additional_information,$this->max_questions,$this->max_attempts,
-            $this->start_date,$this->end_date,$this->duration_of_exam,$this->created_by];
+            $this->start_date,$this->end_date,$this->duration_of_exam,$this->created_by,$this->percentage_passed_exam];
         return $data;
     }
 

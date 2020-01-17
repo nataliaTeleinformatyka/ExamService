@@ -39,17 +39,17 @@ class UserExam extends Entity  implements  EquatableInterface
      */
     private $user_id;
     /**
-     * @Assert\Type("Datetime")
+     * @Assert\Type("\Datetime")
      * @ORM\Column(type="datetime")
      */
     private $date_of_resolve_exam;
     /**
-     * @Assert\Type("Datetime")
+     * @Assert\Type("\Datetime")
      * @ORM\Column(type="datetime")
      */
     private $start_access_time;
     /**
-     * @Assert\Type("Datetime")
+     * @Assert\Type("\Datetime")
      * @ORM\Column(type="datetime")
      */
     private $end_access_time;

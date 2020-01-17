@@ -10,6 +10,7 @@ namespace App\Controller\User\Student;
 
 
 use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\ResultRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -23,33 +24,45 @@ class UserExamListController extends AbstractController
      */
     //todo: dostep do egzaminow user_id = id aktualnego usera, przedzial dostepu, ilosc pozostalych prob
     public function studentExamListCreate() {
-         $examInformation = new UserExamRepository();
-         $id = $examInformation->getQuantity();
+         $userExamRepository = new UserExamRepository();
+         $resultRepository = new ResultRepository();
+
+         $id = $userExamRepository->getQuantity();
          if ($id > 0) {
              $info=false;
              $index = 0;
              for ($i = 0; $i < $id; $i++) {
-                 $userExam = $examInformation->getUserExam($i);
+                 $userExam = $userExamRepository->getUserExam($i);
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
                      $info = true;
-
-                     print_r("jestem tutaj");
+                     $numberOfAttemptsInResult = $resultRepository->getQuantityAttempt($userExam['exam_id'],$_SESSION['user_id']);
 
                      $exam = new ExamRepository();
                      $examInfo = $exam->getExam($userExam['exam_id']);
                      $examName = $examInfo['name'];
-                    print_r($examInfo);
+                     $maxAttempts = $examInfo['max_attempts'];
+                     if($maxAttempts != "NULL") {
+                        $remainingAttempts = $maxAttempts-$numberOfAttemptsInResult;
+                        $attemptsInfo = "- Pozostało prób: ". $remainingAttempts;
+                     }
 
-                     if ($userExam['start_access_time'] == "NULL") {
-                         $startDate = " ";
-                     } else {
+                     if ($userExam['start_access_time'] != "NULL") {
                          $startDate = $userExam['start_access_time'];
-                     }
-                     if ($userExam['end_access_time'] == "NULL") {
-                         $endDate = " ";
+                         if($userExam['end_access_time'] != "NULL") {
+                             $endDate = $userExam['end_access_time'];
+                             $dateInformation = "( ".$startDate." - ".$endDate." ) ";
+                         } else {
+                             $dateInformation = "( dostęp od ".$startDate. " ) ";
+                         }
                      } else {
-                         $endDate = $userExam['end_access_time'];
+                         if($userExam['end_access_time'] != "NULL") {
+                             $endDate = $userExam['end_access_time'];
+                             $dateInformation = "( dostęp do".$endDate." ) ";
+                         } else {
+                             $dateInformation = " ";
+                         }
                      }
+
                      if ($userExam['date_of_resolve_exam'] == "NULL") {
                          $resolveDate = " ";
                      } else {
@@ -60,7 +73,8 @@ class UserExamListController extends AbstractController
                          'user_id' => $userExam['user_id'],
                          'exam_id' => $userExam['exam_id'],
                          'date_of_resolve_exam' => $resolveDate,
-                         'access_period' => "(".$startDate."-".$endDate.")",
+                         'access_period' => $dateInformation,
+                         'remaining_attempts' => $attemptsInfo,
                          'exam_name' => $examName
                          //todo class result and dodac tutaj ilosc pozostalych prob
                      );
@@ -85,9 +99,10 @@ class UserExamListController extends AbstractController
             'user_id' => '',
             'exam_id' => '',
             'date_of_resolve_exam' => '',
-            'start_access_time' => '',
-            'end_access_time' => ''
-        );
+            'access_period' => '',
+            'remaining_attempts' => '',
+
+             );
     }
     print_r($info);
         return $this->render('studentHomepage.html.twig', array(

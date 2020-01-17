@@ -66,7 +66,7 @@ class ResultRepository
         }
     }
 
-    public function insert(array $data)
+    public function insert($id, $userId, $examId, $numberOfAttempt,$points, $isPassed, $dateOfResolveExam)
     {
         if (empty($data) /*|| isset($data)*/) {
             return false;
@@ -124,6 +124,23 @@ class ResultRepository
         } catch (ApiException $e) {
         }
     }
+
+    public function getQuantityAttempt($examId, $userId){
+        $id = $this->getQuantity();
+        for($i=0;$i<$id;$i++) {
+            if ($this->reference->getSnapshot()->hasChild($i)) {
+                $resultInfo = $this->reference->getChild($i)->getValue();
+                if($resultInfo['exam_id'] == $examId and $resultInfo['user_id']==$userId){
+                    return $resultInfo['number_of_attempt'];
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        }
+    }
+
     public function find(int $resultId){
         $information = $this->reference->getChild($resultId)->getValue();
         $result = new Result([]);

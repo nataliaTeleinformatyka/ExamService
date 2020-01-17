@@ -6,7 +6,8 @@
             {% for action in data %}
                 {% if information==true %}
                 <p><a href="{{ path('studentExamStartInfo', { 'userExamId': action.user_exam_id}) }}">
-                        {{ action.exam_name|default('') }} {{ action.access_period|default('') }}  - Pozostało prób: </a></p>
+                        {{ action.exam_name|default('') }} {{ action.access_period|default('') }} {{ action.remaining_attempts|default('') }}</a></p>
+                    </a></p>
                 {% endif %}
             {% endfor %}
 

@@ -67,18 +67,21 @@ class ExamController extends AbstractController
             $info = true;
             for ($i = 0; $i < $id; $i++) {
                 $exams = $examInformation->getExam($i);
-                if ($exams['learning_required'] == 1) {
+                //todo: UNCOMENT THIS WHEN AGATA CHANGE learnign in database
+               /* if ($exams['learning_required'] == 1) {
                     $is_required = true;
                 } else {
                     $is_required = false;
-                }
+                }*/
+               $is_required = "true";
                 $tplArray[$i] = array(
                     'id' => $i,
                     'name' => $exams['name'],
                     'learning_required' => $is_required,
                     'max_questions' => $exams['max_questions'],
                     'max_attempts' => $exams['max_attempts'],
-                    'duration_of_exam' => $exams['duration_of_exam'], //['date'], //todo: only time!!
+                    'duration_of_exam' => $exams['duration_of_exam'],
+                    'percentage_passed_exam' => $exams['percentage_passed_exam'],
                     'created_by' => $exams['created_by'],
                     'start_date' => $exams['start_date']['date'],
                     'end_date' => $exams['end_date']['date'],
@@ -94,6 +97,7 @@ class ExamController extends AbstractController
                 'max_questions' => "",
                 'max_attempts' => "",
                 'duration_of_exam' => "",
+                'percentage_passed_exam' => "",
                 'created_by' => "",
                 'start_date' => "",
                 'end_date' => "",
@@ -144,7 +148,8 @@ class ExamController extends AbstractController
             'learning_required' => $exams['learning_required'],
             'max_questions' => $exams['max_questions'],
             'max_attempts' => $exams['max_attempts'],
-            'duration_of_exam' => $exams['duration_of_exam'],//['date'],
+            'duration_of_exam' => $exams['duration_of_exam'],
+            'percentage_passed_exam' => $exams['percentage_passed_exam'],
             'start_date' => $exams['start_date']['date'],
             'end_date' => $exams['end_date']['date'],
             'additional_information' => $exams['additional_information']

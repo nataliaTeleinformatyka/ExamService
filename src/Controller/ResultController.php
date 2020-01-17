@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Admin\Result;
 use App\Repository\Admin\AnswerRepository;
+use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\ResultRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -27,63 +28,131 @@ class ResultController extends AbstractController
     public function new(Request $request)
     {
         $examId = $_SESSION['exam_id'];
+        $userId = $_SESSION['user_id'];
         $questionAmount = $_SESSION['questionsAmount'];
 
         $answerRepo = new AnswerRepository();
         $questionRepo = new QuestionRepository();
         $points =0;
-
-$data = "UUUU RESULT CONYTOLLER";
+        $existQuestion=false;
+        $questionGoodAmount=$questionRepo->getQuantity($examId);
 
        for($i=0;$i<$questionRepo->getQuantity($examId);$i++) {
-           if (isset($_COOKIE['amountOfAnswers' . $i])) {
-               $allAnswersAmountFromExam = $_COOKIE['amountOfAnswers' . $i];
-               $answersAmount = $_COOKIE['userAnswerAmount' . $i];
 
-               $amount = 0;
-               $trueUserAnswer = true;
+           $trueAnswers=0;
+           $amount = 0;
+           $trueUserAnswer = true;
+           $questionId = $i;
 
-               for ($k = 0; $k < $questionRepo->getQuantity($examId); $k++) {
+           $questionInfo = $questionRepo->getQuestion($examId,$i);
+           if($questionInfo['content']==""){
+               $i++;
+               $questionId++;
+               $existQuestion=false;
+               $questionGoodAmount++;
+           }
+
+           $check=1;
+               for ($k = 0; $k < $answerRepo->getQuantity($examId,$i); $k++) {
                    if (isset($_COOKIE['answerId' . $i . $k])) {
-                       $answersId[$k] = $_COOKIE['answerId' . $i . $k];
-                       // $answersContent = $_COOKIE['answerContent'.$i.$k];
-                        print_r($examId." I ".$i." answer ".$answersId[$k]);
-
-                       $answer = $answerRepo->getAnswer($examId, $i, $answersId[$k]);
-                        print_r($answer);
-                       if ($answer['is_true']) {
-                           $trueAnswer[$k] = $answer['content'];
-                           $amount++; //ile prawidlowych odpowiedzi w odp wyslanych do usera
+                       $answerInformation = $answerRepo->getAnswer($examId,$i,$_COOKIE['answerId' . $i . $k]);
+                       if($answerInformation['is_true'] == true) {
+                           $trueAnswers++;
                        }
-                   }
+                   //    setcookie ("answerId".$i.$k, "", time() - 3600);
+                    //   setcookie ("answerContent".$i.$k, "", time() - 3600);
 
-                   if ($answersAmount == $amount) {
-                       //for ($j = 0; $j < $answersAmount; $j++) {
-                       for ($j = 0; $j < $questionRepo->getQuantity($examId); $j++) {
+                   }
+                   if($questionInfo['content']=="" and $check==1){
+                       $i--;
+                   }
+                   $check++;
+
+                print_r("   AAAAAAAAAAAAAAAAAAAAA".$i.$k." ");
+//                   if ($answersAmount == $amount) {
+                   $existQuestion=true;
+                    //   for ($j = 0; $j < $answerRepo->getQuantity($examId,$k)/* $answersAmount*/; $j++) {
+
+                           if (isset($_COOKIE['userAnswer' . $i . $k])) {
+
+                               print_r(" question ".$questionId. " answer " .$_COOKIE['userAnswer' . $i . $k]);
+
+                                $answer = $answerRepo->getAnswer($examId,$questionId,$_COOKIE['userAnswer' . $i . $k]);
+                                print_r($answer);
+                                    if ($answer['is_true'] == true and $trueUserAnswer) {
+                                        print_r(" TRUEEEE ");
+                                        $amount++;
+                                    } else {
+                                        print_r("  FALSE  ".$i.$k." ");
+                                        $trueUserAnswer = false;
+                                    }
+                              // setcookie ("userAnswer".$i.$k, "", time() - 3600);
+
+                           } else {
+                               print_r(" UPS ");
+                               $trueUserAnswer=false;
+                           }
+
+print_r(" answerTRUE ".$trueUserAnswer);
+                      // }
+                           /*
+                     //  for ($j = 0; $j < $questionRepo->getQuantity($examId); $j++) {
                            if (isset($_COOKIE['userAnswer' . $i . $j])) {
                                $userAnswers[$j] = $_COOKIE['userAnswer' . $i . $j];
                                //for ($m = 0; $m < $amount; $m++) {
-                               //  print_r($userAnswers[$j]);
-                               // print_r(" TRUE ");
-                               //print_r($trueAnswer[$j]);
+                                 print_r($userAnswers[$j]);
+                                print_r(" TRUE ");
+                               print_r($trueAnswer[$j]);
                                if ($userAnswers[$j] == $trueAnswer[$j] and $trueUserAnswer == true) {
                                    $trueUserAnswer = true;
-                                   // print_r(" TAAAK ");
+                                    print_r(" TAAAK ");
                                } else {
                                    $trueUserAnswer = false;
-                                   //   print_r(" NIEEE ");
+                                      print_r(" NIEEE ");
                                }
                                //}
                            }
                        }
-                       if ($trueUserAnswer) $points++;
-                   }
+                       if ($trueUserAnswer) $points++;*/
+                //   }
                }
-              // print_r($points);
+               if($amount==0 and $trueAnswers>0){
+                   $trueUserAnswer=false;
+
+                   print_r(" UUU DALCZEGOTUTAJJESTEM ");
+               }
+               print_r(" amount ".$amount);
+               print_r(" ISTRUE ".$trueAnswers);
+               print_r(" exist ".$existQuestion);
+           if ($trueUserAnswer){//} and $trueAnswers==$amount and $existQuestion) {
+               $points++;
+                print_r(" DLACEGO ");
            }
+               print_r(" POINTS " . $points);
+
+          // }
+
+       //    setcookie ("userAnswerAmount".$i, "", time() - 3600);
+         //  setcookie ("amountOfAnswers", "", time() - 3600);
+
+
        }
+      //  setcookie ("questionAmount", "", time() - 3600);
+        //setcookie ("accessTime", "", time() - 3600);
+
+        $resultRepository = new ResultRepository();
+        $examRepository = new ExamRepository();
+        $examInformation = $examRepository->getExam($examId);
+        $percentagePassedExam = $examInformation['percentage_passed_exam'];
+        print_r($percentagePassedExam);
+       $id = $resultRepository->getQuantity();
+       $numberOfAttempt = $resultRepository->getQuantityAttempt($examId,$userId);
+
+       $isPassed = true;
+       $dateOfResolveExam = "NULL";
+       $resultRepository->insert($id, $userId, $examId, $numberOfAttempt,$points, $isPassed, $dateOfResolveExam);
         return $this->render('studentResult.html.twig', array(
-            'data' => $data
+            'points' => $points
 
         ));
        // return $this->redirectToRoute('resultList');
@@ -125,11 +194,11 @@ $data = "UUUU RESULT CONYTOLLER";
             );
         }
 
-       /* return $this->render('resultList.html.twig', array(
+        return $this->render('resultList.html.twig', array(
             'data' => $tplArray,
             'information' => $info,
 
-        ));*/
+        ));
     }
 //* @ParamConverter("POST", class="Entity:Exam")
   /*

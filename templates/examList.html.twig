@@ -23,6 +23,7 @@
         <td>Maximum questions</td>
         <td>Maximum attempts</td>
         <td>Duration of exam</td>
+        <td>Percentage passed exam</td>
         <td>Created by (user id)</td>
         <td>Start date</td>
         <td>End date</td>
@@ -38,6 +39,7 @@
         <td> {{ action.max_questions|default('') }} </td>
         <td> {{ action.max_attempts|default('') }} </td>
         <td> {{ action.duration_of_exam|default('') }}</td>
+        <td> {{ action.percentage_passed_exam|default('') }}</td>
         <td> {{ action.created_by|default('') }}</td>
         <td> {{ action.start_date|default('') }}</td>
         <td> {{ action.end_date|default('') }}</td>

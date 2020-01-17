@@ -38,8 +38,6 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/app.js')
-    .addEntry('app', './assets/js/userForm.js')
-
     //.addEntry('questions', './src/Controller/User/Student/questions.json')
     //.addEntry('page2', './assets/js/page2.js')
 

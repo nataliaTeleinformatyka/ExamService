@@ -40,6 +40,7 @@ class ExamType extends AbstractType
                     ]])
             ->add('max_questions', IntegerType::class)
             ->add('max_attempts', IntegerType::class)
+            ->add('percentage_passed_exam', IntegerType::class)
             ->add('duration_of_exam', IntegerType::class, [
                 'help' => 'Must be in minutes.'
             ])

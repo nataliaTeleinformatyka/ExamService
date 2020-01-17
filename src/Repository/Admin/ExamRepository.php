@@ -10,6 +10,7 @@ namespace App\Repository\Admin;
 
 
 use App\Entity\Admin\Exam;
+use App\Repository\DatabaseConnection;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -22,6 +23,7 @@ class ExamRepository
     protected $dbname = 'Exam';
     private $entityManager = 'Exam';
     protected $reference;
+    protected $snap;
 
     public function __construct()
     {
@@ -69,8 +71,13 @@ class ExamRepository
 
     public function insert(array $data)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
+        }
+        if($_SESSION['role'] == "ROLE_ADMIN") {
+            $userId = -1;
+        } else {
+            $userId = $_SESSION['user_id'];
         }
 
         $actualExamId = $this->getQuantity();
@@ -86,8 +93,9 @@ class ExamRepository
             'max_attempts' => $data[4],
             'start_date' => $data[5],
             'end_date' => $data[6],
-            'created_by' => 0, //todo: user_id ktory jest zalogowany
-            'duration_of_exam' => $data[7]
+            'created_by' => $userId,
+            'duration_of_exam' => $data[7],
+            'percentage_passed_exam' => $data[8],
         ]);
         return true;
     }
@@ -105,7 +113,8 @@ class ExamRepository
                 'max_attempts' => $data[4],
                 'start_date' => $data[5],
                 'end_date' => $data[6],
-                'duration_of_exam' => $data[7]
+                'duration_of_exam' => $data[7],
+                'percentage_passed_exam' => $data[8],
             ]);
         return true;
     }
@@ -127,6 +136,7 @@ class ExamRepository
     {
         try {
             return $this->reference->getSnapshot()->numChildren();
+
         } catch (ApiException $e) {
         }
     }
@@ -143,6 +153,7 @@ class ExamRepository
         $exam->setMaxQuestions($information['max_questions']);
         $exam->setMaxAttempts($information['max_attempts']);
         $exam->setLearningRequired($information['learning_required']);
+        $exam->setPercentagePassedExam($information['percentage_passed_exam']);
         return $exam;
     }
 

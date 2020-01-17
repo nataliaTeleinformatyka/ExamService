@@ -23,6 +23,7 @@
                 <p><b>Czy materiały naukowe są wymagane :</b> {{ action.learning_required|default('undefined') }}</p>
                 <p><b>Maksymalna liczba pytań :</b> {{ action.max_questions|default('undefined') }}</p>
                 <p><b>Maksymalna liczba prób :</b> {{ action.max_attempts|default('undefined') }}</p>
+                <p><b>Próg zdawalności [%]</b> {{ action.percentage_passed_exam|default('undefined') }}</p>
                 <p><b>Czas trwania egzaminu</b> : {{ action.duration_of_exam|default('undefined') }}</p>
                 <p><b>Data rozpoczęcia dostępu do egzaminu :</b> {{ action.start_date|default('undefined') }}</p>
                 <p><b>Data zakończenia dostępu do egzaminu :</b> {{ action.end_date|default('undefined') }}</p>

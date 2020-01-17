@@ -43,7 +43,7 @@ $amount = 0;
 
         $questionsAmount=$questionRepo->getQuantity($examId);
 
-        $durationOfExam = $examInfo['duration_of_exam'];
+
        // $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
         for($i=0;$i<$questionsAmount;$i++){
@@ -92,9 +92,6 @@ $amount = 0;
                         }
                         setcookie("amountOfAnswers".$i, $answersAmount);
                 }
-
-
-                    //todo: nie wysylac czy poprawna odpowiedz, wysylac wszystkie true+aktywne(do max answers)
                     //todo: answer must be active jezeli ma byc wyswietllona, true musi byc active  and true
 
 
@@ -105,7 +102,6 @@ $amount = 0;
             for ($j = 0; $j < $maxQuestions; $j++) {
                 $questions = $questionRepo->getQuestion($examId, $j);
                 setcookie("questionId".$j, $questions['id'] );
-                setcookie("questionIsMultichoice".$j, $questions['is_multichoice'] );
                 setcookie("questionMaxAnswers".$j, $questions['max_answers'] );
                 setcookie("questionNameOfFile".$j, $questions['name_of_file'] );
                 setcookie("questionContent".$j, $questions['content'] );
@@ -113,11 +109,16 @@ $amount = 0;
             }
         }
         setcookie("questionAmount", $amount);
+
+        $actualHour = date('H')*60;
+        $actualMinutes = date('i');
+
+        $durationOfExam = $examInfo['duration_of_exam']+$actualHour+$actualMinutes;
         setcookie("accessTime",$durationOfExam);
+
+
         $_SESSION['questionsAmount'] = $amount;
         $_SESSION['exam_id']= $examId;
-
-        print_r("ZMIENNA SESJI: ".$_SESSION['questionsAmount']);
 
         return $this->render('studentExam.html', array(
         ));
