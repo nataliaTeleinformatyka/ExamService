@@ -12,6 +12,7 @@ namespace App\Controller\Admin;
 use App\Entity\Admin\Question;
 use App\Form\Admin\QuestionType;
 use App\Repository\Admin\AnswerRepository;
+use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\QuestionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,29 +70,34 @@ class QuestionController extends AbstractController
      */
     public function questionListCreate(Request $request) {
         $_SESSION['exam_id'] ="";
-        $questionInformation= new QuestionRepository();
         $examId = $request->attributes->get('id');
 
-        $idQuestion = $questionInformation -> getQuantity($examId);
+        $questionRepository= new QuestionRepository();
+        $questionsId =$questionRepository->getIdQuestions($examId);
 
-        if($idQuestion>0) {
+        if($questionsId!=0){
+            $questionAmount = count($questionsId);
+        } else {
+            $questionAmount=0;
+        }
+
+        if($questionAmount>0) {
             $info = true;
-            for ($i = 0; $i < $idQuestion; $i++) {
-                $questions = $questionInformation->getQuestion($examId,$i);
-
-
-                $tplArray[$i] = array(
+            for($j=0;$j<$questionAmount;$j++){
+                $questions = $questionRepository->getQuestion($examId,$questionsId[$j]);
+                $tplArray[$j] = array(
                     'id' => $questions['id'],
                     'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                     'max_answers' => $questions['max_answers'],
                     'name_of_file' => $questions['name_of_file'],
                 );
+            }
                 if($questions['name_of_file']!="") {
                     // $questionInformation->downloadFile($questions['name_of_file']);
                      //print_r($inf);
                 }
-            }
+
         } else {
             $info = false;
             $tplArray = array(

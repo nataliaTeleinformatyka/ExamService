@@ -73,7 +73,7 @@ class LearningMaterialsGroupRepository
             return false;
         }
 
-        $materialsGroupId = $this->getQuantity();
+        $materialsGroupId = $this->getNextId();
 
         $this->reference
             ->getChild($materialsGroupId)->set([
@@ -98,7 +98,7 @@ class LearningMaterialsGroupRepository
     {
         try {
             if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
-                $this->reference->getChild($materialsGroupId)->remove();
+                    $this->reference->getChild($materialsGroupId)->remove();
                 return true;
             } else {
                 return false;
@@ -114,10 +114,48 @@ class LearningMaterialsGroupRepository
         } catch (ApiException $e) {
         }
     }
+
+    public function getLearningMaterialsGroupId() {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return  $this->reference->getChildKeys();
+        }
+    }
+
     public function find(int $groupId){
         $information = $this->reference->getChild($groupId)->getValue();
         $info = new LearningMaterialsGroup([]);
         $info->setNameOfGroup($information['name_of_group']);
         return $info;
+    }
+
+    public function getNextId(){
+        $learningMaterialsGroupId= $this->getLearningMaterialsGroupId();
+        if($learningMaterialsGroupId!=0){
+            $learningMaterialsGroupAmount = count($learningMaterialsGroupId);
+        } else {
+            $learningMaterialsGroupAmount=0;
+        }
+        switch ($learningMaterialsGroupAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$learningMaterialsGroupAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$learningMaterialsGroupId[0];
+                for($i=1;$i<$learningMaterialsGroupAmount;$i++){
+                    if($maxNumber<=$learningMaterialsGroupId[$i]){
+                        $maxNumber =$learningMaterialsGroupId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

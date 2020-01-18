@@ -57,12 +57,20 @@ class UserExamController  extends AbstractController
      */
     public function userExamListCreate()
     {
-        $examInformation = new UserExamRepository();
-        $id = $examInformation->getQuantity();
-        if ($id > 0) {
+        $userExamRepository = new UserExamRepository();
+
+        $userExamsId = $userExamRepository->getIdUserExams();
+
+        if($userExamsId!=0){
+            $userExamAmount = count($userExamsId);
+        } else {
+            $userExamAmount=0;
+        }
+
+        if ($userExamAmount > 0) {
             $info = true;
-            for ($i = 0; $i < $id; $i++) {
-                $userExam = $examInformation->getUserExam($i);
+            for ($i = 0; $i < $userExamAmount; $i++) {
+                $userExam = $userExamRepository->getUserExam($userExamsId[$i]);
                 if($userExam['start_access_time']=="NULL") {
                     $startDate = " ";
                 } else {
@@ -98,7 +106,6 @@ class UserExamController  extends AbstractController
                 'end_access_time' => ""
             );
         }
-        print_r($userExam['user_id']);
         if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
             $infoDelete = $_SESSION['information'];
         } else {

@@ -136,12 +136,11 @@ class UserRepository
         }
         return 0;
     }
-   public function insert(array $data) {
+   public function insert(int $id, array $data) {
        if(empty($data) /*|| isset($data)*/) { return false; }
 
-       $actualUserId = $this->getQuantity();
-       $this->reference->getChild($actualUserId)->set([
-           'id' => $actualUserId,
+       $this->reference->getChild($id)->set([
+           'id' => $id,
            'first_name' => $data[1],
            'last_name' => $data[2],
            'email' => $data[3],
@@ -185,6 +184,43 @@ class UserRepository
             return $this->reference->getSnapshot()->numChildren();
         } catch (ApiException $e) {
         }
+    }
+
+    public function getIdUsers() {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $this->reference->getChildKeys();
+        }
+    }
+
+    public function getIdNextUser(){
+        $usersId = $this->getIdUsers();
+        if($usersId!=0){
+            $usersAmount = count($usersId);
+        } else {
+            $usersAmount=0;
+        }
+        switch ($usersAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$usersId[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$usersId[0];
+                for($i=1;$i<$usersAmount;$i++){
+                    if($maxNumber<=$usersId[$i]){
+                        $maxNumber =$usersId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 
     public function find(int $userId){

@@ -58,12 +58,18 @@ class LearningMaterialsGroupController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function learningMaterialsGroupListCreate() {
-        $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
-        $id = $learningMaterialsGroupInformation -> getQuantity();
-        if($id>0) {
+        $learningMaterialsGroupRepository= new LearningMaterialsGroupRepository();
+        $learningMaterialsGroupsId = $learningMaterialsGroupRepository->getLearningMaterialsGroupId();
+        if($learningMaterialsGroupsId!=0){
+            $learningMaterialsGroupCount = count($learningMaterialsGroupsId);
+        } else {
+            $learningMaterialsGroupCount=0;
+        }
+
+        if($learningMaterialsGroupCount>0) {
             $info=true;
-            for ($i = 0; $i < $id; $i++) {
-                $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($i);
+            for ($i = 0; $i < $learningMaterialsGroupCount; $i++) {
+                $learningMaterialsGroup = $learningMaterialsGroupRepository->getLearningMaterialsGroup($learningMaterialsGroupsId[$i]);
 
                 $tplArray[$i] = array(
                     'id' => $i,

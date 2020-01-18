@@ -72,7 +72,7 @@ class ResultRepository
             return false;
         }
 
-        $actualResultId = $this->getQuantity();
+        $actualResultId = $this->getNextId();
 
         $this->reference
             ->getChild($actualResultId)->set([
@@ -125,6 +125,15 @@ class ResultRepository
         }
     }
 
+    public function getIdResults()
+    {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return  $this->reference->getChildKeys();
+        }
+    }
+
     public function getQuantityAttempt($examId, $userId){
         $id = $this->getQuantity();
         for($i=0;$i<$id;$i++) {
@@ -151,5 +160,34 @@ class ResultRepository
         $result->setIsPassed($information['is_passed']);
         $result->setDateOfResolveExam($information['date_of_resolve_exam']);
         return $result;
+    }
+
+    public function getNextId(){
+        $resultsId= $this->getIdResults();
+        if($resultsId!=0){
+            $resultsAmount = count($resultsId);
+        } else {
+            $resultsAmount=0;
+        }
+        switch ($resultsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$resultsAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$resultsId[0];
+                for($i=1;$i<$resultsAmount;$i++){
+                    if($maxNumber<=$resultsId[$i]){
+                        $maxNumber =$resultsId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

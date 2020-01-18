@@ -51,12 +51,12 @@ class UserController extends AbstractController
 
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
-            $uid = $repositoryUser->getQuantity();
+            $uid = $repositoryUser->getIdNextUser();
 
             $email=$values[3];
             $password=$values[0];
             $repositoryUser->registerUser($uid,$email,$password);
-            $repositoryUser->insert($values);
+            $repositoryUser->insert($uid, $values);
 
 
 
@@ -74,12 +74,18 @@ class UserController extends AbstractController
      */
     public function userListCreate() {
 
-        $userInformation= new UserRepository();
-        $id = $userInformation -> getQuantity();
-        if ($id > 0) {
+        $userRepository= new UserRepository();
+        $usersId = $userRepository->getIdUsers();
+        if($usersId!=0){
+            $usersAmount = count($usersId);
+        } else {
+            $usersAmount=0;
+        }
+
+        if ($usersAmount > 0) {
             $info=true;
-            for ($i = 0; $i < $id; $i++) {
-                $users = $userInformation->getUser($i);
+            for ($i = 0; $i < $usersAmount; $i++) {
+                $users = $userRepository->getUser($usersId[$i]);
 
                 //$password[$i] = $userInformation->getUserPasswordFromAuthentication($users['email']);
                // $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);

@@ -56,16 +56,21 @@ class LearningMaterialsGroupExamController extends AbstractController
      */
     public function learningMaterialsGroupExamListCreate()
     {
-        $groupExamInformation = new LearningMaterialsGroupExamRepository();
+        $groupExamRepository = new LearningMaterialsGroupExamRepository();
         $examInformationRepo = new ExamRepository();
         $learningMaterialsGroupRepo= new LearningMaterialsGroupRepository();
 
-        $id = $groupExamInformation->getQuantity();
+        $groupExamsId = $groupExamRepository->getIdLearningMaterialsGroupExams();
+        if($groupExamsId!=0){
+            $groupExamsCount = count($groupExamsId);
+        } else {
+            $groupExamsCount=0;
+        }
 
-        if ($id > 0) {
+        if ($groupExamsCount > 0) {
             $info = true;
-            for ($i = 0; $i < $id; $i++) {
-                $groupExam = $groupExamInformation->getLearningMaterialsGroupExam($i);
+            for ($i = 0; $i < $groupExamsCount; $i++) {
+                $groupExam = $groupExamRepository->getLearningMaterialsGroupExam($groupExamsId[$i]);
 
                 $groupInfo = $learningMaterialsGroupRepo->getLearningMaterialsGroup($groupExam['learning_materials_group_id']);
                 $examInfo=$examInformationRepo->getExam($groupExam['exam_id']);

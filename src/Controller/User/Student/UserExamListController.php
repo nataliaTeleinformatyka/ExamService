@@ -9,7 +9,9 @@
 namespace App\Controller\User\Student;
 
 
+use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
+use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\ResultRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,61 +27,71 @@ class UserExamListController extends AbstractController
     //todo: dostep do egzaminow user_id = id aktualnego usera, przedzial dostepu, ilosc pozostalych prob
     public function studentExamListCreate() {
          $userExamRepository = new UserExamRepository();
+         $questionRepository = new QuestionRepository();
+         $answerRepository = new AnswerRepository();
          $resultRepository = new ResultRepository();
 
-         $id = $userExamRepository->getQuantity();
-         if ($id > 0) {
+         $userExamsId = $userExamRepository->getIdUserExams();
+        if($userExamsId!=0){
+            $userExamsCount = count($userExamsId);
+        } else {
+            $userExamsCount=0;
+        }
+         if ($userExamsCount > 0) {
              $info=false;
              $index = 0;
-             for ($i = 0; $i < $id; $i++) {
-                 $userExam = $userExamRepository->getUserExam($i);
+             for ($i = 0; $i < $userExamsCount; $i++) {
+                 $userExam = $userExamRepository->getUserExam($userExamsId[$i]);
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
-                     $info = true;
-                     $numberOfAttemptsInResult = $resultRepository->getQuantityAttempt($userExam['exam_id'],$_SESSION['user_id']);
+                     $questionsId = $questionRepository->getIdQuestions($userExam['exam_id']);
+                     if ($questionsId > 0) {
 
-                     $exam = new ExamRepository();
-                     $examInfo = $exam->getExam($userExam['exam_id']);
-                     $examName = $examInfo['name'];
-                     $maxAttempts = $examInfo['max_attempts'];
-                     if($maxAttempts != "NULL") {
-                        $remainingAttempts = $maxAttempts-$numberOfAttemptsInResult;
-                        $attemptsInfo = "- Pozostało prób: ". $remainingAttempts;
-                     }
+                         $info = true;
+                         $numberOfAttemptsInResult = $resultRepository->getQuantityAttempt($userExam['exam_id'], $_SESSION['user_id']);
 
-                     if ($userExam['start_access_time'] != "NULL") {
-                         $startDate = $userExam['start_access_time'];
-                         if($userExam['end_access_time'] != "NULL") {
-                             $endDate = $userExam['end_access_time'];
-                             $dateInformation = "( ".$startDate." - ".$endDate." ) ";
-                         } else {
-                             $dateInformation = "( dostęp od ".$startDate. " ) ";
+                         $exam = new ExamRepository();
+                         $examInfo = $exam->getExam($userExam['exam_id']);
+                         $examName = $examInfo['name'];
+                         $maxAttempts = $examInfo['max_attempts'];
+                         if ($maxAttempts != "NULL") {
+                             $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;
+                             $attemptsInfo = "- Pozostało prób: " . $remainingAttempts;
                          }
-                     } else {
-                         if($userExam['end_access_time'] != "NULL") {
-                             $endDate = $userExam['end_access_time'];
-                             $dateInformation = "( dostęp do".$endDate." ) ";
-                         } else {
-                             $dateInformation = " ";
-                         }
-                     }
 
-                     if ($userExam['date_of_resolve_exam'] == "NULL") {
-                         $resolveDate = " ";
-                     } else {
-                         $resolveDate = $userExam['date_of_resolve_exam'];
-                     }
-                     $tplArray[$i] = array(
-                         'user_exam_id' => $userExam['user_exam_id'],
-                         'user_id' => $userExam['user_id'],
-                         'exam_id' => $userExam['exam_id'],
-                         'date_of_resolve_exam' => $resolveDate,
-                         'access_period' => $dateInformation,
-                         'remaining_attempts' => $attemptsInfo,
-                         'exam_name' => $examName
-                         //todo class result and dodac tutaj ilosc pozostalych prob
-                     );
-                     $index++;
-                 }/* else {
+                         if ($userExam['start_access_time'] != "NULL") {
+                             $startDate = $userExam['start_access_time'];
+                             if ($userExam['end_access_time'] != "NULL") {
+                                 $endDate = $userExam['end_access_time'];
+                                 $dateInformation = "( " . $startDate . " - " . $endDate . " ) ";
+                             } else {
+                                 $dateInformation = "( dostęp od " . $startDate . " ) ";
+                             }
+                         } else {
+                             if ($userExam['end_access_time'] != "NULL") {
+                                 $endDate = $userExam['end_access_time'];
+                                 $dateInformation = "( dostęp do" . $endDate . " ) ";
+                             } else {
+                                 $dateInformation = " ";
+                             }
+                         }
+
+                         if ($userExam['date_of_resolve_exam'] == "NULL") {
+                             $resolveDate = " ";
+                         } else {
+                             $resolveDate = $userExam['date_of_resolve_exam'];
+                         }
+                         $tplArray[$i] = array(
+                             'user_exam_id' => $userExam['user_exam_id'],
+                             'user_id' => $userExam['user_id'],
+                             'exam_id' => $userExam['exam_id'],
+                             'date_of_resolve_exam' => $resolveDate,
+                             'access_period' => $dateInformation,
+                             'remaining_attempts' => $attemptsInfo,
+                             'exam_name' => $examName
+                             //todo class result and dodac tutaj ilosc pozostalych prob
+                         );
+                         $index++;
+                     }/* else {
                      return $this->redirectToRoute('login');
                  }  else {
                      $info = false;
@@ -91,6 +103,7 @@ class UserExamListController extends AbstractController
                          'end_access_time' => ''
                      );
                  }*/
+                 }
              }
          }
          else {

@@ -10,7 +10,6 @@ namespace App\Repository\Admin;
 
 
 use App\Entity\Admin\Exam;
-use App\Repository\DatabaseConnection;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -80,12 +79,11 @@ class ExamRepository
             $userId = $_SESSION['user_id'];
         }
 
-        $actualExamId = $this->getQuantity();
+       $maxNumber = $this->nextExamId();
 
         $this->reference
-        ->getChild($actualExamId)->set([
-            //$actualUserId => [
-            'exam_id' => $actualExamId,
+        ->getChild($maxNumber)->set([
+            'exam_id' => $maxNumber,
             'name' => $data[0],
             'learning_required' => $data[1],
             'additional_information' => $data[2],
@@ -95,12 +93,13 @@ class ExamRepository
             'end_date' => $data[6],
             'created_by' => $userId,
             'duration_of_exam' => $data[7],
-            'percentage_passed_exam' => $data[8],
+            'percentage_passed_exam' => $data[9],
         ]);
         return true;
     }
+
     public function update(array $data, int $id) {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
 
@@ -140,6 +139,15 @@ class ExamRepository
         } catch (ApiException $e) {
         }
     }
+
+    public function getIdExams()
+    {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return  $this->reference->getChildKeys();
+        }
+    }
     public function find(int $examId){
         $information = $this->reference->getChild($examId)->getValue();
         $exam = new Exam([]);
@@ -147,7 +155,7 @@ class ExamRepository
         $exam->setId($information['exam_id']);
         $exam->setAdditionalInformation($information['additional_information']);
         $exam->setCreatedBy($information['created_by']);
-        //$exam->setDurationOfExam(date("H",strtotime($information['duration_of_exam']['date']))*60 + date("i",strtotime($information['duration_of_exam']['date'])));
+        $exam->setDurationOfExam($information['duration_of_exam']);
         //$exam->setEndDate($information['end_date']);
        // $exam->setStartDate($information['start_date']);
         $exam->setMaxQuestions($information['max_questions']);
@@ -157,4 +165,32 @@ class ExamRepository
         return $exam;
     }
 
+    public function nextExamId(){
+        $examsId= $this->getIdExams();
+        if($examsId!=0){
+            $examsAmount = count($examsId);
+        } else {
+            $examsAmount=0;
+        }
+        switch ($examsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$examsAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$examsId[0];
+                for($i=1;$i<$examsAmount;$i++){
+                    if($maxNumber<=$examsId[$i]){
+                        $maxNumber =$examsId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
+    }
 }

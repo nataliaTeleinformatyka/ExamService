@@ -65,10 +65,10 @@ class LearningMaterialRepository {
 
     public function insert( int $learningMaterialsGroupId, array $data, UploadedFile $file)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
-        $materialId = $this->getQuantity($learningMaterialsGroupId);
+        $materialId = $this->nextLearningMaterialId($learningMaterialsGroupId);
         $learningMaterialsGroupReference = $this->database->getReference("LearningMaterialsGroup");
         $filename = $this->upload_file($file);
         $learningMaterialsGroupReference->getChild($learningMaterialsGroupId)
@@ -128,13 +128,25 @@ class LearningMaterialRepository {
     public function getQuantity(int $learningMaterialsGroupId)
     {
         try {
-            $examReference = $this->database->getReference("LearningMaterialsGroup");
+            $groupReference = $this->database->getReference("LearningMaterialsGroup");
 
-            return $examReference->getSnapshot()->getChild($learningMaterialsGroupId)
+            return $groupReference->getSnapshot()->getChild($learningMaterialsGroupId)
                 ->getChild("LearningMaterial")->numChildren();
         } catch (ApiException $e) {
         }
     }
+
+    public function getIdLearningMaterials(int $groupId)
+    {
+        $groupReference = $this->database->getReference("LearningMaterialsGroup");
+        $learningMaterialsReference= $groupReference->getChild($groupId)->getChild("LearningMaterial")->getSnapshot()->getReference();
+        if($learningMaterialsReference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $learningMaterialsReference->getChildKeys();
+        }
+    }
+
     public function find(int $materialId){
         $information = $this->reference->getSnapshot()->getChild($_SESSION['group_id'])
             ->getChild("LearningMaterial")->getChild($materialId)->getValue();
@@ -145,5 +157,34 @@ class LearningMaterialRepository {
         $learningMaterial->setIsRequired($information['is_required']);
 
         return $learningMaterial;
+    }
+
+    public function nextLearningMaterialId($groupId){
+        $learningMaterialsId= $this->getIdLearningMaterials($groupId);
+        if($learningMaterialsId!=0){
+            $learningMaterialsAmount = count($learningMaterialsId);
+        } else {
+            $learningMaterialsAmount=0;
+        }
+        switch ($learningMaterialsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$learningMaterialsAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$learningMaterialsId[0];
+                for($i=1;$i<$learningMaterialsAmount;$i++){
+                    if($maxNumber<=$learningMaterialsId[$i]){
+                        $maxNumber =$learningMaterialsId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

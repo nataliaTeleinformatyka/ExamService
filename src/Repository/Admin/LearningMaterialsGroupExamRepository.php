@@ -52,7 +52,7 @@ class LearningMaterialsGroupExamRepository
             return false;
         }
 
-        $materialsGroupExamId = $this->getQuantity();
+        $materialsGroupExamId = $this->getNextId();
 
         $this->reference
             ->getChild($materialsGroupExamId)->set([
@@ -95,6 +95,17 @@ class LearningMaterialsGroupExamRepository
         } catch (ApiException $e) {
         }
     }
+
+
+    public function getIdLearningMaterialsGroupExams()
+    {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $this->reference->getChildKeys();
+        }
+    }
+
     public function find(int $groupId){
         $information = $this->reference->getChild($groupId)->getValue();
         $info = new LearningMaterialsGroupExam([]);
@@ -102,6 +113,7 @@ class LearningMaterialsGroupExamRepository
         $info->setExamId($information['exam_id']);
         return $info;
     }
+
     public function findByGroupId(int $learningMaterialsGroupId) {
         $amount = $this->getQuantity();
         for($i=0;$i<$amount;$i++) {
@@ -113,6 +125,35 @@ class LearningMaterialsGroupExamRepository
             }
 
         }
+    }
 
+
+    public function getNextId() {
+        $learningMaterialsGroupExamsId = $this->getIdLearningMaterialsGroupExams();
+        if($learningMaterialsGroupExamsId!=0){
+            $learningMaterialsGroupExamsAmount = count($learningMaterialsGroupExamsId);
+        } else {
+            $learningMaterialsGroupExamsAmount=0;
+        }
+        switch ($learningMaterialsGroupExamsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$learningMaterialsGroupExamsId[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$learningMaterialsGroupExamsId[0];
+                for($i=1;$i<$learningMaterialsGroupExamsAmount;$i++){
+                    if($maxNumber<=$learningMaterialsGroupExamsId[$i]){
+                        $maxNumber =$learningMaterialsGroupExamsId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

@@ -80,12 +80,17 @@ class AnswerController extends AbstractController
 
         $examId = $request->attributes->get('examId');
         $questionId = $request->attributes->get('questionId');
-        $id = $answerInformation -> getQuantity($examId,$questionId);
 
-        if($id>0) {
+        $answersId = $answerInformation->getIdAnswers($examId,$questionId);
+        if($answersId!=0){
+            $answersCount = count($answersId);
+        } else {
+            $answersCount=0;
+        }
+        if($answersCount>0) {
             $info=true;
-            for ($i = 0; $i < $id; $i++) {
-                $answers = $answerInformation->getAnswer($examId,$questionId,$i);
+            for ($i = 0; $i < $answersCount; $i++) {
+                $answers = $answerInformation->getAnswer($examId,$questionId,$answersId[$i]);
                 if ($answers['is_true'] == 1) {
                     $is_required = "true";
                 } else {

@@ -35,7 +35,7 @@ class ExamController extends AbstractController
         $form = $this->createForm(ExamType::class, $exam);
         $form->handleRequest($request);
         $exam = $form->getData();
-        print_r($exam);
+        //print_r($exam);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $exam = $form->getData();
@@ -43,6 +43,7 @@ class ExamController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
 
             $values = $exam->getAllInformation();
+            print_r($values);
             $repositoryExam = new ExamRepository();
             $repositoryExam->insert($values);
 
@@ -53,7 +54,6 @@ class ExamController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-//todo: zapisywac do bazy przez kogo stworzony exam, zeby nie mogli przypisywac uczniow do nie swojego egzaminu
     /**
      * @Route("examList", name="examList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -61,12 +61,19 @@ class ExamController extends AbstractController
     public function examListCreate()
     {
 
-        $examInformation = new ExamRepository();
-        $id = $examInformation->getQuantity();
-        if ($id > 0) {
+        $examRepository = new ExamRepository();
+        $examsId = $examRepository->getIdExams();
+        if($examsId!=0){
+            $examsCount = count($examsId);
+        } else {
+            $examsCount=0;
+        }
+
+        if ($examsCount > 0) {
             $info = true;
-            for ($i = 0; $i < $id; $i++) {
-                $exams = $examInformation->getExam($i);
+            for ($i = 0; $i < $examsCount; $i++) {
+
+                $exams = $examRepository->getExam($examsId[$i]);
                 //todo: UNCOMENT THIS WHEN AGATA CHANGE learnign in database
                /* if ($exams['learning_required'] == 1) {
                     $is_required = true;
@@ -75,13 +82,13 @@ class ExamController extends AbstractController
                 }*/
                $is_required = "true";
                 $tplArray[$i] = array(
-                    'id' => $i,
+                    'id' => $examsId[$i],
                     'name' => $exams['name'],
                     'learning_required' => $is_required,
                     'max_questions' => $exams['max_questions'],
                     'max_attempts' => $exams['max_attempts'],
                     'duration_of_exam' => $exams['duration_of_exam'],
-                    'percentage_passed_exam' => $exams['percentage_passed_exam'],
+                    'percentage_passed_exam' => '',// $exams['percentage_passed_exam'],
                     'created_by' => $exams['created_by'],
                     'start_date' => $exams['start_date']['date'],
                     'end_date' => $exams['end_date']['date'],
@@ -172,7 +179,7 @@ class ExamController extends AbstractController
             $repositoryExam = new ExamRepository();
             $repositoryExam->update($values,$examId);
             print_r($values);
-           // return $this->redirectToRoute('examList');
+            return $this->redirectToRoute('examList');
         }
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),

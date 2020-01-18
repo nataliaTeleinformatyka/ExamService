@@ -66,18 +66,20 @@ class QuestionRepository
     }
 
 
-    public function insert( int $idExam, array $data, string $filename)
+    public function insert( int $examId, array $data, string $filename)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
-        $questionId = $this->getQuantity($idExam);
+        $questionRepository = new QuestionRepository();
         $examReference = $this->database->getReference("Exam");
 
-        $examReference->getChild($idExam)
-            ->getChild("Question")->getChild($questionId)->set([
-                'id' => $questionId,
-                'exam_id' => $idExam,
+        $maxNumber = $questionRepository->getNextId($examId);
+
+        $examReference->getChild($examId)
+            ->getChild("Question")->getChild($maxNumber)->set([
+                'id' => $maxNumber,
+                'exam_id' => $examId,
                 'content' => $data[0],
                 'max_answers' => $data[1],
                 'name_of_file' => $filename
@@ -112,12 +114,12 @@ class QuestionRepository
     }
 
 
-    public function delete(int $idExam, int $questionId)
+    public function delete(int $examId, int $questionId)
     {
         $examReference = $this->database->getReference("Exam");
         try {
-            if ($examReference->getSnapshot()->getChild($idExam)->hasChild("Question")) {
-                $examReference->getChild($idExam)->getChild("Question")->getChild($questionId)->remove();
+            if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
+                $examReference->getChild($examId)->getChild("Question")->getChild($questionId)->remove();
                 return true;
             } else {
                 return false;
@@ -126,13 +128,24 @@ class QuestionRepository
         }
     }
 
-    public function getQuantity(int $idExam)
+    public function getQuantity(int $examId)
     {
         try {
             $examReference = $this->database->getReference("Exam");
 
-            return $examReference->getSnapshot()->getChild($idExam)->getChild("Question")->numChildren();
+            return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->numChildren();
         } catch (ApiException $e) {
+        }
+    }
+
+    public function getIdQuestions(int $examId)
+    {
+        $examReference = $this->database->getReference("Exam");
+        $questionReference= $examReference->getChild($examId)->getChild("Question")->getSnapshot()->getReference();
+        if($questionReference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $questionReference->getChildKeys();
         }
     }
 
@@ -159,5 +172,33 @@ class QuestionRepository
         $question->setNameOfFile($information['name_of_file']);
 
         return $question;
+    }
+    public function getNextId($examId){
+        $questionId= $this->getIdQuestions($examId);
+        if($questionId!=0){
+            $questionsAmount = count($questionId);
+        } else {
+            $questionsAmount=0;
+        }
+        switch ($questionsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$questionsAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$questionId[0];
+                for($i=1;$i<$questionsAmount;$i++){
+                    if($maxNumber<=$questionId[$i]){
+                        $maxNumber =$questionId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

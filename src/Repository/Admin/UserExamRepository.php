@@ -44,16 +44,17 @@ class UserExamRepository
 
     public function insert(array $data)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
-        $actualUserExamId = $this->getQuantity();
+
+        $maxNumber = $this->nextUserExamId();
         $this->reference
-            ->getChild($actualUserExamId)->set([
-                'user_exam_id' => $actualUserExamId,
+            ->getChild($maxNumber)->set([
+                'user_exam_id' => $maxNumber,
                 'user_id' => $data[0],
                 'exam_id' => $data[1],
-                //'date_of_resolve_exam' => NULL,
+              //  'date_of_resolve_exam' => NULL,
                 'start_access_time' => $data[3],
                 'end_access_time' => $data[4],
             ]);
@@ -80,6 +81,15 @@ class UserExamRepository
         } catch (ApiException $e) {
         }
     }
+
+    public function getIdUserExams()
+    {
+        if($this->reference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $this->reference->getChildKeys();
+        }
+    }
     public function isUserExamForExamId(int $examId)
     {
         for ($i = 0; $i < $this->getQuantity(); $i++) {
@@ -93,7 +103,7 @@ class UserExamRepository
     }
 
     public function update(array $data, int $id) {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
 
@@ -114,5 +124,34 @@ class UserExamRepository
         //$userExam->setEndAccessTime($information['end_access_time']);
 
         return $userExam;
+    }
+
+    public function nextUserExamId(){
+        $userExamsId= $this->getIdUserExams();
+        if($userExamsId!=0){
+            $userExamsAmount = count($userExamsId);
+        } else {
+            $userExamsAmount=0;
+        }
+        switch ($userExamsAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$userExamsAmount[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$userExamsId[0];
+                for($i=1;$i<$userExamsAmount;$i++){
+                    if($maxNumber<=$userExamsId[$i]){
+                        $maxNumber =$userExamsId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }

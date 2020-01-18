@@ -64,20 +64,22 @@ class LearningMaterialController  extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    //todo: wyswietlanie gdy usuniety zostanie rekord 0 - DLA WSZYSTKICH CONTROLLER
     public function learningMaterialListCreate(Request $request) {
-        $learningMaterialInformation= new LearningMaterialRepository();
+        $learningMaterialRepository= new LearningMaterialRepository();
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
         $_SESSION['group_id'] = "";
-        $id = $learningMaterialInformation -> getQuantity($learningMaterialsGroupId);
 
-
-        if($id>0) {
+        $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialsGroupId);
+        if($learningMaterialsId!=0){
+            $learningMaterialsCount = count($learningMaterialsId);
+        } else {
+            $learningMaterialsCount=0;
+        }
+        if($learningMaterialsCount>0) {
             $info = true;
-            for ($i = 0; $i < $id; $i++) {
-                $learningMaterial = $learningMaterialInformation->getLearningMaterial($learningMaterialsGroupId,$i);
+            for ($i = 0; $i < $learningMaterialsCount; $i++) {
+                $learningMaterial = $learningMaterialRepository->getLearningMaterial($learningMaterialsGroupId,$learningMaterialsId[$i]);
            if($learningMaterial['id']!=$i) {
-//todo: pomijac rekord 0 gdy usuniety
                     print_r($learningMaterial);
                 }
                 if($learningMaterial['is_required'] == true) {
@@ -85,7 +87,7 @@ class LearningMaterialController  extends AbstractController
                 } else {
                     $is_required="false";
                 }
-                print_r($learningMaterialInformation->get_file($learningMaterial['name_of_content']));
+                print_r($learningMaterialRepository->get_file($learningMaterial['name_of_content']));
                 $tplArray[$i] = array(
                     'id' => $learningMaterial['id'],
                     'learning_materials_group_id' => $learningMaterial['learning_materials_group_id'],

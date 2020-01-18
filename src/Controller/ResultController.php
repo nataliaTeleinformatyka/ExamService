@@ -51,7 +51,7 @@ class ResultController extends AbstractController
                $existQuestion=false;
                $questionGoodAmount++;
            }
-
+print_r(" PPPPP ");
            $check=1;
                for ($k = 0; $k < $answerRepo->getQuantity($examId,$i); $k++) {
                    if (isset($_COOKIE['answerId' . $i . $k])) {
@@ -88,10 +88,12 @@ class ResultController extends AbstractController
                                     }
                               // setcookie ("userAnswer".$i.$k, "", time() - 3600);
 
-                           } else {
-                               print_r(" UPS ");
-                               $trueUserAnswer=false;
-                           }
+                           }// else {
+                               if($amount!=$trueAnswers) {
+                                   print_r(" UPS ");
+                                   $trueUserAnswer = false;
+                               }
+                           //}
 
 print_r(" answerTRUE ".$trueUserAnswer);
                       // }

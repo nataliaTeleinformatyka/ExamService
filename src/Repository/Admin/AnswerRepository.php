@@ -52,11 +52,11 @@ class AnswerRepository
 
     public function insert(int $examId, int $questionId, array $data)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
 
-        $actualAnswerId = $this->getQuantity($examId,$questionId);
+        $actualAnswerId = $this->getNextId($examId,$questionId);
 
         $examReference = $this->database->getReference("Exam");
 
@@ -109,6 +109,19 @@ class AnswerRepository
         } catch (ApiException $e) {
         }
     }
+
+    public function getIdAnswers(int $examId,int $questionId)
+    {
+        $examReference = $this->database->getReference("Exam");
+        $answerReference= $examReference->getChild($examId)->getChild("Question")->getChild($questionId)->getChild("Answer")
+            ->getSnapshot()->getReference();
+        if($answerReference->getSnapshot()->hasChildren()==NULL){
+            return 0;
+        } else {
+            return $answerReference->getChildKeys();
+        }
+    }
+
     public function find(int $answerId){
         $examReference = $this->database->getReference("Exam");
 
@@ -120,5 +133,34 @@ class AnswerRepository
         $answer->setIsActive($information['is_active']);
         $answer->setIsTrue($information['is_true']);
         return $answer;
+    }
+
+    public function getNextId($examId, $questionId) {
+        $answersId = $this->getIdAnswers($examId,$questionId);
+        if($answersId!=0){
+            $answersAmount = count($answersId);
+        } else {
+            $answersAmount=0;
+        }
+        switch ($answersAmount) {
+            case 0:{
+                $maxNumber = 0;
+                break;
+            }
+            case 1:{
+                $maxNumber=$answersId[0]+1;
+                break;
+            }
+            default:{
+                $maxNumber=$answersId[0];
+                for($i=1;$i<$answersAmount;$i++){
+                    if($maxNumber<=$answersId[$i]){
+                        $maxNumber =$answersId[$i];
+                    }
+                }
+                $maxNumber=$maxNumber+1;
+            }
+        }
+        return $maxNumber;
     }
 }
