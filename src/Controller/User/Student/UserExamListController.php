@@ -40,12 +40,14 @@ class UserExamListController extends AbstractController
          if ($userExamsCount > 0) {
              $info=false;
              $index = 0;
+             print_r(" TUTAJJESTEM ");
              for ($i = 0; $i < $userExamsCount; $i++) {
                  $userExam = $userExamRepository->getUserExam($userExamsId[$i]);
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
+                     print_r("TUUU".$userExam['exam_id']);
                      $questionsId = $questionRepository->getIdQuestions($userExam['exam_id']);
                      if ($questionsId > 0) {
-
+print_r("a teraz tutaj ");
                          $info = true;
                          $numberOfAttemptsInResult = $resultRepository->getQuantityAttempt($userExam['exam_id'], $_SESSION['user_id']);
 
@@ -53,7 +55,7 @@ class UserExamListController extends AbstractController
                          $examInfo = $exam->getExam($userExam['exam_id']);
                          $examName = $examInfo['name'];
                          $maxAttempts = $examInfo['max_attempts'];
-                         if ($maxAttempts != "NULL") {
+                         if ($maxAttempts != NULL) {
                              $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;
                              $attemptsInfo = "- Pozostało prób: " . $remainingAttempts;
                          }
@@ -80,6 +82,7 @@ class UserExamListController extends AbstractController
                          } else {
                              $resolveDate = $userExam['date_of_resolve_exam'];
                          }
+                         $error = '';
                          $tplArray[$i] = array(
                              'user_exam_id' => $userExam['user_exam_id'],
                              'user_id' => $userExam['user_id'],
@@ -91,10 +94,22 @@ class UserExamListController extends AbstractController
                              //todo class result and dodac tutaj ilosc pozostalych prob
                          );
                          $index++;
-                     }/* else {
-                     return $this->redirectToRoute('login');
-                 }  else {
+                         /*} else {
+                         return $this->redirectToRoute('login');*/
+                     } else {
+                         $info = false;
+                         $error = '';
+                         $tplArray = array(
+                             'user_id' => '',
+                             'exam_id' => '',
+                             'date_of_resolve_exam' => '',
+                             'start_access_time' => '',
+                             'end_access_time' => ''
+                         );
+                     }
+                 } /*else {
                      $info = false;
+                     $error = "Brak egzaminów do rozwiązania";
                      $tplArray = array(
                          'user_id' => '',
                          'exam_id' => '',
@@ -103,11 +118,11 @@ class UserExamListController extends AbstractController
                          'end_access_time' => ''
                      );
                  }*/
-                 }
              }
          }
          else {
              $info = false;
+             $error = "Brak egzaminów do rozwiązania";
              $tplArray = array(
             'user_id' => '',
             'exam_id' => '',
@@ -120,6 +135,7 @@ class UserExamListController extends AbstractController
     print_r($info);
         return $this->render('studentHomepage.html.twig', array(
         'data' => $tplArray,
+        'error' => $error,
         'information' => $info
     ));
     }

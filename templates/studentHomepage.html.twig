@@ -3,6 +3,7 @@
 {% block body %}
     <div class="container">
         <div>
+            {{ error }}
             {% for action in data %}
                 {% if information==true %}
                 <p><a href="{{ path('studentExamStartInfo', { 'userExamId': action.user_exam_id}) }}">

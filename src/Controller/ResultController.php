@@ -33,11 +33,57 @@ class ResultController extends AbstractController
 
         $answerRepo = new AnswerRepository();
         $questionRepo = new QuestionRepository();
-        $points =0;
-        $existQuestion=false;
-        $questionGoodAmount=$questionRepo->getQuantity($examId);
+        $points = 0;
+        $existQuestion = false;
+        $questionGoodAmount = $questionRepo->getQuantity($examId);
+        $amount = 0;
+        $questionsId = $questionRepo->getIdQuestions($examId);
+        for ($j = 0; $j < $questionAmount; $j++) {
+            $isTrueAnswer=true;
+            $question = $questionRepo->getQuestion($examId, $_COOKIE['questionId' . $j]);
+           // $answersId = $answerRepo->getIdAnswers($examId, $_COOKIE['questionId' . $j]);
+            if (/*$answersId */ $_COOKIE['amountOfAnswers' . $j]== 0 ) {
+                $points++;
+            } else {
+                for ($k = 0; $k < $_COOKIE['amountOfAnswers' . $j]; $k++) {
+                    //print_r($_COOKIE['amountOfAnswers' . $j]);
+                    $answerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['answerId'.$j.$k]);
+                    /*if($answerInformation['is_true']==true){
+                        $isTrueAnswer=false;
+                    }*/
+                    //print_r($answerInformation);
+                }
+            }
 
-       for($i=0;$i<$questionRepo->getQuantity($examId);$i++) {
+
+            $questionInformation = $questionRepo->getQuestion($examId, $questionsId[$j]);
+
+            $questionId = $questionInformation['id'];
+            $answersId = $answerRepo->getIdAnswers($examId, $questionId);
+            //print_r(" AAA ");
+            //print_r($answersId);
+            if($answersId!=0){
+                $answerInformation = $answerRepo->getAnswer($examId, $questionId, $answersId[$j]);
+            }else {
+                $answerInformation = $answerRepo->getAnswer($examId, $questionId, $answersId);
+
+            }
+           // print_r($answerInformation);
+
+            /*if($questionInformation[$j]['is_true']==true){
+                $question[$amount] = $questionsId[$j];
+                $amount++;
+            }*/
+        }
+        return $this->render('studentResult.html.twig', array(
+            'points' => $points
+
+        ));
+    }
+
+
+/*
+       for($i=0;$i<$questionAmount;$i++) {
 
            $trueAnswers=0;
            $amount = 0;
@@ -45,13 +91,13 @@ class ResultController extends AbstractController
            $questionId = $i;
 
            $questionInfo = $questionRepo->getQuestion($examId,$i);
-           if($questionInfo['content']==""){
+           /*if($questionInfo['content']==""){
                $i++;
                $questionId++;
                $existQuestion=false;
                $questionGoodAmount++;
-           }
-print_r(" PPPPP ");
+           }*//*
+/*print_r(" PPPPP ");
            $check=1;
                for ($k = 0; $k < $answerRepo->getQuantity($examId,$i); $k++) {
                    if (isset($_COOKIE['answerId' . $i . $k])) {
@@ -71,9 +117,9 @@ print_r(" PPPPP ");
                 print_r("   AAAAAAAAAAAAAAAAAAAAA".$i.$k." ");
 //                   if ($answersAmount == $amount) {
                    $existQuestion=true;
-                    //   for ($j = 0; $j < $answerRepo->getQuantity($examId,$k)/* $answersAmount*/; $j++) {
+                    //   for ($j = 0; $j < $answerRepo->getQuantity($examId,$k)/* $answersAmount*//*; $j++) {
 
-                           if (isset($_COOKIE['userAnswer' . $i . $k])) {
+                          /* if (isset($_COOKIE['userAnswer' . $i . $k])) {
 
                                print_r(" question ".$questionId. " answer " .$_COOKIE['userAnswer' . $i . $k]);
 
@@ -117,7 +163,7 @@ print_r(" answerTRUE ".$trueUserAnswer);
                        }
                        if ($trueUserAnswer) $points++;*/
                 //   }
-               }
+               /*}
                if($amount==0 and $trueAnswers>0){
                    $trueUserAnswer=false;
 
@@ -157,8 +203,8 @@ print_r(" answerTRUE ".$trueUserAnswer);
             'points' => $points
 
         ));
-       // return $this->redirectToRoute('resultList');
-    }
+       // return $this->redirectToRoute('resultList');*/
+   /// }
     /**
      * @Route("resultList", name="resultList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response

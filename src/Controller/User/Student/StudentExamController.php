@@ -45,17 +45,16 @@ $amount = 0;
 
         $questionsAmount = count($questionsId);
 
-
+print_r(" EXAM ID ".$examId);
        // $accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
         for($i=0;$i<$questionsAmount;$i++){
             $answersIds = $answerRepository->getIdAnswers($examId,$questionsId[$i]);
 
-            $questions=$questionRepository->getQuestion($examId,$questionsId[$i]);
             //if($questions['id'] != NULL or $questions['id']=="0") {
-                $questionId[$i] = $questions['id'];
+               /* $questionId[$i] = $questions['id'];
                 $maxAnswers[$i] = $questions['max_answers'];
                 $nameOfFile[$i] = $questions['name_of_file'];
-                $content[$i] = $questions['content'];
+                $content[$i] = $questions['content'];*/
               //  $amount++;
             //}
         //    print_r(" i ".$i." w ".$questions);
@@ -68,41 +67,72 @@ $amount = 0;
 print_r($numbers);
             for($i=0;$i<$questionsAmount;$i++) {
                 $id = $questionsId[$numbers[$i]];
-                print_r($id);
-                setcookie("questionId" . $i, $questionId[$id]/*$questions['id']*/);
-                setcookie("questionMaxAnswers" . $i, $maxAnswers[$id]);
-                setcookie("questionNameOfFile" . $i, $nameOfFile[$id]);
-                setcookie("questionContent" . $i, $content[$id]);
+                $questions=$questionRepository->getQuestion($examId,$id);
 
-                $answerNumbers = $answerRepository->getIdAnswers($examId, $questionId[$numbers[$i]]);
+                print_r($id);
+                setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
+                setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
+                setcookie("questionNameOfFile" . $i,  $questions['name_of_file']);
+                setcookie("questionContent" . $i,$questions['content']);
+
+                $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
                 if ($answerNumbers == 0) {
                     $allAnswersAmount = 0;
+                    print_r(" TUUU ".$i." lll");
                 } else {
                     $allAnswersAmount = count($answerNumbers);
+                    print_r(" TUTAJ ".$i." pppldld ");
                 }
-                // $answersAmount = 0;
+                print_r( $allAnswersAmount );
                 if ($allAnswersAmount > 0) {
-                    for ($k = 0; $k < $allAnswersAmount; $k++) {
-                        $answerInfo = $answerRepository->getAnswer($examId, $questionId[$numbers[$i]], $answerNumbers[$k]);
+                   // for ($k = 0; $k < $allAnswersAmount; $k++) {
+                      //  $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerNumbers[$k]);
                         // if($answerContent['is_true'] or $answerContent['is_active']) {
                         //if ($answerInfo['id'] != NULL or $answerInfo['id'] == "0") {
-                        $answersId[$k] = $answerInfo['id'];
-                        $answers[$k] = $answerInfo['content'];
+                      //  $answersId[$k] = $answerInfo['id'];
+                      //  $answers[$k] = $answerInfo['content'];
                         //  $answersAmount++;
                         //}
-                    print_r($answerInfo);
-                    }
-                    if ($allAnswersAmount <= $maxAnswers) {
+                   // print_r($answerInfo);
+                   // print_r($answerNumbers);
+                 //   }
+
+
+
+                    if ($allAnswersAmount <= $questions['max_answers']){//} and $allAnswersAmount>1) {
+
                         $answerNumber = array_rand($answerNumbers, $allAnswersAmount);//$this->random($allAnswersAmount-1, $allAnswersAmount);
+                       print_r(" answeNumber ");
+                        print_r($answerNumber);
+
 
                         for ($j = 0; $j < $allAnswersAmount; $j++) {
-                            setcookie("answerId" . $i . $k, $answersId[$answerNumber[$k]]); // (numer pytania,numer odpowiedzi);
-                            setcookie("answerContent" . $i . $k, $answers[$answerNumber[$k]]);
+                            print_r(" idIDid".$j);
+                            if($allAnswersAmount>1){
+                                $answerId = $answerNumbers[$answerNumber[$j]];
+                            } else {
+                                $answerId = $answerNumber;
+                            }
+                        print_r($answerId);
+                            $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerId);
+
+
+                           // print_r(" KKKKKWIEKSZERROWNE ".$answerNumber[$j]);
+                            setcookie("answerId" . $i . $j, $answerInfo['id']); // (numer pytania,numer odpowiedzi);
+                            setcookie("answerContent" . $i . $j, $answerInfo['content']);
                         }
-                        setcookie("amountOfAnswers" . $i, $allAnswersAmount);
                     }
+                    /*if($allAnswersAmount==0){
+                        print_r(" ROWNEZERO");
+                        setcookie("answerId" . $i . $k, $answersId[$answerNumber[$k]]); // (numer pytania,numer odpowiedzi);
+                        setcookie("answerContent" . $i . $k, $answers[$answerNumber[$k]]);
+                        setcookie("amountOfAnswers" . $i, $allAnswersAmount);
+
+                    }*/
 
                 }
+                setcookie("amountOfAnswers" . $i, $allAnswersAmount);
+
 
             }
 
