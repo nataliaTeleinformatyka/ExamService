@@ -84,6 +84,7 @@ print_r($numbers);
                     print_r(" TUTAJ ".$i." pppldld ");
                 }
                 print_r( $allAnswersAmount );
+                $ids=array();
                 if ($allAnswersAmount > 0) {
                    // for ($k = 0; $k < $allAnswersAmount; $k++) {
                       //  $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerNumbers[$k]);
@@ -115,7 +116,7 @@ print_r($numbers);
                             }
                         print_r($answerId);
                             $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerId);
-
+                            $ids[$j] = $answerInfo['id'];
 
                            // print_r(" KKKKKWIEKSZERROWNE ".$answerNumber[$j]);
                             setcookie("answerId" . $i . $j, $answerInfo['id']); // (numer pytania,numer odpowiedzi);
@@ -132,6 +133,8 @@ print_r($numbers);
 
                 }
                 setcookie("amountOfAnswers" . $i, $allAnswersAmount);
+                setcookie("allAnswers" . $i, json_encode($ids));
+
 
 
             }
@@ -158,6 +161,7 @@ print_r($numbers);
 
         $_SESSION['questionsAmount'] = $questionsAmount;
         $_SESSION['exam_id']= $examId;
+        setcookie("user_exam_id",$userExamId);
 
         return $this->render('studentExam.html', array(
         ));

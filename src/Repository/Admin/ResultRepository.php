@@ -8,7 +8,6 @@
 
 namespace App\Repository\Admin;
 
-use App\Entity\Admin\Exam;
 use App\Entity\Admin\Result;
 use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
@@ -66,29 +65,27 @@ class ResultRepository
         }
     }
 
-    public function insert($id, $userId, $examId, $numberOfAttempt,$points, $isPassed, $dateOfResolveExam)
+    public function insert($userExam, $numberOfAttempt,$points, $isPassed)
     {
-        if (empty($data) /*|| isset($data)*/) {
+        print_r(" jestem w insert ");
+        if (empty($data)) {
             return false;
         }
 
         $actualResultId = $this->getNextId();
+        print_r("id".$actualResultId);
 
-        $this->reference
+        $this->reference->getChild($userExam)->getChild("Result")
             ->getChild($actualResultId)->set([
-                //$actualUserId => [
                 'id' => $actualResultId,
-                'user_id' => $data[0],
-                'exam_id' => $data[1],
-                'number_of_attempt' => $data[2],
-                'points' => $data[3],
-                'is_passed' => $data[4],
-                'date_of_resolve_exam' => $data[5]
+                'number_of_attempt' => $numberOfAttempt,
+                'points' => $points,
+                'is_passed' => $isPassed,
             ]);
         return true;
     }
     public function update(array $data, int $id) {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data)) {
             return false;
         }
 

@@ -39,24 +39,73 @@ class ResultController extends AbstractController
         $amount = 0;
         $questionsId = $questionRepo->getIdQuestions($examId);
         for ($j = 0; $j < $questionAmount; $j++) {
-            $isTrueAnswer=true;
+            $isTrueAnswer=false;
+            $amount = 0;
+
             $question = $questionRepo->getQuestion($examId, $_COOKIE['questionId' . $j]);
            // $answersId = $answerRepo->getIdAnswers($examId, $_COOKIE['questionId' . $j]);
             if (/*$answersId */ $_COOKIE['amountOfAnswers' . $j]== 0 ) {
                 $points++;
+                print_r(" zerooooo ");
             } else {
+                $answerIds = json_decode($_COOKIE['allAnswers' . $j]);
+                $amount = 0;
+                for ($m = 0; $m < count($answerIds); $m++) {
+                    $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $answerIds[$m]);
+                    if ($userAnswerInformation['is_true'] == true) {
+                        $trueAnswers[$amount] = $userAnswerInformation['id'];
+                        $amount++;
+                    }
+                }
+                print_r(" ilosc ".$amount. $_COOKIE['userAnswerAmount' . $j]." pp ");
+                if ($_COOKIE['userAnswerAmount' . $j] == $amount){
+                    print_r(" rowne ");
+                    for ($t = 0; $t < $amount; $t++) {
+                        if (isset($_COOKIE['userAnswer' . $j . $t])){
+                            $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $t]);
+                        if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
+                            $isTrueAnswer = true;
+                            print_r(" ICH BIN ");
+                        }
+                        if ($t == $amount - 1 and $isTrueAnswer == true) {
+                            $points++;
+                            print_r(" TUTUUT");
+                        }
+                    }
+                    }
+                }
+
+
+               /* for($i=0;$i<count($questionsId);$i++) {
+                    $answerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $questionsId[$i]);
+                    if($answerInformation['is_true']==true) {
+                        print_r("TUTAJ");
+$amount++;
+$goodAnswers[$amount]=$answerInformation['id'];
+
+                    }
+
+                }
                 for ($k = 0; $k < $_COOKIE['amountOfAnswers' . $j]; $k++) {
                     //print_r($_COOKIE['amountOfAnswers' . $j]);
-                    $answerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['answerId'.$j.$k]);
-                    /*if($answerInformation['is_true']==true){
-                        $isTrueAnswer=false;
-                    }*/
+                    if (isset($_COOKIE['userAnswer' . $j . $k])) {
+                        $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $k]);
+                        for($m=0;$m<$amount;$m++){
+                            if($goodAnswers[$m]==$userAnswerInformation['id']){
+                                $isTrueAnswer=true;
+                            }
+                        }
+
+                        //if($answerInformation['is_true']==true){
+                        $isTrueAnswer = false;
+                    }
+                }*/
                     //print_r($answerInformation);
                 }
             }
 
 
-            $questionInformation = $questionRepo->getQuestion($examId, $questionsId[$j]);
+           /* $questionInformation = $questionRepo->getQuestion($examId, $questionsId[$j]);
 
             $questionId = $questionInformation['id'];
             $answersId = $answerRepo->getIdAnswers($examId, $questionId);
@@ -67,14 +116,34 @@ class ResultController extends AbstractController
             }else {
                 $answerInformation = $answerRepo->getAnswer($examId, $questionId, $answersId);
 
-            }
+            }*/
            // print_r($answerInformation);
 
             /*if($questionInformation[$j]['is_true']==true){
                 $question[$amount] = $questionsId[$j];
                 $amount++;
             }*/
+
+        $resultRepository = new ResultRepository();
+        $examRepository = new ExamRepository();
+        $examInformation = $examRepository->getExam($examId);
+        $percentagePassedExam = $examInformation['percentage_passed_exam'];
+        print_r($percentagePassedExam);
+        $numberOfAttempt = $resultRepository->getQuantityAttempt($examId,$userId);
+
+        if($points>0){
+            if($points/$questionAmount >=$percentagePassedExam){
+                $isPassed=true;
+            } else {
+                $isPassed = false;
+            }
+        } else {
+            $isPassed=false;
         }
+
+        $dateOfResolveExam = "NULL";
+        $resultRepository->insert($_COOKIE['user_exam_id'], $numberOfAttempt,$points, $isPassed);
+
         return $this->render('studentResult.html.twig', array(
             'points' => $points
 
