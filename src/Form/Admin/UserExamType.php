@@ -54,9 +54,6 @@ class UserExamType extends AbstractType
             ->add('exam_id', ChoiceType::class,
                 [
                     'choices'  => $examInfo])
-           // ->add('date_of_resolve_exam', DateType::class)
-            ->add('start_access_time', DateType::class)
-            ->add('end_access_time', DateType::class)
             ->add('save', SubmitType::class, ['label' => 'Add userExam'])
             ->setMethod('POST')
             ->getForm();

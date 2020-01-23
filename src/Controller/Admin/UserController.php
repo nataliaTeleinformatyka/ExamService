@@ -9,6 +9,7 @@
 namespace App\Controller\Admin;
 
 
+use App\Form\Admin\UserEditType;
 use App\Repository\Admin\UserRepository;
 use App\Security\UserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -151,20 +152,10 @@ class UserController extends AbstractController
      */
     public function editUser(Request $request, User $user)
     {
-       //  $repository = $this->getDoctrine()->getRepository(User::class);
-        /*print_r($id);
-        $examEn= new Exam([]);
-        $examrepo = new ExamRepository();
-        $efxam = $examrepo->getExam($id);
-        print_r($efxam);*/
-        //  $exam = new Exam([]);
         $userInformation = new UserRepository();
         $userId = (int)$request->attributes->get('id');
         $users = $userInformation->getUser($userId);
-        //   print_r($exams);
-        //print_r($_SESSION['user_id']);
-        //print_r($examId);
-        //  print_r($exams['exam_id']);
+
         $userInfoArray = array(
             'id' => $users['id'],
             'first_name' => $users['first_name'],
@@ -178,30 +169,21 @@ class UserController extends AbstractController
         );
 
 
-        setcookie("info","edit",time()+60*2);
-            //$_COOKIE['info'] = "editStudent";
-//            $_COOKIE['info'] = "edit";
+        $_SESSION['info'] = "student";
 
-
-
-
-        //  $exam->setId($examId);
-        //$exam->setName($exams['name']);
-        //print_r($exam);
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserEditType::class, $user);
         $form->handleRequest($request);
-        //  var_dump($form);
-        //$exams = $form->getData();
-        //print_r($exams);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $userInfo = $form->getData();
-       //     $entityManager = $this->getDoctrine()->getManager();
+
             $examValue = $request->attributes->get('id');
             print_r($examValue);
 
-            //$values = $user->getAllInformation();
+            $values = $user->getAllInformation();
+            print_r($values);
             $repositoryExam = new UserRepository();
-          //  $repositoryExam->update($values,$userId);
+            $repositoryExam->update($values,$userId);
           //  print_r($values);
             // return $this->redirectToRoute('examList');
         }

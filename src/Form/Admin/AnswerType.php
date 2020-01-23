@@ -23,18 +23,11 @@ class AnswerType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    //todo: min one answer must be active and true
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('content', TextareaType::class)
             ->add('is_true', ChoiceType::class,
-                [
-                    'choices'  => [
-                        'Yes' => true,
-                        'No' => false,
-                    ]])
-            ->add('is_active', ChoiceType::class,
                 [
                     'choices'  => [
                         'Yes' => true,

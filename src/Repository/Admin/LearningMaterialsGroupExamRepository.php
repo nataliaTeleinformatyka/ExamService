@@ -115,9 +115,9 @@ class LearningMaterialsGroupExamRepository
     }
 
     public function findByGroupId(int $learningMaterialsGroupId) {
-        $amount = $this->getQuantity();
-        for($i=0;$i<$amount;$i++) {
-            $information = $this->reference->getChild($i)->getValue();
+        $id = $this->getIdLearningMaterialsGroupExams();
+        for($i=0;$i<count($id);$i++) {
+            $information = $this->reference->getChild($id[$i])->getValue();
             if($information['learning_materials_group_id'] == $learningMaterialsGroupId) {
                 return true;
             } else {
@@ -127,6 +127,18 @@ class LearningMaterialsGroupExamRepository
         }
     }
 
+    public function findByExamId(int $examId) {
+        $id = $this->getIdLearningMaterialsGroupExams();
+        $amount =0;
+        for($i=0;$i<count($id);$i++) {
+            $information = $this->reference->getChild($id[$i])->getValue();
+            if($information['exam_id'] == $examId) {
+                $learningMaterialsGroups[$amount] = $information['learning_materials_group_id'];
+                $amount++;
+            }
+        }
+        return $learningMaterialsGroups;
+    }
 
     public function getNextId() {
         $learningMaterialsGroupExamsId = $this->getIdLearningMaterialsGroupExams();

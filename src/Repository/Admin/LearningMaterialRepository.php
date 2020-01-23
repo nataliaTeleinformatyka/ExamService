@@ -25,6 +25,8 @@ class LearningMaterialRepository {
     private $entityManager = 'LearningMaterial';
     protected $reference;
     private $bucket,$storage;
+    private $connection;
+    private $login;
 
     public function __construct()
 {
@@ -45,32 +47,43 @@ class LearningMaterialRepository {
 
     $this->database = $factory->createDatabase();
     $this->reference = $this->database->getReference($this->dbname);
+
+    $ftp_server = "ftp.files1.radiokomunikacja.edu.pl";
+    $ftp_port =21;
+    $ftp_time = 90;
+    $ftp_user = "user@files01.radiokomunikacja.edu.pl";
+    $ftp_password = "M5.wlx.KZH.4";
+    $this->connection = ftp_connect($ftp_server,$ftp_port,$ftp_time) or die("Couldn't connect to $ftp_server");
+        $this->login = ftp_login($this->connection,$ftp_user,$ftp_password);
+
+    if ((!$this->connection) || (!$this->login)) {
+        echo "Połączenie FTP się nie powiodło!";
+        echo "Próbowano połączyć się do $ftp_server jako użytkownik"
+            . $ftp_user;
+        die;
+    } else {
+        echo "Połączony z $ftp_server jako użytkownik $ftp_user<br>";
+    }
+
 }
 
-    public function getLearningMaterial(int $materialsGroupId,int $materialId)
-{
-    $learningMaterialsGroupReference = $this->database->getReference("LearningMaterialsGroup");
-
-    try {
+    public function getLearningMaterial(int $materialsGroupId,int $materialId) {
+        $learningMaterialsGroupReference = $this->database->getReference("LearningMaterialsGroup");
         if ($learningMaterialsGroupReference->getSnapshot()->getChild($materialsGroupId)->hasChild("LearningMaterial")) {
             return $learningMaterialsGroupReference->getSnapshot()->getChild($materialsGroupId)
                 ->getChild("LearningMaterial")->getChild($materialId)->getValue();
         } else {
             return 0;
         }
-    } catch (ApiException $e) {
-
     }
-}
 
-    public function insert( int $learningMaterialsGroupId, array $data, UploadedFile $file)
-    {
+    public function insert( int $learningMaterialsGroupId, array $data, UploadedFile $file, $filename) {
         if (empty($data)) {
             return false;
         }
         $materialId = $this->nextLearningMaterialId($learningMaterialsGroupId);
         $learningMaterialsGroupReference = $this->database->getReference("LearningMaterialsGroup");
-        $filename = $this->upload_file($file);
+        $this->upload_file($file,$filename);
         $learningMaterialsGroupReference->getChild($learningMaterialsGroupId)
             ->getChild("LearningMaterial")->getChild($materialId)->set([
                 'id' => $materialId,
@@ -82,32 +95,47 @@ class LearningMaterialRepository {
         return true;
     }
 
-    public function upload_file(UploadedFile $file)
+    public function upload_file(UploadedFile $file, $filename)
     {
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $fileName = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
-        $this->bucket->upload(
-            $file,
-            [
-                'name' => $fileName
-            ]
-        );
-        return $fileName;
+        print_r(" file remote ".$filename. " trutru ");
+        if(ftp_put($this->connection,$filename,$file,FTP_BINARY))
+        {
+            echo "Successfully uploaded $file.";
+        }
+        else
+        {
+            echo "Error uploading $file.";
+        }
+        ftp_close($this->connection);
+
     }
 
     public function get_file(string $filename){
-//todo: get files from database
-    //    mkdir (".../Downloads/Exam", 0777);
-   //     touch($filename);
- //  $rootPath="../Downloads".'/'.$filename;
-   // $localFile = new File($rootPath,"imageName.txt");
+        if(!ftp_get($this->connection,$filename,$filename,FTP_BINARY)) {
+            echo("Błąd przy próbie pobrania pliku $filename...");
+        exit;
+        } else {
+            echo("ALL IS GOOD");
+        }
+    }
 
-       //return $this->bucket->object($filename)->info();//->downloadToFile();
-        return $this->bucket->object($filename)->info();
+    public function deleteFile($filename){
+        if(ftp_delete($this->connection,$filename)) {
+            echo "Successfully deleted $filename.";
+        }
+        else
+        {
+            echo "Error deleting $filename.";
+        }
+    }
+
+    public function get_all_files(){
+        print_r(ftp_rawlist($this->connection,"/"));
+
     }
 
 
-    public function delete(int $learningMaterialsGroupId, int $materialId, string $filename)
+    public function delete(int $learningMaterialsGroupId, int $materialId)
     {
         $learningMaterialsGroupReference = $this->database->getReference("LearningMaterialsGroup");
 
@@ -116,7 +144,7 @@ class LearningMaterialRepository {
                 ->hasChild("LearningMaterial")) {
                 $learningMaterialsGroupReference->getChild($learningMaterialsGroupId)
                     ->getChild("LearningMaterial")->getChild($materialId)->remove();
-               // $this->bucket->delete($filename);
+
                 return true;
             } else {
                 return false;
@@ -124,6 +152,7 @@ class LearningMaterialRepository {
         } catch (ApiException $e) {
         }
     }
+
 
     public function getQuantity(int $learningMaterialsGroupId)
     {

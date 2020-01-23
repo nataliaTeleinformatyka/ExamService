@@ -1,21 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.10.2019
- * Time: 18:19
- */
+
 namespace App\Repository\Admin;
 
 use App\Entity\Admin\User;
 
 use Kreait\Firebase\Exception\ApiException;
-use Kreait\Firebase\Exception\AuthException;
-use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
-use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 require_once 'C:\xampp\htdocs\examServiceProject\vendor\autoload.php';
 class UserRepository
@@ -43,7 +34,7 @@ class UserRepository
         $this->auth = (new Factory)
             ->withServiceAccount($serviceAccount)
             ->createAuth();
-        $this->reference = $this->database->getReference($this->dbname/*'src/Entity/User.php'*/);
+        $this->reference = $this->database->getReference($this->dbname);
     }
 
     public function registerUser(int $uid,String $email,String $password){
@@ -137,7 +128,9 @@ class UserRepository
         return 0;
     }
    public function insert(int $id, array $data) {
-       if(empty($data) /*|| isset($data)*/) { return false; }
+       if(empty($data)) {
+           return false;
+       }
 
        $this->reference->getChild($id)->set([
            'id' => $id,
@@ -154,10 +147,16 @@ class UserRepository
    }
 
     public function update(array $data, int $id) {
-        if (empty($data) /*|| isset($data)*/) {
+        if (empty($data) ) {
             return false;
         }
-
+        $email = $data[3];
+        $idFromAuthentication = $this->getUserIdFromAuthentication($email);
+        print_r($idFromAuthentication);
+        $user = $this->auth->getUser($idFromAuthentication);
+        print_r($user);
+        $updatedUser = $this->auth->changeUserPassword($user->uid, $data[0]);
+        //$this->editUserPasswordFromAuthentication($idFromAuthentication,$data[0]);
         $this->reference
             ->getChild($id)->update([
                 'first_name' => $data[1],
@@ -229,7 +228,7 @@ class UserRepository
         $user->setFirstName($information['first_name']);
         $user->setLastName($information['last_name']);
         $user->setEmail($information['email']);
-        $user->setRoles($information['role']);
+
         $user->setGroupOfStudents($information['group_of_students']);
 
         return $user;

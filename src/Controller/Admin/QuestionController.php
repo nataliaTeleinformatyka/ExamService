@@ -12,7 +12,6 @@ namespace App\Controller\Admin;
 use App\Entity\Admin\Question;
 use App\Form\Admin\QuestionType;
 use App\Repository\Admin\AnswerRepository;
-use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\QuestionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,27 +28,25 @@ class QuestionController extends AbstractController
     {
         $question = new Question([]);
         $repositoryQuestion = new QuestionRepository();
-
+        $newFilename="";
         $examId = $request->attributes->get('examId');
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $idExamValue = $request->attributes->get('examId');
-
             $question = $form->getData();
 
-            $entityManager = $this->getDoctrine()->getManager();
-
             $values = $question->getAllInformation();
-            if($form['file']->getData()==NULL) {
-                $filename = "";
-            } else {
+            if($form['file']->getData()!=NULL) {
                 $file = $form['file']->getData();
-                $filename = $repositoryQuestion->uploadFile($file);
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                $repositoryQuestion->uploadFile($file,$newFilename);
             }
 
-            $repositoryQuestion->insert($idExamValue, $values,$filename);
+            $repositoryQuestion->insert($idExamValue, $values,$newFilename);
 
             return $this->redirectToRoute('questionList', [
                 'id' => $examId,
@@ -93,11 +90,6 @@ class QuestionController extends AbstractController
                     'name_of_file' => $questions['name_of_file'],
                 );
             }
-                if($questions['name_of_file']!="") {
-                    // $questionInformation->downloadFile($questions['name_of_file']);
-                     //print_r($inf);
-                }
-
         } else {
             $info = false;
             $tplArray = array(
@@ -144,7 +136,8 @@ class QuestionController extends AbstractController
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {
             $repo->delete($examId, $questionId);
-            $repo->deleteFile($filename);
+            if($filename != "")
+                $repo->deleteFile($filename);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
         }
         return $this->redirectToRoute('questionList', [
@@ -206,23 +199,23 @@ class QuestionController extends AbstractController
         ]);
     }
 
-
     /**
      * @param Request $request
      * @Route("downloadFile/{exam}/{question}", name="downloadFile")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function downloadFile(Request $request)
-    {
+    public function downloadFile(Request $request) {
         $examId = $request->attributes->get('exam');
-
         $questionId = $request->attributes->get('question');
-        $repo = new QuestionRepository();
-        $question = $repo->getQuestion($examId,$questionId);
+        $questionRepository = new QuestionRepository();
+
+        $question = $questionRepository->getQuestion($examId,$questionId);
         $filename = $question['name_of_file'];
-        $url = "gs://examservicedatabase.appspot.com/" . $filename;
-        $file_name = basename($url);
 
+        $questionRepository->getFile($filename);
 
+        return $this->redirectToRoute('questionList',[
+            "id" => $examId
+        ]);
     }
 }

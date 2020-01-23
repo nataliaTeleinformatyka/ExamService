@@ -26,11 +26,10 @@ class LearningMaterialController  extends AbstractController
      */
     public function new(Request $request)
     {
-       // $repository = $this->getDoctrine()->getRepository(LearningMaterial::class);
         $learningMaterial = new LearningMaterial([]);
+        $repositoryMaterial = new LearningMaterialRepository();
 
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
-
 
         $form = $this->createForm(LearningMaterialType::class, $learningMaterial);
         $form->handleRequest($request);
@@ -40,17 +39,18 @@ class LearningMaterialController  extends AbstractController
             $material = $form->getData();
             $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
 
-            $entityManager = $this->getDoctrine()->getManager();
-
             $values = $material->getAllInformation();
-            $repositoryMaterial = new LearningMaterialRepository();
+
             $file = $form['attachment']->getData();
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $newFilename = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
 
-            $repositoryMaterial->insert($learningMaterialsGroupId,$values,$file);
+//$repositoryMaterial->get_file("test.txt");
+            $repositoryMaterial->insert($learningMaterialsGroupId,$values,$file,$newFilename);
 
-           /* return $this->redirectToRoute('learningMaterialList',[
+            return $this->redirectToRoute('learningMaterialList',[
                 "learningMaterialsGroupId" => $learningMaterialsGroupId
-            ]);*/
+            ]);
         }
 
         return $this->render('learningMaterialAdd.html.twig', [
@@ -66,9 +66,11 @@ class LearningMaterialController  extends AbstractController
      */
     public function learningMaterialListCreate(Request $request) {
         $learningMaterialRepository= new LearningMaterialRepository();
+        $learningMaterialRepository->get_all_files();
+
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
         $_SESSION['group_id'] = "";
-
+        $learningMaterialRepository->get_all_files();
         $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialsGroupId);
         if($learningMaterialsId!=0){
             $learningMaterialsCount = count($learningMaterialsId);
@@ -80,14 +82,13 @@ class LearningMaterialController  extends AbstractController
             for ($i = 0; $i < $learningMaterialsCount; $i++) {
                 $learningMaterial = $learningMaterialRepository->getLearningMaterial($learningMaterialsGroupId,$learningMaterialsId[$i]);
            if($learningMaterial['id']!=$i) {
-                    print_r($learningMaterial);
+                 //   print_r($learningMaterial);
                 }
                 if($learningMaterial['is_required'] == true) {
                     $is_required = "true";
                 } else {
                     $is_required="false";
                 }
-                print_r($learningMaterialRepository->get_file($learningMaterial['name_of_content']));
                 $tplArray[$i] = array(
                     'id' => $learningMaterial['id'],
                     'learning_materials_group_id' => $learningMaterial['learning_materials_group_id'],
@@ -116,6 +117,26 @@ class LearningMaterialController  extends AbstractController
 
         ) );
     }
+    /**
+     * @Route("/learningMaterialDownload/{learningMaterialsGroupId}/{learningMaterialId}", name="learningMaterialDownload")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function learningMaterialDownload(Request $request)
+    {
+        $learningMaterialRepository= new LearningMaterialRepository();
+        $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
+        $learningMaterialId = $request->attributes->get('learningMaterialId');
+        $learningMaterialInfo = $learningMaterialRepository->getLearningMaterial($learningMaterialsGroupId,$learningMaterialId);
+        $filename = $learningMaterialInfo['name_of_content'];
+        $learningMaterialRepository->get_file($filename);
+        return $this->redirectToRoute('learningMaterialList',[
+            "learningMaterialsGroupId" => $learningMaterialsGroupId
+        ]);
+    }
+
+
+
     /**
      * @param Request $request
      * @param LearningMaterial $learningMaterial
@@ -175,7 +196,10 @@ class LearningMaterialController  extends AbstractController
         $repo = new LearningMaterialRepository();
         $info = $repo->getLearningMaterial($learningMaterialsGroupId,$id);
         $filename = $info['name_of_content'];
-        $repo->delete($learningMaterialsGroupId,$id,$filename);
+        if($filename!="") {
+            $repo->deleteFile($filename);
+        }
+        $repo->delete($learningMaterialsGroupId,$id);
 
         return $this->redirectToRoute('learningMaterialList', [
             'learningMaterialsGroupId' => $learningMaterialsGroupId,

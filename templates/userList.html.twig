@@ -24,7 +24,7 @@
         <td>Date Registration</td>
         <td></td>
     </tr>
-    {% for action in data %}
+    {% for action in data|sort %}
         {% if( information == true) %}
             {% if action.id !="" or action.id=="0" %}
             <tr>

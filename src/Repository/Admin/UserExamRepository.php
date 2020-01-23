@@ -17,8 +17,12 @@ use Kreait\Firebase\ServiceAccount;
 class UserExamRepository
 {
     private $dbname= "UserExam";
-    public function __construct()
-    {
+    protected $db;
+    protected $database;
+    private $entityManager = 'UserExam';
+    protected $reference;
+
+    public function __construct() {
         $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
 
         $factory = (new Factory)
@@ -29,69 +33,50 @@ class UserExamRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getUserExam(int $userExamId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($userExamId)) {
-                return $this->reference->getChild($userExamId)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
-
+    public function getUserExam(int $userExamId) {
+        if ($this->reference->getSnapshot()->hasChild($userExamId)) {
+            return $this->reference->getChild($userExamId)->getValue();
+        } else {
+            return 0;
         }
     }
 
-    public function insert(array $data)
-    {
+    public function insert(array $data) {
         if (empty($data)) {
             return false;
         }
-
+        $time = new \DateTime('1970-01-01');
         $maxNumber = $this->nextUserExamId();
         $this->reference
             ->getChild($maxNumber)->set([
                 'user_exam_id' => $maxNumber,
                 'user_id' => $data[0],
                 'exam_id' => $data[1],
-              //  'date_of_resolve_exam' => NULL,
-                'start_access_time' => $data[3],
-                'end_access_time' => $data[4],
+                'date_of_resolve_exam' => $time,
             ]);
         return true;
     }
 
-    public function delete(int $userExamId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($userExamId)) {
-                $this->reference->getChild($userExamId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+    public function delete(int $userExamId) {
+        if ($this->reference->getSnapshot()->hasChild($userExamId)) {
+            $this->reference->getChild($userExamId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity()
-    {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
-        } catch (ApiException $e) {
-        }
-    }
+    public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
 
-    public function getIdUserExams()
-    {
+    public function getIdUserExams() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
             return $this->reference->getChildKeys();
         }
     }
-    public function isUserExamForExamId(int $examId)
-    {
+
+    public function isUserExamForExamId(int $examId) {
         for ($i = 0; $i < $this->getQuantity(); $i++) {
             $userExam = $this->getUserExam($i);
             if ($userExam['exam_id'] == $examId) {
@@ -110,8 +95,6 @@ class UserExamRepository
         $this->reference
             ->getChild($id)->update([
                 'date_of_resolve_exam' => $data[0],
-                'start_access_time' => $data[1],
-                'end_access_time' => $data[2],
             ]);
         return true;
     }
@@ -120,8 +103,7 @@ class UserExamRepository
         $information = $this->reference->getChild($userExamId)->getValue();
         $userExam = new UserExam([]);
        // $userExam->setDateOfResolveExam($information['date_of_resolve_exam']);
-        //$userExam->setStartAccessTime($information['start_access_time']);
-        //$userExam->setEndAccessTime($information['end_access_time']);
+
 
         return $userExam;
     }

@@ -12,8 +12,6 @@ namespace App\Controller\Admin;
 use App\Entity\Admin\Answer;
 use App\Form\Admin\AnswerType;
 use App\Repository\Admin\AnswerRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,7 +25,7 @@ class AnswerController extends AbstractController
      */
     public function new(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Answer::class);
+        //$repository = $this->getDoctrine()->getRepository(Answer::class);
         $question = new Answer([]);
 
         $examId = $request->attributes->get('examId');
@@ -40,11 +38,10 @@ class AnswerController extends AbstractController
 
             $data[0] = $request->request->get('content');
             $data[1] = $request->request->get('is_true');
-            $data[2] = $request->request->get('is_active');
 
             $answer = $form->getData();
 
-            $entityManager = $this->getDoctrine()->getManager();
+           // $entityManager = $this->getDoctrine()->getManager();
 
             $values = $answer->getAllInformation();
             $examValue = $request->attributes->get('examId');
@@ -96,17 +93,12 @@ class AnswerController extends AbstractController
                 } else {
                     $is_required = "false";
                 }
-                if ($answers['is_active'] == 1) {
-                    $is_required_active = "true";
-                } else {
-                    $is_required_active = "false";
-                }
+
 
                 $tplArray[$i] = array(
                     'id' => $i,
                     'content' => $answers['content'],
                     'is_true' => $is_required,
-                    'is_active' => $is_required_active
                 );
             }
         } else {
@@ -115,7 +107,6 @@ class AnswerController extends AbstractController
                 'id' => 0,
                 'content' => 0,
                 'is_true' => 0,
-                'is_active' => 0
             );
         }
         return $this->render( 'answerList.html.twig', array (
@@ -145,7 +136,6 @@ class AnswerController extends AbstractController
 
         $examInfoArray = array(
             'content' => $answers['content'],
-            'is_active' => $answers['is_active'],
             'is_true' => $answers['is_true'],
 
         );
@@ -155,7 +145,7 @@ class AnswerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $exams = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
+        //    $entityManager = $this->getDoctrine()->getManager();
 
             $values = $answer->getAllInformation();
             $answerInformation->update($values,$examId,$questionId,$id);

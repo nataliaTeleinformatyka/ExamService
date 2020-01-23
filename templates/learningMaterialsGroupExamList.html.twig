@@ -22,7 +22,7 @@
         <td>Exam name</td>
         <td></td>
     </tr>
-    {% for action in data %}
+    {% for action in data|sort %}
         {% if action.id !="" or action.id=="0" %}
         <tr>
             <td> {{ action.id|default('') }}  </td>

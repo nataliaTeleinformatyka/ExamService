@@ -29,27 +29,19 @@ class ExamController extends AbstractController
      */
     public function new(Request $request)
     {
-        //$repository = $this->getDoctrine()->getRepository(Exam::class);
         $exam = new Exam([]);
 
         $form = $this->createForm(ExamType::class, $exam);
         $form->handleRequest($request);
-        $exam = $form->getData();
-        //print_r($exam);
+
         if ($form->isSubmitted() && $form->isValid()) {
-
             $exam = $form->getData();
-
-            $entityManager = $this->getDoctrine()->getManager();
-
             $values = $exam->getAllInformation();
-            print_r($values);
             $repositoryExam = new ExamRepository();
             $repositoryExam->insert($values);
 
              return $this->redirectToRoute('examList');
         }
-
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
         ]);
@@ -68,6 +60,7 @@ class ExamController extends AbstractController
         } else {
             $examsCount=0;
         }
+
 
         if ($examsCount > 0) {
             $info = true;

@@ -26,7 +26,6 @@ class UserType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //todo:password min 6 znakow
         switch ($_SESSION['role']) {
             case "ROLE_PROFESSOR" :
                 {

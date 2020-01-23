@@ -145,3 +145,8 @@ function time() {
        // return "Czas minal";
         //timer.innerHTML = "czas minal";
 }
+
+function sortTableById(){
+    const idField = document.getElementById("idField");
+
+}

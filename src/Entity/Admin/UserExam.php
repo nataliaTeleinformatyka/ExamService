@@ -43,16 +43,6 @@ class UserExam extends Entity  implements  EquatableInterface
      * @ORM\Column(type="datetime")
      */
     private $date_of_resolve_exam;
-    /**
-     * @Assert\Type("\Datetime")
-     * @ORM\Column(type="datetime")
-     */
-    private $start_access_time;
-    /**
-     * @Assert\Type("\Datetime")
-     * @ORM\Column(type="datetime")
-     */
-    private $end_access_time;
 
     /**
      * @return mixed
@@ -117,39 +107,8 @@ class UserExam extends Entity  implements  EquatableInterface
         $this->date_of_resolve_exam = $date_of_resolve_exam;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getStartAccessTime()
-    {
-        return $this->start_access_time;
-    }
-
-    /**
-     * @param mixed $start_access_time
-     */
-    public function setStartAccessTime($start_access_time): void
-    {
-        $this->start_access_time = $start_access_time;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEndAccessTime()
-    {
-        return $this->end_access_time;
-    }
-
-    /**
-     * @param mixed $end_access_time
-     */
-    public function setEndAccessTime($end_access_time): void
-    {
-        $this->end_access_time = $end_access_time;
-    }
     public function getAllInformation(){
-        $data = [$this->date_of_resolve_exam, $this->start_access_time,$this->end_access_time];
+        $data = [$this->date_of_resolve_exam];
         return $data;
     }
 

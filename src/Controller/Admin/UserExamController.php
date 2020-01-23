@@ -26,7 +26,6 @@ class UserExamController  extends AbstractController
      */
     public function new(Request $request)
     {
-        //$repository = $this->getDoctrine()->getRepository(Exam::class);
         $exam = new UserExam([]);
 
         $form = $this->createForm(UserExamType::class, $exam);
@@ -36,8 +35,6 @@ class UserExamController  extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $exam = $form->getData();
-
-            $entityManager = $this->getDoctrine()->getManager();
 
             $values = $exam->getAllInformation();
             $repositoryExam = new UserExamRepository();
@@ -67,32 +64,24 @@ class UserExamController  extends AbstractController
             $userExamAmount=0;
         }
 
+
         if ($userExamAmount > 0) {
             $info = true;
             for ($i = 0; $i < $userExamAmount; $i++) {
                 $userExam = $userExamRepository->getUserExam($userExamsId[$i]);
-                if($userExam['start_access_time']=="NULL") {
-                    $startDate = " ";
-                } else {
-                    $startDate = $userExam['start_access_time'];
-                }
-                if($userExam['end_access_time']=="NULL"){
-                    $endDate = " ";
-                } else {
-                    $endDate=$userExam['end_access_time'];
-                }
-                if($userExam['date_of_resolve_exam'] == "NULL"){
+
+                $year = date("Y", strtotime($userExam['date_of_resolve_exam']['date']));
+
+                if($year < '2020'){
                     $resolveDate = " ";
                 } else {
-                    $resolveDate=$userExam['date_of_resolve_exam'];
+                    $resolveDate=$userExam['date_of_resolve_exam']['date'];
                 }
                 $tplArray[$i] = array(
                     'user_exam_id' => $userExam['user_exam_id'],
                     'user_id' => $userExam['user_id'],
                     'exam_id' => $userExam['exam_id'],
                     'date_of_resolve_exam' => $resolveDate,
-                    'start_access_time' => $startDate,
-                    'end_access_time' => $endDate
                 );
             }
         } else {
@@ -102,8 +91,6 @@ class UserExamController  extends AbstractController
                 'user_id' => "",
                 'exam_id' => "",
                 'date_of_resolve_exam' => "",
-                'start_access_time' => "",
-                'end_access_time' => ""
             );
         }
         if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {

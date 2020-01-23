@@ -67,7 +67,6 @@ class AnswerRepository
                 'question_id' => $questionId,
                 'content' => $data[0],
                 'is_true' => $data[1],
-                'is_active' => $data[2]
             ]);
         return true;
     }
@@ -79,7 +78,6 @@ class AnswerRepository
             ->getChild("Question")->getChild($questionId)->getChild("Answer")->getChild($id)->update([
                 'content' => $data[0],
                 'is_true' => $data[1],
-                'is_active' => $data[2]
             ]);
         return true;
 
@@ -89,13 +87,9 @@ class AnswerRepository
         $examReference = $this->database->getReference("Exam");
 
         try {
-           // if ($examReference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)->hasChild("Answer")) {
                 $examReference->getChild($examId)->getChild("Question")
                     ->getChild($questionId)->getChild("Answer")->getChild($answerId)->remove();
                 return true;
-            /*} else {
-                return false;
-            }*/
         } catch (ApiException $e) {
         }
     }
@@ -130,7 +124,6 @@ class AnswerRepository
             ->getChild("Answer")->getChild($answerId)->getValue();
         $answer = new Answer([]);
         $answer->setContent($information['content']);
-        $answer->setIsActive($information['is_active']);
         $answer->setIsTrue($information['is_true']);
         return $answer;
     }

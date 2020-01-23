@@ -23,7 +23,7 @@
         <td></td>
 
     </tr>
-    {% for action in data %}
+    {% for action in data|sort %}
         {% if action.id !="" or action.id=="0" %}
         <tr>
             <td> {{ action.id|default('') }}  </td>
@@ -41,9 +41,14 @@
                         <a href="{{ path('answerList', { 'questionId' : action.id, 'examId': action.exam_id }) }}" title="Answer list">
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
+                    {% if action.name_of_file != "" %}
+                    <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_file}}">
+                        <span class="glyphicon glyphicon-file"></span>
+                    </a>
                         <a href="{{ path('downloadFile', { 'exam': examId, 'question' : action.id  }) }}">
-                            <span class="glyphicon glyphicon-file" title="File"></span>
+                            <span class="glyphicon glyphicon-download"></span>
                         </a>
+                        {% endif %}
                 </div>
 
             </td>

@@ -16,16 +16,14 @@
         <td class="col-md-1">Id</td>
         <td class="col-md-1">Content</td>
         <td class="col-md-1">Is true</td>
-        <td class="col-md-1">Is active</td>
         <td class="col-md-1"></td>
     </tr>
-    {% for action in data %}
+    {% for action in data|sort %}
     {% if (action.id !="" or action.id=="0") %}
         <tr>
             <td class="col-md-1"> {{ action.id|default('undefined') }}  </td>
             <td class="col-md-1"> {{ action.content|default('undefined') }}  </td>
             <td class="col-md-1"> {{ action.is_true|default('') }} </td>
-            <td class="col-md-1"> {{ action.is_active|default('') }} </td>
 
             <td class="col-md-1" ><div class="sign">
                     <a href="{{ path('deleteAnswer', { 'exam': examId, 'question': questionId, 'answer': action.id}) }}" title="delete answer">

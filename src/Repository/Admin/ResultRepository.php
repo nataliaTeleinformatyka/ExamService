@@ -17,7 +17,7 @@ class ResultRepository
 {
     protected $db;
     protected $database;
-    protected $dbname = 'Result';
+    protected $dbname = 'UserExam';
     private $entityManager = 'Result';
     protected $reference;
 
@@ -33,19 +33,14 @@ class ResultRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getResult(int $resultId)
+    public function getResult(int $userExamId, int $resultId)
     {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($resultId)) {
-                return $this->reference->getChild($resultId)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
-
+        if ($this->reference->getSnapshot()->getChild($userExamId)->hasChild("Result")) {
+            return $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->getValue();
+        } else {
+            return 0;
         }
     }
-
 
     public function getAllResults()
     {
@@ -65,7 +60,7 @@ class ResultRepository
         }
     }
 
-    public function insert($userExam, $numberOfAttempt,$points, $isPassed)
+    public function insert($userExamId, $data)//, $numberOfAttempt,$points, $isPassed)
     {
         print_r(" jestem w insert ");
         if (empty($data)) {
@@ -75,21 +70,21 @@ class ResultRepository
         $actualResultId = $this->getNextId();
         print_r("id".$actualResultId);
 
-        $this->reference->getChild($userExam)->getChild("Result")
+        $this->reference->getChild($userExamId)->getChild("Result")
             ->getChild($actualResultId)->set([
                 'id' => $actualResultId,
-                'number_of_attempt' => $numberOfAttempt,
-                'points' => $points,
-                'is_passed' => $isPassed,
+                'number_of_attempt' => $data[2],//$numberOfAttempt,
+                'points' => $data[3],//$points,
+                'is_passed' => $data[4],//$isPassed,
             ]);
         return true;
     }
-    public function update(array $data, int $id) {
+    public function update($userExamId,array $data, int $id) {
         if (empty($data)) {
             return false;
         }
-
-        $this->reference
+//todo : edit userexam and result child add everywhere in this repo
+        $this->reference->getChild($userExamId)->getChild("Result")
             ->getChild($id)->update([
                 'user_id' => $data[0],
                 'exam_id' => $data[1],
@@ -101,38 +96,32 @@ class ResultRepository
         return true;
     }
 
-    public function delete(int $resultId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($resultId)) {
-                $this->reference->getChild($resultId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+    public function delete(int $userExamId,int $resultId) {
+        if ($this->reference->getSnapshot()->getChild($userExamId)->hasChild("Result")) {
+            $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity()
-    {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
-        } catch (ApiException $e) {
-        }
+    public function getQuantity(int $userExamId) {
+        return $this->reference->getSnapshot()->getChild($userExamId)->getChild("Result")->numChildren();
     }
 
-    public function getIdResults()
+    public function getIdResults(int $userExamId)
     {
-        if($this->reference->getSnapshot()->hasChildren()==NULL){
+        $resultReference= $this->reference->getChild($userExamId)->getChild("Result")->getSnapshot()->getReference();
+
+        if($resultReference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
-            return  $this->reference->getChildKeys();
+            return $resultReference->getChildKeys();
         }
     }
-
-    public function getQuantityAttempt($examId, $userId){
-        $id = $this->getQuantity();
+//todo: THIS
+    public function getQuantityAttempt($userExamId,$examId, $userId){
+   /*     $id = $this->getQuantity($userExamId);
         for($i=0;$i<$id;$i++) {
             if ($this->reference->getSnapshot()->hasChild($i)) {
                 $resultInfo = $this->reference->getChild($i)->getValue();
@@ -144,11 +133,11 @@ class ResultRepository
             } else {
                 return 0;
             }
-        }
+        }*/
     }
 
-    public function find(int $resultId){
-        $information = $this->reference->getChild($resultId)->getValue();
+    public function find(int $userExamId, int $resultId){
+        $information = $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->getValue();
         $result = new Result([]);
         $result->setUserId($information['user_id']);
         $result->setExamId($information['exam_id']);
@@ -159,8 +148,8 @@ class ResultRepository
         return $result;
     }
 
-    public function getNextId(){
-        $resultsId= $this->getIdResults();
+    public function getNextId($userExamId){
+        $resultsId= $this->getIdResults($userExamId);
         if($resultsId!=0){
             $resultsAmount = count($resultsId);
         } else {

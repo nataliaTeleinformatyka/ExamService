@@ -29,6 +29,7 @@ class ResultController extends AbstractController
     {
         $examId = $_SESSION['exam_id'];
         $userId = $_SESSION['user_id'];
+       // $userExamId = $_SESSION['user_exam_id'];
         $questionAmount = $_SESSION['questionsAmount'];
 
         $answerRepo = new AnswerRepository();
@@ -141,8 +142,13 @@ $goodAnswers[$amount]=$answerInformation['id'];
             $isPassed=false;
         }
 
-        $dateOfResolveExam = "NULL";
-        $resultRepository->insert($_COOKIE['user_exam_id'], $numberOfAttempt,$points, $isPassed);
+        $result = new Result([]);
+        $result->setPoints($points);
+        $result->setNumberOfAttempt($numberOfAttempt);
+        $result->setIsPassed($isPassed);
+
+        $data = $result->getAllInformation();
+        $resultRepository->insert($_COOKIE['user_exam_id'],$data);//$_COOKIE['user_exam_id'], $numberOfAttempt,$points, $isPassed);
 
         return $this->render('studentResult.html.twig', array(
             'points' => $points

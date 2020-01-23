@@ -23,12 +23,11 @@ class StudentExamController extends AbstractController
      * @Route("studentExam/{userExamId}", name="studentExam")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    //todo: losowanie pytan i wyswietlanie odpowiedzi ktore sa active
     //jesli mniej active niz wymaganych to losowo pobierane
     public function studentExamCreate(Request $request) {
         $userExamId = $request->attributes->get('userExamId');
 $amount = 0;
-
+        //$_SESSION['user_exam_id'] = $userExamId;
         $userExamRepository = new UserExamRepository();
         $examRepository = new ExamRepository();
         $questionRepository = new QuestionRepository();

@@ -57,7 +57,7 @@ print_r("SPRAWDZAM ");
                 $goodLog = $userRepository->checkPassword($email, $password);
                 session_destroy();
                 session_start();
-                $_SESSION['user_id']=$id;
+                $_SESSION['user_id']=$information['id'];
                 $_SESSION['role'] = $information['role'];
                 $_SESSION['email']=$information['email'];
              //   $token = new UsernamePasswordToken($email, $password, 'main', $information['role']);

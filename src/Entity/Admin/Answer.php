@@ -50,11 +50,6 @@ class Answer extends Entity  implements  EquatableInterface
      * @ORM\Column(type="boolean")
      */
     private $is_true;
-    /**
-     * @Assert\Type("Boolean")
-     * @ORM\Column(type="boolean")
-     */
-    private $is_active;
 
     /**
      * @return mixed
@@ -139,21 +134,9 @@ class Answer extends Entity  implements  EquatableInterface
     /**
      * @return mixed
      */
-    public function getisActive()
-    {
-        return $this->is_active;
-    }
-
-    /**
-     * @param mixed $is_active
-     */
-    public function setIsActive($is_active): void
-    {
-        $this->is_active = $is_active;
-    }
 
     public function getAllInformation(){
-        $data = [$this->content,$this->is_true,$this->is_active];
+        $data = [$this->content,$this->is_true];
         return $data;
     }
     /**

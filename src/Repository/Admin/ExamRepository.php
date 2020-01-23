@@ -118,37 +118,26 @@ class ExamRepository
         return true;
     }
 
-    public function delete(int $examId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($examId)) {
-                $this->reference->getChild($examId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+    public function delete(int $examId) {
+        if ($this->reference->getSnapshot()->hasChild($examId)) {
+            $this->reference->getChild($examId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity()
-    {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
+    public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
 
-        } catch (ApiException $e) {
-        }
-    }
-
-    public function getIdExams()
-    {
+    public function getIdExams() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
             return  $this->reference->getChildKeys();
         }
     }
-    public function find(int $examId){
+
+    public function find(int $examId) {
         $information = $this->reference->getChild($examId)->getValue();
         $exam = new Exam([]);
         $exam->setName($information['name']);

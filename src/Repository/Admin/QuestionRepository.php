@@ -23,7 +23,8 @@ class QuestionRepository
     protected $dbname = 'Exam';
     private $entityManager = 'Question';
     protected $reference;
-
+    private $connection;
+    private $login;
 
     public function __construct()
     {
@@ -32,45 +33,45 @@ class QuestionRepository
         $factory = (new Factory)
             ->withServiceAccount($serviceAccount)
             ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-        $this->storage = new StorageClient([
-            'keyFilePath' => 'C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json',
-            'projectId' => 'examservicedatabase']);
-        $this->bucket = $this->storage->bucket('examservicedatabase.appspot.com');
+
         $this->database = $factory->createDatabase();
         $this->reference = $this->database->getReference($this->dbname);
+
+
+        $ftp_server = "ftp.files1.radiokomunikacja.edu.pl";
+        $ftp_port = 21;
+        $ftp_time = 90;
+        $ftp_user = "user@files01.radiokomunikacja.edu.pl";
+        $ftp_password = "M5.wlx.KZH.4";
+        $this->connection = ftp_connect($ftp_server,$ftp_port,$ftp_time) or die("Couldn't connect to $ftp_server");
+        $this->login = ftp_login($this->connection,$ftp_user,$ftp_password);
+
+        if ((!$this->connection) || (!$this->login)) {
+            echo "Połączenie FTP się nie powiodło!";
+            echo "Próbowano połączyć się do $ftp_server jako użytkownik"
+                . $ftp_user;
+            die;
+        } else {
+            echo "Połączony z $ftp_server jako użytkownik $ftp_user<br>";
+        }
+
     }
 
-    public function getQuestion(int $examId, int $questionId)
-    {
+    public function getQuestion(int $examId, int $questionId) {
         $examReference = $this->database->getReference("Exam");
-        try {
-           if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
-                return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
 
+        if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
+            return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)->getValue();
+        } else {
+            return 0;
         }
     }
-    public function getFile($filename){
-        return $this->bucket->object($filename);
-    }
 
-    public function downloadFile($filename) {
-        $object = $this->bucket->object($filename);
-        $object->downloadToFile('/files/'.$filename);
-
-
-        //return $this->bucket->object($filename);
-    }
-
-
-    public function insert( int $examId, array $data, string $filename)
-    {
+    public function insert( int $examId, array $data, string $filename) {
         if (empty($data)) {
             return false;
         }
+
         $questionRepository = new QuestionRepository();
         $examReference = $this->database->getReference("Exam");
 
@@ -87,30 +88,36 @@ class QuestionRepository
         return true;
     }
 
-    public function uploadFile(UploadedFile $file)
-    {
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $fileName = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
-        $this->bucket->upload(
-            $file,
-            [
-                'name' => $fileName
-            ]
-        );
-        return $fileName;
+    public function uploadFile(UploadedFile $file, $filename) {
+        if(ftp_put($this->connection,$filename,$file,FTP_BINARY))
+        {
+            echo "Successfully uploaded $file.";
+        }
+        else
+        {
+            echo "Error uploading $file.";
+        }
+        ftp_close($this->connection);
+
     }
 
-    public function updateFile(UploadedFile $file, string $filenameFromDatabase)
-    {
-        $this->deleteFile($filenameFromDatabase);
-
-        $fileName = $this->uploadFile($file);
-        return $fileName;
+    public function getFile(string $filename){
+        if(!ftp_get($this->connection,$filename,$filename,FTP_BINARY)) {
+            echo("Błąd przy próbie pobrania pliku $filename...");
+            exit;
+        } else {
+            echo("ALL IS GOOD");
+        }
     }
 
-    public function deleteFile(string $filename){
-        $fileObject = $this->getFile($filename);
-        $fileObject->delete();
+    public function deleteFile($filename) {
+        if(ftp_delete($this->connection,$filename)) {
+            echo "Successfully deleted $filename.";
+        }
+        else
+        {
+            echo "Error deleting $filename.";
+        }
     }
 
 

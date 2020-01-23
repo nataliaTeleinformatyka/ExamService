@@ -5,18 +5,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 17.11.2019
- * Time: 11:32
- */
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Admin\UserRepository")
  */
 
-class User extends Entity //implements UserInterface
+class User extends Entity
 {
     /**
      * @Assert\Type("Integer")

@@ -37,7 +37,8 @@
         "symfony/web-link": "4.3.*",
         "symfony/webpack-encore-bundle": "dev-master",
         "symfony/yaml": "4.3.*",
-      "ext-intl": "*"
+      "ext-intl": "*",
+      "ext-ftp": "*"
     },
     "require-dev": {
         "symfony/debug-pack": "*",
