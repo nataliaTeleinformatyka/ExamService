@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 03.12.2019
- * Time: 13:14
- */
 
 namespace App\Repository\Admin;
 
-
-use App\Entity\Admin\UserExam;
-use Kreait\Firebase\Exception\ApiException;
+use DateTime;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
@@ -77,8 +69,15 @@ class UserExamRepository
     }
 
     public function isUserExamForExamId(int $examId) {
-        for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $userExam = $this->getUserExam($i);
+        $userExamsId = $this->getIdUserExams();
+        if ($userExamsId != 0) {
+            $userExamsCount = count($userExamsId);
+        } else {
+            $userExamsCount = 0;
+            return false;
+        }
+        for ($i = 0; $i < $userExamsCount; $i++) {
+            $userExam = $this->getUserExam($userExamsId[$i]);
             if ($userExam['exam_id'] == $examId) {
                 return true;
             } else {
@@ -87,25 +86,34 @@ class UserExamRepository
         }
     }
 
-    public function update(array $data, int $id) {
+    public function isUserExamForUserId(int $userId) {
+        $userExamsId = $this->getIdUserExams();
+        if($userExamsId!=0){
+            $userExamsCount = count($userExamsId);
+        } else {
+            $userExamsCount=0;
+            return false;
+        }
+        for ($i = 0; $i < $userExamsCount; $i++) {
+            $userExam = $this->getUserExam($userExamsId[$i]);
+            if ($userExam['user_id'] == $userId) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public function update(Datetime $data, int $id) {
         if (empty($data)) {
             return false;
         }
 
         $this->reference
             ->getChild($id)->update([
-                'date_of_resolve_exam' => $data[0],
+                'date_of_resolve_exam' => $data,
             ]);
         return true;
-    }
-
-    public function find(int $userExamId){
-        $information = $this->reference->getChild($userExamId)->getValue();
-        $userExam = new UserExam([]);
-       // $userExam->setDateOfResolveExam($information['date_of_resolve_exam']);
-
-
-        return $userExam;
     }
 
     public function nextUserExamId(){

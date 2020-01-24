@@ -46,15 +46,6 @@ class QuestionRepository
         $this->connection = ftp_connect($ftp_server,$ftp_port,$ftp_time) or die("Couldn't connect to $ftp_server");
         $this->login = ftp_login($this->connection,$ftp_user,$ftp_password);
 
-        if ((!$this->connection) || (!$this->login)) {
-            echo "Połączenie FTP się nie powiodło!";
-            echo "Próbowano połączyć się do $ftp_server jako użytkownik"
-                . $ftp_user;
-            die;
-        } else {
-            echo "Połączony z $ftp_server jako użytkownik $ftp_user<br>";
-        }
-
     }
 
     public function getQuestion(int $examId, int $questionId) {

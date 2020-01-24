@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 15:51
- */
 
 namespace App\Controller\Admin;
-
 
 use App\Entity\Admin\Answer;
 use App\Form\Admin\AnswerType;
@@ -25,7 +18,6 @@ class AnswerController extends AbstractController
      */
     public function new(Request $request)
     {
-        //$repository = $this->getDoctrine()->getRepository(Answer::class);
         $question = new Answer([]);
 
         $examId = $request->attributes->get('examId');
@@ -40,8 +32,6 @@ class AnswerController extends AbstractController
             $data[1] = $request->request->get('is_true');
 
             $answer = $form->getData();
-
-           // $entityManager = $this->getDoctrine()->getManager();
 
             $values = $answer->getAllInformation();
             $examValue = $request->attributes->get('examId');
@@ -123,7 +113,7 @@ class AnswerController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editAnswer/{examId}/{questionId}/{id}", name="editAnswer")
      */
-    public function editExam(Request $request, Answer $answer)
+    public function editAnswer(Request $request, Answer $answer)
     {
         $examId = (int)$request->attributes->get('examId');
         $questionId = (int)$request->attributes->get('questionId');
@@ -137,7 +127,6 @@ class AnswerController extends AbstractController
         $examInfoArray = array(
             'content' => $answers['content'],
             'is_true' => $answers['is_true'],
-
         );
 
         $form = $this->createForm(AnswerType::class, $answer);
@@ -145,14 +134,28 @@ class AnswerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $exams = $form->getData();
-        //    $entityManager = $this->getDoctrine()->getManager();
 
             $values = $answer->getAllInformation();
             $answerInformation->update($values,$examId,$questionId,$id);
-            return $this->redirectToRoute('answerList', [
-                'examId' => $examId,
-                'questionId' => $questionId
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('answerList', [
+                            'examId' => $examId,
+                            'questionId' => $questionId
+                        ]);
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherQuestionInfo', [
+                            'exam' => $examId,
+                            'question' => $questionId
+                        ]);
+                        break;
+                    }
+            }
+
         }
         return $this->render('answerAdd.html.twig', [
             'form' => $form->createView(),

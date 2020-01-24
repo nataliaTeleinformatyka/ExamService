@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 13:53
- */
 
 namespace App\Controller\Admin;
-
 
 use App\Entity\Admin\Question;
 use App\Form\Admin\QuestionType;
@@ -48,9 +41,22 @@ class QuestionController extends AbstractController
 
             $repositoryQuestion->insert($idExamValue, $values,$newFilename);
 
-            return $this->redirectToRoute('questionList', [
-                'id' => $examId,
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('questionList', [
+                            'id' => $examId,
+                        ]);
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherExamInfo', [
+                            'exam' => $examId,
+                        ]);
+                        break;
+                    }
+            }
         }
 
         return $this->render('questionAdd.html.twig', [
@@ -140,9 +146,23 @@ class QuestionController extends AbstractController
                 $repo->deleteFile($filename);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
         }
-        return $this->redirectToRoute('questionList', [
-            'id' => $examId,
-        ]);
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('questionList', [
+                        'id' => $examId,
+                    ]);
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamInfo', [
+                        'exam' => $examId,
+                    ]);
+                    break;
+                }
+        }
+
     }
 
     /**
@@ -188,9 +208,22 @@ class QuestionController extends AbstractController
 
             $questionInformation->update($values,$examId, $questionId,$filename);
 
-            return $this->redirectToRoute('questionList', [
-                'id' => $questionId,
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('questionList', [
+                            'id' => $examId,
+                        ]);
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherExamInfo', [
+                            'exam' => $examId,
+                        ]);
+                        break;
+                    }
+            }
         }
         return $this->render('questionAdd.html.twig', [
             'form' => $form->createView(),

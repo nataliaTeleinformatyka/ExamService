@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 08.12.2019
- * Time: 14:40
- */
 
 namespace App\Controller\User\Teacher;
-
-
 
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupExamRepository;
@@ -28,22 +20,28 @@ class ExamInformationController extends AbstractController
      */
     public function examListCreate()
     {
-        $examInformation = new ExamRepository();
-        $id = $examInformation->getQuantity();
-        if ($id > 0) {
-            for ($i = 0; $i < $id; $i++) {
-                $exams = $examInformation->getExam($i);
-                if ($exams['created_by'] == 0/*$_SESSION['user_id']*/){ //todo: Pobieranie id uzytkownika z sesji
+        $_SESSION['exam_id'] = "";
+        $examRepository = new ExamRepository();
+        $examsId = $examRepository->getIdExams();
+
+        if($examsId!=0){
+            $examsCount = count($examsId);
+        } else {
+            $examsCount=0;
+        }
+
+        if ($examsCount > 0) {
+            for ($i = 0; $i < $examsCount; $i++) {
+                $exams = $examRepository->getExam($examsId[$i]);
+                if ($exams['created_by'] == $_SESSION['user_id'] or $exams['created_by'] == -1){
                     if ($exams['learning_required'] == 1) {
-                        $is_required = true;
+                        $is_required = "true";
                     } else {
-                        $is_required = false;
+                        $is_required = "false";
                     }
-                   // $durationOfExam = $exams['duration_of_exam'];
-                    //$accessTime = date("H",strtotime($durationOfExam['date']))*60 + date("i",strtotime($durationOfExam['date']));
 
                     $tplArray[$i] = array(
-                        'id' => $i,
+                        'id' => $exams['exam_id'],
                         'name' => $exams['name'],
                         'learning_required' => $is_required,
                         'max_questions' => $exams['max_questions'],
@@ -83,56 +81,79 @@ class ExamInformationController extends AbstractController
     {
         $examInformation = new ExamRepository();
         $examId = $request->attributes->get('exam');
+        $_SESSION['exam_id'] = $examId;
+        $_SESSION['question_id']="";
         $exams = $examInformation->getExam($examId);
+        $existQuestions = false;
         if ($exams['learning_required'] == 1) {
             $is_required = "Tak";
         } else {
             $is_required = "Nie";
         }
+        $startDate = date("Y-m-d",strtotime( $exams['start_date']['date']));
+        $endDate = date("Y-m-d",strtotime( $exams['end_date']['date']));
+        if(date("Y",strtotime( $exams['start_date']['date'])) <'2020')
+            $startDate=" - ";
+        if(date("Y",strtotime( $exams['end_date']['date'])) <'2020')
+            $endDate=" - ";
 
-        $examInfoArray[0] = array(
+            $examInfoArray[0] = array(
             'id' => $examId,
             'name' => $exams['name'],
             'learning_required' => $is_required,
             'max_questions' => $exams['max_questions'],
             'max_attempts' => $exams['max_attempts'],
-            'duration_of_exam' => $exams['duration_of_exam'],//date("H",strtotime($exams['duration_of_exam']['date']))*60 + date("i",strtotime($exams['duration_of_exam']['date']))." minut",
-            'start_date' => date("Y-m-d",strtotime( $exams['start_date']['date'])),
-            'end_date' => date("Y-m-d",strtotime( $exams['end_date']['date'])),
+            'duration_of_exam' => $exams['duration_of_exam'],
+            'percentage_passed_exam' => $exams['percentage_passed_exam'],
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'additional_information' => $exams['additional_information']
         );
 
-        $questionInformation= new QuestionRepository();
-        $idQuestion = $questionInformation -> getQuantity($examId);
-        if($idQuestion>0) {
-            for ($i = 0; $i < $idQuestion; $i++) {
-                $questions = $questionInformation->getQuestion($examId,$i);
+        $questionRepository= new QuestionRepository();
+        $questionsId = $questionRepository->getIdQuestions($examId);
+        if($questionsId!=0){
+            $questionsCount = count($questionsId);
+        } else {
+            $questionsCount=0;
+        }
+        if($questionsCount>0) {
+            $existQuestions = true;
+            for ($i = 0; $i < $questionsCount; $i++) {
+                $questions = $questionRepository->getQuestion($examId,$questionsId[$i]);
                 $questionArray[$i] = array(
-                    'id' => $i,
+                    'id' => $questions['id'],
                     'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                 );
             }
         } else {
             $questionArray = array(
-                'id' => 0,
-                'exam_id' => 0,
-                'content' => 0,
+                'id' => '',
+                'exam_id' => '',
+                'content' => '',
             );
         }
 
         $learningMaterialsGroupExamInformation = new LearningMaterialsGroupExamRepository();
         $learningMaterialsGroupInformation= new LearningMaterialsGroupRepository();
-        $id = $learningMaterialsGroupExamInformation->getQuantity();
-        if($id>0) {
+
+        $learningMaterialsGroupExamsId = $learningMaterialsGroupExamInformation->getIdLearningMaterialsGroupExams();
+        if($learningMaterialsGroupExamsId!=0){
+            $learningMaterialsGroupExamsCount = count($learningMaterialsGroupExamsId);
+        } else {
+            $learningMaterialsGroupExamsCount=0;
+        }
+
+        if($learningMaterialsGroupExamsCount>0) {
             $informationMaterialGroupExam = false;
-            for ($i = 0; $i < $id; $i++) {
-                $amount=0;
-                $learningMaterialsGroupExam = $learningMaterialsGroupExamInformation->getLearningMaterialsGroupExam($i);
+            $amount=0;
+
+            for ($i = 0; $i < $learningMaterialsGroupExamsCount; $i++) {
+                $learningMaterialsGroupExam = $learningMaterialsGroupExamInformation->getLearningMaterialsGroupExam($learningMaterialsGroupExamsId[$i]);
                 if ($learningMaterialsGroupExam['exam_id'] == $examId){
                     $informationMaterialGroupExam = true;
                     $learning_materials_group_id = $learningMaterialsGroupExam['learning_materials_group_id'];
-                    $exam_id = $learningMaterialsGroupExam['exam_id'];
 
                     $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($learning_materials_group_id);
                     $materialsGroupArray[$amount] = array(
@@ -140,28 +161,49 @@ class ExamInformationController extends AbstractController
                         'name_of_group' => $learningMaterialsGroup['name_of_group'],
                     );
                     $amount++;
+                } else {
+                    if($i==$learningMaterialsGroupExamsCount-1 and $informationMaterialGroupExam==false){
+                        $materialsGroupArray[] = array(
+                            'id' => '',
+                            'name_of_group' => '',
+                        );
+                    }
                 }
             }
         } else {
-                $learning_materials_group_id = "";
-                $exam_id = "";
+            $materialsGroupArray[] = array(
+                'id' => '',
+                'name_of_group' => '',
+            );
         }
 
         $userInformation= new UserRepository();
-        $userId = $userInformation -> getQuantity();
-        if ($userId > 0) {
+        $usersId = $userInformation->getIdUsers();
+        if($usersId!=0){
+            $usersCount = count($usersId);
+        } else {
+            $usersCount=0;
+        }
+        if ($usersCount > 0) {
             $userExamInformation = new UserExamRepository();
-            $userExamId = $userExamInformation -> getQuantity();
-            if ($userExamId > 0) {
+            $userExamsId = $userExamInformation->getIdUserExams();
+            if($userExamsId!=0){
+                $userExamsCount = count($userExamsId);
+            } else {
+                $userExamsCount=0;
+            }
+
+            if ($userExamsCount > 0) {
+                $informationUserExam = false;
+
                 $k =0;
-                for ($i = 0; $i < $userExamId; $i++) {
-                    $userExam = $userExamInformation->getUserExam($i);
+                for ($i = 0; $i < $userExamsCount; $i++) {
+                    $userExam = $userExamInformation->getUserExam($userExamsId[$i]);
                     if($userExam['exam_id'] == $examId) {
                         $informationUserExam = true;
                         $users = $userInformation->getUser($userExam['user_id']);
-                        print_r($users);
                         $userExamArray[$k] = array(
-                            'user_exam_id' => $userExamId,
+                            'user_exam_id' => $userExam['user_exam_id'],
                             'user_id' => $userExam['user_id'],
                             'first_name' => $users['first_name'],
                             'last_name' => $users['last_name'],
@@ -170,17 +212,45 @@ class ExamInformationController extends AbstractController
                         );
                         $k++;
                     } else {
-                        $informationUserExam = false;
+                        if($i==$userExamsCount-1 and $informationUserExam == false){
+                            $userExamArray[] = array(
+                                'user_exam_id' => '',
+                                'user_id' => '',
+                                'first_name' => '',
+                                'last_name' => '',
+                                'group_of_students' => '',
+                                'email' => ''
+                            );
+                        }
                     }
                 }
+            } else {
+                $userExamArray[] = array(
+                    'user_exam_id' => '',
+                    'user_id' => '',
+                    'first_name' => '',
+                    'last_name' => '',
+                    'group_of_students' => '',
+                    'email' => ''
+                );
             }
+        } else {
+            $userExamArray[] = array(
+                'user_exam_id' => '',
+                'user_id' => '',
+                'first_name' => '',
+                'last_name' => '',
+                'group_of_students' => '',
+                'email' => ''
+            );
         }
         return $this->render('teacherExamInfo.html.twig', array(
             'data' => $examInfoArray,
+            'information_question' => $existQuestions,
             'question_data' => $questionArray,
             'materials_group_data'=> $materialsGroupArray,
             'user_info_data' => $userExamArray,
-            'exam_id' => $exam_id,
+            'exam_id' => $examId,
             'informationMaterialGroupExam' => $informationMaterialGroupExam,
             'informationUserExam' => $informationUserExam,
         ));

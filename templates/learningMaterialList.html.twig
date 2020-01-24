@@ -10,6 +10,7 @@
             <span class="glyphicon glyphicon-plus-sign"></span> Add new learning material
         </a>
     </div>
+{% if( information == true) %}
     <table>
         <tr>
             <td>Id</td>
@@ -20,7 +21,6 @@
             <td></td>
         </tr>
         {% for action in data|sort %}
-            {% if( information == true) %}
             <tr>
                 <td>{{ action.id|default('') }}  </td>
                     <td>{{ action.learning_materials_group_id|default('') }}</td>
@@ -34,7 +34,7 @@
                         <a href="{{ path('editLearningMaterial', { 'groupId': learningMaterialsGroupId, 'id': action.id }) }}" title="edit learning materials group">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
-                        <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_content}}">
+                        <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_content}}" target="_blank">
                             <span class="glyphicon glyphicon-file"></span>
                         </a>
                         <a href="{{ path('learningMaterialDownload', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterialId': action.id }) }}">
@@ -42,8 +42,9 @@
                         </a>
                     </td>
             </tr>
-                {% endif %}
             {% endfor%}
         </table>
+{% endif %}
+
     </div>
 {% endblock %}

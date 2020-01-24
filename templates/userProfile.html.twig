@@ -1,0 +1,20 @@
+{# templates/userList.html.twig #}
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+    <div>
+        <a href="{{ path('editUser', { 'id': user_id}) }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-pencil"></span> Edytuj informacje
+        </a>
+    </div>
+    {% for action in user_information %}
+    <p><b>Imię:</b>{{ action.first_name }}</p>
+    <p><b>Nazwisko:</b>{{ action.last_name }}</p>
+    <p><b>Email:</b>{{ action.email }}</p>
+    <p><b>Data ostatniego logowania:</b>{{ action.last_login }}</p>
+    <p><b>Data rejestracji:</b>{{ action.date_registration }}</p>
+    {% endfor %}
+
+</div>
+{% endblock %}

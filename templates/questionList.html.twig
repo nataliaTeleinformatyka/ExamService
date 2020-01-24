@@ -42,7 +42,7 @@
                             <span class="glyphicon glyphicon-list"></span>
                         </a>
                     {% if action.name_of_file != "" %}
-                    <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_file}}">
+                    <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_file}}" target="_blank">
                         <span class="glyphicon glyphicon-file"></span>
                     </a>
                         <a href="{{ path('downloadFile', { 'exam': examId, 'question' : action.id  }) }}">

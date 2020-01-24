@@ -1,27 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 17.11.2019
- * Time: 17:55
- */
 
 namespace App\Controller;
-
 
 use App\Entity\Admin\User;
 use App\Form\LoginType;
 use App\Repository\Admin\UserRepository;
-use App\Security\UserProvider;
 use Kreait\Firebase\Exception\Auth\InvalidPassword;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Twig_Environment;
 
 class LoginController  extends AbstractController
 {

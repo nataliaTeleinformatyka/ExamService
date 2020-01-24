@@ -1,0 +1,23 @@
+{# templates/teacherQuestionInfo.html.twig #}
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container">
+        <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-home"></span> Strona główna
+        </a>
+        <div class="list">
+            {% if information==true %}
+                {% for action in result %}
+                    <p><b>Podejście numer :</b> {{ action.id|default('undefined') }}
+                        <b>Ilość punktów :</b> {{ action.points|default('undefined') }}
+                        <b>Czy egzamin ukończono z wynikiem pozytywnym:</b> {{ action.is_passed|default('undefined') }}
+                        </p>
+                {% endfor%}
+            {% endif %}
+        </div>
+        <button type="button" class="btn btn-default btn-sm">
+            <a href="{{ path('teacherExamInfo', { 'exam': exam_id}) }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
+    </div>
+{% endblock %}

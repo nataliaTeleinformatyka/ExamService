@@ -152,16 +152,14 @@ class UserRepository
         }
         $email = $data[3];
         $idFromAuthentication = $this->getUserIdFromAuthentication($email);
-        print_r($idFromAuthentication);
         $user = $this->auth->getUser($idFromAuthentication);
-        print_r($user);
         $updatedUser = $this->auth->changeUserPassword($user->uid, $data[0]);
-        //$this->editUserPasswordFromAuthentication($idFromAuthentication,$data[0]);
         $this->reference
             ->getChild($id)->update([
                 'first_name' => $data[1],
                 'last_name' => $data[2],
-                'group_of_students' => $data[8]
+                'group_of_students' => $data[8],
+                'last_password_change' => $data[6]
             ]);
         return true;
     }

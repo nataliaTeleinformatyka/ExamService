@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 03.12.2019
- * Time: 13:12
- */
 
 namespace App\Controller\Admin;
 
-
-use App\Entity\Admin\Exam;
 use App\Entity\Admin\UserExam;
 use App\Form\Admin\UserExamType;
 use App\Repository\Admin\UserExamRepository;
@@ -30,8 +22,6 @@ class UserExamController  extends AbstractController
 
         $form = $this->createForm(UserExamType::class, $exam);
         $form->handleRequest($request);
-        $exam = $form->getData();
-        print_r($exam);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $exam = $form->getData();
@@ -40,7 +30,20 @@ class UserExamController  extends AbstractController
             $repositoryExam = new UserExamRepository();
             $repositoryExam->insert($values);
 
-            return $this->redirectToRoute('userExamList');
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('userExamList');
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherExamInfo', [
+                            'exam' =>  $_SESSION['exam_id'],
+                        ]);
+                        break;
+                    }
+            }
         }
 
         return $this->render('userExamAdd.html.twig', [

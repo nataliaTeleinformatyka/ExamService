@@ -90,10 +90,7 @@ class LearningMaterialsGroupExamRepository
 
     public function getQuantity()
     {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
-        } catch (ApiException $e) {
-        }
+        return $this->reference->getSnapshot()->numChildren();
     }
 
 
@@ -116,7 +113,12 @@ class LearningMaterialsGroupExamRepository
 
     public function findByGroupId(int $learningMaterialsGroupId) {
         $id = $this->getIdLearningMaterialsGroupExams();
-        for($i=0;$i<count($id);$i++) {
+        if($id!=0){
+            $count = count($id);
+        } else {
+            $count=0;
+        }
+        for($i=0;$i<$count;$i++) {
             $information = $this->reference->getChild($id[$i])->getValue();
             if($information['learning_materials_group_id'] == $learningMaterialsGroupId) {
                 return true;
@@ -129,6 +131,24 @@ class LearningMaterialsGroupExamRepository
 
     public function findByExamId(int $examId) {
         $id = $this->getIdLearningMaterialsGroupExams();
+        if($id!=0){
+            $count = count($id);
+        } else {
+            $count=0;
+        }
+        for($i=0;$i<$count;$i++) {
+            $information = $this->reference->getChild($id[$i])->getValue();
+            if($information['exam_id'] == $examId) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+    }
+
+   /* public function findByExamId(int $examId) {
+        $id = $this->getIdLearningMaterialsGroupExams();
         $amount =0;
         for($i=0;$i<count($id);$i++) {
             $information = $this->reference->getChild($id[$i])->getValue();
@@ -138,7 +158,7 @@ class LearningMaterialsGroupExamRepository
             }
         }
         return $learningMaterialsGroups;
-    }
+    }*/
 
     public function getNextId() {
         $learningMaterialsGroupExamsId = $this->getIdLearningMaterialsGroupExams();

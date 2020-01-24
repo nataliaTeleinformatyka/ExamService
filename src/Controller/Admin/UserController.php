@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 17.11.2019
- * Time: 17:58
- */
 
 namespace App\Controller\Admin;
 
-
 use App\Form\Admin\UserEditType;
+use App\Repository\Admin\UserExamRepository;
 use App\Repository\Admin\UserRepository;
-use App\Security\UserProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Admin\User;
 use App\Form\Admin\UserType;
@@ -34,9 +27,6 @@ class UserController extends AbstractController
      */
     public function new(Request $request)
     {
-        //todo: jesli admin to moze dodac wszystkich, jesli nauczyciel to moze dodac tylko uczniow
-//todo: redirect, potwierdz haslo
-       // $repository = $this->getDoctrine()->getRepository(User::class);
         $user = new User([]);
         $user->setLastPasswordChange(new \DateTime('now'));
         $user->setLastLogin(new \DateTime('now'));
@@ -48,7 +38,6 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();
-            //$entityManager = $this->getDoctrine()->getManager();
 
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
@@ -114,13 +103,20 @@ class UserController extends AbstractController
                 'role' => '',
                 'group_of_students' => '',
                 'last_login' => '',
-                'last_password_change' => '',
+               // 'last_password_change' => '',
                 'date_registration' => ''
             );
+        }
+        if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
+            $infoDelete = $_SESSION['information'];
+        } else {
+            $infoDelete = "";
         }
         return $this->render( 'userList.html.twig', array (
             'data' => $tplArray,
             'information' => $info,
+            'infoDelete' => $infoDelete,
+
         ) );
 
     }
@@ -132,14 +128,20 @@ class UserController extends AbstractController
      */
     public function userDelete(Request $request) {
         $id = $request->attributes->get('userId');
-        print_r($id);
-        $repo = new UserRepository();
-        $userInfo = $repo->getUser($id);
-        $email = $userInfo['email'];
-        if($repo->delete($id))
-            $repo->deleteUserFromAuthenticationByEmail($email);
+        $userRepository = new UserRepository();
+        $userExamRepository = new UserExamRepository();
 
-        //todo: nie moze usunac gdy istnieja powiazania userexam
+        $isUserExam = $userExamRepository->isUserExamForUserId($id);
+
+        $userInfo = $userRepository->getUser($id);
+        $email = $userInfo['email'];
+        if($isUserExam==true){
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
+        } else {
+            if($userRepository->delete($id))
+                $userRepository->deleteUserFromAuthenticationByEmail($email);
+            $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
+        }
 
         return $this->redirectToRoute('userList');
     }
@@ -176,16 +178,30 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userInfo = $form->getData();
-
+            $user->setLastPasswordChange(new \DateTime());
             $examValue = $request->attributes->get('id');
-            print_r($examValue);
-
             $values = $user->getAllInformation();
-            print_r($values);
+
             $repositoryExam = new UserRepository();
             $repositoryExam->update($values,$userId);
-          //  print_r($values);
-            // return $this->redirectToRoute('examList');
+
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('userList');
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('userProfile');
+                        break;
+                    }
+                case "ROLE_STUDENT":
+                    {
+                        return $this->redirectToRoute('userProfile');
+                        break;
+                    }
+            }
         }
         return $this->render('userAdd.html.twig', [
             'form' => $form->createView(),

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 15.12.2019
- * Time: 20:53
- */
 
 namespace App\Form\Admin;
 
@@ -29,14 +23,18 @@ class LearningMaterialsGroupExamType extends AbstractType
         $exam = new ExamRepository();
         $group = new LearningMaterialsGroupRepository();
 
-           for ($i = 0; $i < $exam->getQuantity(); $i++) {
-               $values = $exam->getExam($i);
-               $examArray[$values['exam_id'].' - '.$values["name"]] = $values['exam_id'];
-           }
-           for ($i = 0; $i < $group->getQuantity(); $i++) {
-                $valuesGroup = $group->getLearningMaterialsGroup($i);
-                $groupArray[$valuesGroup['learning_materials_groups_id'].' - '.$values['name']] = $valuesGroup['learning_materials_groups_id'];
-           }
+        $examsId = $exam->getIdExams();
+        $examsCount = count($examsId);
+        $learningMaterialsGroupsId = $group->getLearningMaterialsGroupId();
+        $learningMaterialsGroupsCount = count($learningMaterialsGroupsId);
+        for ($i = 0; $i < $examsCount; $i++) {
+            $values = $exam->getExam($examsId[$i]);
+            $examArray[$values['exam_id'].' - '.$values["name"]] = $values['exam_id'];
+        }
+        for ($i = 0; $i < $learningMaterialsGroupsCount; $i++) {
+            $valuesGroup = $group->getLearningMaterialsGroup($learningMaterialsGroupsId[$i]);
+            $groupArray[$valuesGroup['learning_materials_groups_id'].' - '.$values['name']] = $valuesGroup['learning_materials_groups_id'];
+        }
 
         $builder
             ->add('learning_materials_group_id', ChoiceType::class, [

@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 09.12.2019
- * Time: 12:16
- */
 
 namespace App\Controller\User\Teacher;
 
-
-use App\Entity\Admin\LearningMaterial;
 use App\Repository\Admin\LearningMaterialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,14 +19,22 @@ class LearningMaterialsInformationController extends AbstractController
 
         $materialGroupId = $request->attributes->get('groupId');
         $learningMaterialsInformation = new LearningMaterialRepository();
-        $id = $learningMaterialsInformation->getQuantity($materialGroupId);
-        if ($id > 0) {
-            for ($i = 0; $i < $id; $i++) {
-                $learningMaterials = $learningMaterialsInformation->getLearningMaterial($materialGroupId,$i);
+        $existLearningMaterial=false;
+
+        $learningMaterialsId = $learningMaterialsInformation->getIdLearningMaterials($materialGroupId);
+        if($learningMaterialsId!=0){
+            $learningMaterialsCount = count($learningMaterialsId);
+        } else {
+            $learningMaterialsCount=0;
+        }
+        if ($learningMaterialsCount > 0) {
+            $existLearningMaterial=true;
+            for ($i = 0; $i < $learningMaterialsCount; $i++) {
+                $learningMaterials = $learningMaterialsInformation->getLearningMaterial($materialGroupId, $learningMaterialsId[$i]);
                 if($learningMaterials['is_required'] == true) {
-                    $is_required = "true";
+                    $is_required = "Tak";
                 } else {
-                    $is_required="false";
+                    $is_required="Nie";
                 }
                     $learningMaterialsArray[$i] = array(
                         'id' => $i,
@@ -60,8 +60,10 @@ class LearningMaterialsInformationController extends AbstractController
         $_SESSION['information'] = array();
         return $this->render('teacherLearningMaterialsInfo.html.twig', array(
             'learning_materials_data' => $learningMaterialsArray,
-            'learning_materials_group_id' => $learningMaterials['learning_materials_group_id'],
-            'info_delete' => $infoDelete
+            'learning_materials_group_id' => $materialGroupId,
+            'info_delete' => $infoDelete,
+            'information' => $existLearningMaterial,
+            'exam_id' => $_SESSION['exam_id']
 
         ));
 

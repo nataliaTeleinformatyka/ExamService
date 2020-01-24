@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 15:47
- */
 
 namespace App\Repository\Admin;
-
 
 use App\Entity\Admin\Answer;
 use Kreait\Firebase\Exception\ApiException;

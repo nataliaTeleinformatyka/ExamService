@@ -3,23 +3,36 @@
 
 {% block body %}
     <div class="container">
+        <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-home"></span> Strona główna
+        </a>
     <div class="signClass">
         <a href="{{ path('deleteGroup', { 'learningMaterialsGroup': learning_materials_group_id}) }}" class="btn btn-info btn-lg">
             <span class="glyphicon glyphicon-remove-sign"></span> Usuń grupę materiałów naukowych
         </a>
     </div>
         <div class="list">
-            {% for error in infoDelete %}
+            {% for error in info_delete %}
                 {{ error.message }}
             {% endfor %}
+
+            {% if information==true %}
             {% for action in learning_materials_data %}
-                <p><b>Name :</b> {{ action.name|default('undefined') }}
-                <b>Name of content :</b> {{ action.name_of_content|default('undefined') }}
-                <b>Is required :</b> {{ action.is_required|default('undefined') }}
+                <p><b>Nazwa :</b> {{ action.name|default('undefined') }}
+                <b>Plik :</b><a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_content}}" target="_blank">
+                        {{ action.name_of_content|default('undefined') }}</a>
+                <b>Czy plik jest wymagany :</b> {{ action.is_required|default('undefined') }}
                     <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learning_materials_group_id, 'learningMaterial': action.id}) }}" title="Usuń materiał">
                         <span class="glyphicon glyphicon-remove-sign"></span> Usuń
+                    </a>
+                    <a href="{{ path('editLearningMaterial', { 'groupId': learning_materials_group_id, 'id': action.id}) }}" title="Edytuj materiał">
+                        <span class="glyphicon glyphicon-remove-sign"></span> Edytuj
                     </a></p>
             {% endfor%}
+            {% endif %}
         </div>
+        <button type="button" class="btn btn-default btn-sm">
+            <a href="{{ path('teacherExamInfo', { 'exam': exam_id}) }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
     </div>
 {% endblock %}

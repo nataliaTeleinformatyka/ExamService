@@ -32,6 +32,9 @@
                         <a href="{{ path('deleteUserExam', { 'userExamId': action.user_exam_id}) }}">
                             <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
                         </a>
+                        <a href="{{ path('resultList', { 'userExamId': action.user_exam_id }) }}" title="Result list">
+                            <span class="glyphicon glyphicon-list"></span>
+                        </a>
                     </div>
                 </td>
             </tr>

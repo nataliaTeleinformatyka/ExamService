@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 11.01.2020
- * Time: 13:46
- */
 
 namespace App\Controller\User\Teacher;
 
@@ -23,11 +17,16 @@ class UserInformationController extends AbstractController
     {
         $info = false;
         $userInformation = new UserRepository();
-        $id = $userInformation->getQuantity();
-        if ($id > 0) {
+        $usersId = $userInformation->getIdUsers();
+        if($usersId!=0){
+            $usersCount = count($usersId);
+        } else {
+            $usersCount=0;
+        }
+        if ($usersCount > 0) {
             $amount = 0;
-            for ($i = 0; $i < $id; $i++) {
-                $user = $userInformation->getUser($i);
+            for ($i = 0; $i < $usersCount; $i++) {
+                $user = $userInformation->getUser($usersId[$i]);
                 if ($user['role'] == "ROLE_STUDENT") {
                     $info = true;
 
@@ -40,13 +39,15 @@ class UserInformationController extends AbstractController
                     );
                     $amount++;
                 } else {
-                    $tplArray[] = array(
-                        'id' => '',
-                        'first_name' => '',
-                        'last_name' => '',
-                        'email' => '',
-                        'group_of_students' => '',
-                    );
+                    if($i==$usersCount-1 and $info==false) {
+                        $tplArray[] = array(
+                            'id' => '',
+                            'first_name' => '',
+                            'last_name' => '',
+                            'email' => '',
+                            'group_of_students' => '',
+                        );
+                    }
                 }
             }
         } else {

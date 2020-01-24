@@ -10,8 +10,12 @@
         <span class="glyphicon glyphicon-plus-sign"></span> Add new user
     </a>
 </div>
+    {% for error in infoDelete %}
+        {{ error.message }}
+    {% endfor %}
+    {% if( information == true) %}
 
-<table>
+    <table>
     <tr>
         <td>Id</td>
         <td>First name</td>
@@ -25,7 +29,6 @@
         <td></td>
     </tr>
     {% for action in data|sort %}
-        {% if( information == true) %}
             {% if action.id !="" or action.id=="0" %}
             <tr>
             <td> {{ action.id|default('') }}  </td>
@@ -47,8 +50,9 @@
             </td>
         </tr>
             {% endif %}
-        {% endif %}
     {% endfor%}
 </table>
+    {% endif %}
+
 </div>
 {% endblock %}

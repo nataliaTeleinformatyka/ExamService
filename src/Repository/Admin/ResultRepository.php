@@ -42,11 +42,12 @@ class ResultRepository
         }
     }
 
-    public function getAllResults()
+
+/*    public function getAllResults()
     {
         $resultId = $this->getQuantity();
-        if (empty($resultId) /*|| isset($userId)*/) {
-            return 0;
+        if (empty($resultId) /*|| isset($userId)*//*) {
+       /*     return 0;
         }
         for ($i = 0; $i < $resultId; $i++) {
             try {
@@ -58,7 +59,7 @@ class ResultRepository
                 }
             } catch (ApiException $e) {}
         }
-    }
+    }*/
 
     public function insert($userExamId, $data)//, $numberOfAttempt,$points, $isPassed)
     {
@@ -67,13 +68,13 @@ class ResultRepository
             return false;
         }
 
-        $actualResultId = $this->getNextId();
+        $actualResultId = $this->getNextId($userExamId);
         print_r("id".$actualResultId);
 
         $this->reference->getChild($userExamId)->getChild("Result")
             ->getChild($actualResultId)->set([
                 'id' => $actualResultId,
-                'number_of_attempt' => $data[2],//$numberOfAttempt,
+               // 'number_of_attempt' => $data[2],//$numberOfAttempt,
                 'points' => $data[3],//$points,
                 'is_passed' => $data[4],//$isPassed,
             ]);
@@ -120,11 +121,12 @@ class ResultRepository
         }
     }
 //todo: THIS
-    public function getQuantityAttempt($userExamId,$examId, $userId){
-   /*     $id = $this->getQuantity($userExamId);
-        for($i=0;$i<$id;$i++) {
-            if ($this->reference->getSnapshot()->hasChild($i)) {
-                $resultInfo = $this->reference->getChild($i)->getValue();
+   /*public function getQuantityAttempt($userExamId,$examId, $userId){
+        $id = $this->getIdResults($userExamId);
+        $idAmount = count($id);
+        for($i=0;$i<$idAmount;$i++) {
+            if ($this->reference->getChild($userExamId)->getChild("Result")->getSnapshot()->hasChild($id[$i])) {
+                $resultInfo = $this->reference->getChild($userExamId)->getChild("Result")->getChild($i)->getValue();
                 if($resultInfo['exam_id'] == $examId and $resultInfo['user_id']==$userId){
                     return $resultInfo['number_of_attempt'];
                 } else {
@@ -133,8 +135,8 @@ class ResultRepository
             } else {
                 return 0;
             }
-        }*/
-    }
+        }
+    }*/
 
     public function find(int $userExamId, int $resultId){
         $information = $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->getValue();

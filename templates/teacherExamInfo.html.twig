@@ -3,9 +3,15 @@
 
 {% block body %}
     <div class="container">
+        <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg">
+            <span class="glyphicon glyphicon-home"></span> Strona główna
+        </a>
         <div class="signClass">
             <a href="{{ path('delete', { 'exam': exam_id}) }}" class="btn btn-info btn-lg">
                 <span class="glyphicon glyphicon-remove-sign"></span> Usuń egzamin
+            </a>
+            <a href="{{ path('editExam', { 'id': exam_id}) }}" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-pencil"></span> Edytuj egzamin
             </a>
             <a href="{{ path('question', { 'examId': exam_id}) }}" class="btn btn-info btn-lg">
                 <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nowe pytanie
@@ -32,9 +38,11 @@
         </div>
         <div class="teacherInfo">
             <b>Lista pytań dla egzaminu:</b>
+            {% if information_question==true %}
             {% for question in question_data %}
                 <p><a href="{{ path('teacherQuestionInfo', { 'exam': exam_id, 'question': question.id}) }}"> {{ question.content|default('') }} </a></p>
             {% endfor %}
+            {% endif %}
         </div>
         <div class="teacherInfo">
             <b>Grupy materiałów naukowych przypisanych do egzaminu:</b>
@@ -59,16 +67,11 @@
                     <a href="{{ path('deleteUserExam', { 'userExamId': user_data.user_exam_id|default('')}) }}" title="Usuń">
                         <span class="glyphicon glyphicon-remove-sign"></span> Usuń
                     </a></p>
+                    <a href="{{ path('teacherResultInfo', { 'userExam': user_data.user_exam_id|default('') }) }}" title="Result list">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </a>
                 {% endfor %}
             {% endif %}
-        </div>
-        <div class="teacherInfo">
-            <b>Lista wyników dla danego egzaminu:</b>
-
-            <a href="#" title="Usuń">
-                <span class="glyphicon glyphicon-remove-sign"></span> Usuń
-            </a>
-
         </div>
     </div>
 {% endblock %}

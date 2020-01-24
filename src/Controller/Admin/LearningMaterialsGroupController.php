@@ -140,12 +140,14 @@ class LearningMaterialsGroupController extends AbstractController
     public function deleteGroup(Request $request)
     {
         $id = $request->attributes->get('learningMaterialsGroup');
+
         $repo = new LearningMaterialsGroupRepository();
         $learningMaterialRepo = new LearningMaterialRepository();
         $learningMaterialsGroupExam = new LearningMaterialsGroupExamRepository();
-        $isLearningMaterialsGroupExam = $learningMaterialsGroupExam->findByGroupId($id);
 
+        $isLearningMaterialsGroupExam = $learningMaterialsGroupExam->findByGroupId($id);
         $isMaterial = $learningMaterialRepo->getQuantity($id);
+
         if($isMaterial or $isLearningMaterialsGroupExam){
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {

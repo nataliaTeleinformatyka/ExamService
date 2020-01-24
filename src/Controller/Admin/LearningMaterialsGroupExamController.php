@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 15.12.2019
- * Time: 20:50
- */
 
 namespace App\Controller\Admin;
-
 
 use App\Entity\Admin\LearningMaterialsGroupExam;
 use App\Form\Admin\LearningMaterialsGroupExamType;
@@ -15,7 +8,6 @@ use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,27 +20,48 @@ class LearningMaterialsGroupExamController extends AbstractController
      */
     public function new(Request $request)
     {
-        //$repository = $this->getDoctrine()->getRepository(Exam::class);
-        $groupExam= new LearningMaterialsGroupExam([]);
+        $learningMaterialsGroupExam= new LearningMaterialsGroupExam([]);
+        $learningMaterialsGroupRepository = new LearningMaterialsGroupRepository();
+        $examRepository = new ExamRepository();
+        $examsId = $examRepository->getIdExams();
+        $learningMaterialsGroupsId = $learningMaterialsGroupRepository->getLearningMaterialsGroupId();
 
-        $form = $this->createForm(LearningMaterialsGroupExamType::class, $groupExam);
-        $form->handleRequest($request);
+        if($examsId==0 or $learningMaterialsGroupsId==0) {
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => ' There are no exams or learning materials groups to assign');
 
-        if ($form->isSubmitted() && $form->isValid()) {
 
-            $info = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
+        } else {
+            $form = $this->createForm(LearningMaterialsGroupExamType::class, $learningMaterialsGroupExam);
+            $form->handleRequest($request);
 
-            $values = $groupExam->getAllInformation();
-            $repositoryExam = new LearningMaterialsGroupExamRepository();
-            $repositoryExam->insert($values);
+            if ($form->isSubmitted() && $form->isValid()) {
 
-            return $this->redirectToRoute('learningMaterialsGroupExamList');
+                $info = $form->getData();
+
+                $values = $learningMaterialsGroupExam->getAllInformation();
+                $repositoryExam = new LearningMaterialsGroupExamRepository();
+                $repositoryExam->insert($values);
+                switch ($_SESSION['role']) {
+                    case "ROLE_ADMIN":
+                        {
+                            return $this->redirectToRoute('learningMaterialsGroupExamList');
+                            break;
+                        }
+                    case "ROLE_PROFESSOR":
+                        {
+                            return $this->redirectToRoute('teacherExamInfo', [
+                                'exam' => $_SESSION['exam_id'],
+                            ]);
+                            break;
+                        }
+                }
+            }
+
+            return $this->render('learningMaterialsGroupExamAdd.html.twig', [
+                'form' => $form->createView(),
+            ]);
         }
-
-        return $this->render('learningMaterialsGroupExamAdd.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('learningMaterialsGroupExamList');
     }
     /**
      * @Route("learningMaterialsGroupExamList", name="learningMaterialsGroupExamList")
@@ -56,6 +69,7 @@ class LearningMaterialsGroupExamController extends AbstractController
      */
     public function learningMaterialsGroupExamListCreate()
     {
+
         $groupExamRepository = new LearningMaterialsGroupExamRepository();
         $examInformationRepo = new ExamRepository();
         $learningMaterialsGroupRepo= new LearningMaterialsGroupRepository();
@@ -117,14 +131,11 @@ class LearningMaterialsGroupExamController extends AbstractController
      */
     public function editExam(Request $request, LearningMaterialsGroupExam $groupExam)
     {
-
-
         $groupExamInformation = new LearningMaterialsGroupExamRepository();
         $groupExamId = (int)$request->attributes->get('id');
         $groupExams = $groupExamInformation->getLearningMaterialsGroupExam($groupExamId);
 
         $examInfoArray = array(
-
             'learning_materials_group_id' => $groupExams['learning_materials_group_id'],
             'exam_id' => $groupExams['exam_id'],
 
@@ -135,7 +146,6 @@ class LearningMaterialsGroupExamController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $exams = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
 
             $values = $groupExam->getAllInformation();
             $repositoryExam = new LearningMaterialsGroupExamRepository();
@@ -158,17 +168,6 @@ class LearningMaterialsGroupExamController extends AbstractController
         $id = $request->attributes->get('id');
         $repo = new LearningMaterialsGroupExamRepository();
         $repo->delete($id);
-
-        //todo: czy jest powiazanie w userexam - data obejrzenia wymaganych materialow przed rozpoczeciem egzaminu
-       /* if($isQuestion !=0 or $isUserExam==false){
-            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
-
-        } else {
-            $repo->delete($id);
-            $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
-
-        }*/
-
 
         return $this->redirectToRoute('learningMaterialsGroupExamList');
     }
