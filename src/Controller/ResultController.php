@@ -70,9 +70,6 @@ class ResultController extends AbstractController
                 }
             }
 
-
-
-
         $resultRepository = new ResultRepository();
         $examRepository = new ExamRepository();
         $examInformation = $examRepository->getExam($examId);

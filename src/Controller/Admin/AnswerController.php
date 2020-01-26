@@ -40,17 +40,33 @@ class AnswerController extends AbstractController
             $repositoryAnswer = new AnswerRepository();
             $repositoryAnswer->insert($examValue, $questionValue, $values);
 
-            return $this->redirectToRoute('answerList', [
-                'examId' => $examId,
-                'questionId' => $questionId
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('answerList', [
+                            'examId' => $examId,
+                            'questionId' => $questionId
+                        ]);
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherQuestionInfo', [
+                            'exam' => $examId,
+                            'question' => $questionId
+                        ]);
+                        break;
+                    }
+            }
+
         }
 
         return $this->render('answerAdd.html.twig', [
             'form' => $form->createView(),
             'title' => 'Answers to question ',
             'examId' => $examId,
-            'questionId' => $questionId
+            'questionId' => $questionId,
+            'role' => $_SESSION['role'],
         ]);
     }
 
@@ -160,6 +176,7 @@ class AnswerController extends AbstractController
         return $this->render('answerAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$examInfoArray,
+            'role' => $_SESSION['role'],
         ]);
     }
 

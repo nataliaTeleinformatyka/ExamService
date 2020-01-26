@@ -16,8 +16,9 @@ class LearningMaterialsInformationController extends AbstractController
      */
     public function learningMaterialsListCreate(Request $request)
     {
-
+        $_SESSION['group_id']="";
         $materialGroupId = $request->attributes->get('groupId');
+        $_SESSION['group_id']=$materialGroupId;
         $learningMaterialsInformation = new LearningMaterialRepository();
         $existLearningMaterial=false;
 
@@ -37,7 +38,7 @@ class LearningMaterialsInformationController extends AbstractController
                     $is_required="Nie";
                 }
                     $learningMaterialsArray[$i] = array(
-                        'id' => $i,
+                        'id' => $learningMaterials['id'],
                         'name' => $learningMaterials['name'],
                         'name_of_content' => $learningMaterials['name_of_content'],
                         'is_required' => $is_required
@@ -45,10 +46,10 @@ class LearningMaterialsInformationController extends AbstractController
                 }
         } else {
             $learningMaterialsArray = array(
-                'id' => 0,
-                'name' => 0,
-                'name_of_content' => 0,
-                'is_required' => 0
+                'id' => '',
+                'name' => '',
+                'name_of_content' => '',
+                'is_required' => ''
 
             );
         }

@@ -1,5 +1,5 @@
 body {
-    background-color: lightgray;
+    background: linear-gradient(to top, #8617705D, #b6b8f8);
     margin:0;
     padding:0;
     height:100%;
@@ -9,13 +9,22 @@ body {
 }
 table {
     border-collapse: collapse;
+    background: radial-gradient(ellipse farthest-corner at 10% 30%, #b28895, #9781af);
+    margin: auto;
+    float: right;
+    clear: both;
+}
+.resultTable {
+    margin-top: 25px;
+    float: none;
+    clear:none;
 }
 .containerBody {
     min-height:100%;
     position:relative;
 }
 
-table, tr, td {
+table, tr, td, th {
     font-family: sans-serif;
     font-size: 12px;
     border: 1px solid #cde;
@@ -24,7 +33,6 @@ table, tr, td {
     text-align: left;
 }
 tr {
-    background: #7dabee;
     padding: 5px;
 }
 td {
@@ -32,7 +40,8 @@ td {
 }
 .sign {
     text-align: left;
-    }
+    clear: both;
+}
 footer {
     position:relative;
     bottom:0;
@@ -41,30 +50,61 @@ footer {
     background: #837f7f;
 }
 tr.informationRow {
-    background-color: #916319;
+    background: linear-gradient(to top, rgba(134, 24, 19, 0.36), #f8e243);
 }
 .teacherInfo {
-    background-color: #f6f6f6;
+    background: linear-gradient(to top, rgba(223, 96, 121, 0.36), #ffc5b0);
     width: 48%;
     float: left;
     margin: 5px;
     text-align: center;
 }
 .signClass {
-    float:right;
+    float: right;
     margin-top: 25px;
 }
 .list {
-    background-color: #e1ddd3;
     margin-left: auto;
     margin-right: auto;
     margin-top: 100px;
     text-align: center;
+    clear: both;
 }
 .information {
-    background-color: #b6b8f8;
+    background: linear-gradient(to top, rgba(39, 130, 178, 0.36), #b6b8f8);
     margin-top: 75px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+}
+.buttonColor {
+    background: radial-gradient(ellipse farthest-corner at 5% 15%, #f5bbff, #9781af);
+}
+.logoutButton {
+    background: linear-gradient(to top, rgba(255, 60, 31, 0.36), #3053f8);
+}
+.buttonNav {
+    background: linear-gradient(to top, rgba(255, 60, 31, 0.36), #3053f8);
+    margin-top: 25px;
+    margin-bottom: 25px;
+    float: right;
+    clear: both;
+}
+.backButton{
+    float:left;
+    clear:both;
+}
+.floatNone {
+    float : none;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.studentExam {
+    margin:auto;
+    text-align: center;
+    background: radial-gradient(ellipse farthest-corner at 5% 15%, #f5bbff, #9781af);
+}
+.buttons{
+    background: radial-gradient(ellipse farthest-corner at 5% 15%, #eeffe8, #a8afa4);
+
 }

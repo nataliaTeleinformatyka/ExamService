@@ -195,13 +195,14 @@ class ExamInformationController extends AbstractController
 
             if ($userExamsCount > 0) {
                 $informationUserExam = false;
-
+            print_r($userExamsCount);
                 $k =0;
                 for ($i = 0; $i < $userExamsCount; $i++) {
                     $userExam = $userExamInformation->getUserExam($userExamsId[$i]);
                     if($userExam['exam_id'] == $examId) {
                         $informationUserExam = true;
                         $users = $userInformation->getUser($userExam['user_id']);
+                        print_r($userExam['user_id']);
                         $userExamArray[$k] = array(
                             'user_exam_id' => $userExam['user_exam_id'],
                             'user_id' => $userExam['user_id'],
@@ -213,6 +214,7 @@ class ExamInformationController extends AbstractController
                         $k++;
                     } else {
                         if($i==$userExamsCount-1 and $informationUserExam == false){
+                            print_r("PPPP");
                             $userExamArray[] = array(
                                 'user_exam_id' => '',
                                 'user_id' => '',
@@ -244,6 +246,7 @@ class ExamInformationController extends AbstractController
                 'email' => ''
             );
         }
+        print_r($userExamArray);
         return $this->render('teacherExamInfo.html.twig', array(
             'data' => $examInfoArray,
             'information_question' => $existQuestions,

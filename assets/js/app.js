@@ -8,6 +8,12 @@ const questionId = document.getElementById("questionNumber");
 const questionContent = document.getElementById("questionContent");
 const nextButton = document.getElementById("buttonNext");
 
+
+window.onload = function() {
+    attachSorting();
+    let userName = document.getElementById("userNameMenu");
+    userName.innerHTML = getCookie("userName");
+}
 let numberQuestion=1;
 let id=0;
 let questionAmount = getCookie("questionAmount") - 1;
@@ -18,6 +24,31 @@ let accessMinute = accessTime - accessHours*60;
 
 let timer = document.getElementById("timer");
 nextButton.addEventListener('click', nextQuestion);
+
+
+function Contains(classArray,value){
+    for (var i=0; i<classArray.length;i++)
+        if (classArray[i]===value) return true;
+    return false;
+}
+
+function IntegerSort(a,b){return parseInt(a)>parseInt(b);}
+function ValueSort(a,b){return a>b;}
+
+function attachSorting(){
+    console.log("ATTACH SORT");
+    var handlers=[["SSort", ValueSort],["ISort",IntegerSort]];
+    for(var i=0, ths=document.getElementsByTagName('th'); th=ths[i]; i++){
+        for (var h=0; h<handlers.length;h++) {
+            if(Contains(th.className.split(" "), handlers[h][0])){
+                th.columnIndex=i;
+                th.order = -1;
+                th.sortHandler = handlers[h][1];
+                th.onclick=function(){sort(this);}
+            }
+        }
+    }
+}
 
 window.requestAnimationFrame(time);
 /*window.onload = function() {
@@ -146,7 +177,28 @@ function time() {
         //timer.innerHTML = "czas minal";
 }
 
-function sortTableById(){
-    const idField = document.getElementById("idField");
+function sortTableByName(){
+    const name = document.getElementById("name");
+    const tr = document.getElementsByTagName("tr");
+}
 
+function sort(header) {
+    header.order *= -1;
+    var table = header.parentNode.parentNode;
+    for (var i = 0, th, ths = table.getElementsByTagName('th'); th = ths[i]; i++)
+        if (th != header) th.order = -1;
+    var rows = table.getElementsByTagName('tr');
+    for (var i = 1, tempRows = [], tr; tr = rows[i]; i++) {
+        tempRows[i - 1] = tr
+    }
+    tempRows.sort(function (a, b) {
+        return header.order *
+            (header.sortHandler(
+                a.getElementsByTagName('td')[header.columnIndex].innerHTML,
+                b.getElementsByTagName('td')[header.columnIndex].innerHTML) ? 1 : -1)
+    });
+    for (var i = 0; i < tempRows.length; i++) {
+        table.appendChild(tempRows[i]);
+    }
+    console.log("POSOTROWANIE");
 }

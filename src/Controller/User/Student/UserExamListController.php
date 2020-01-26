@@ -23,12 +23,14 @@ class UserExamListController extends AbstractController
 
         $exist=false;
         $attemptsInfo="";
+        $remainingAttempts="";
         $userExamsId = $userExamRepository->getIdUserExams();
         if($userExamsId!=0){
             $userExamsCount = count($userExamsId);
         } else {
             $userExamsCount=0;
         }
+        $existExam=false;
 
          if ($userExamsCount > 0) {
              $info=false;
@@ -44,7 +46,7 @@ class UserExamListController extends AbstractController
                          $info = true;
                          $exist = true;
                          $today = new \DateTime();
-                         $resultsId = $resultRepository->getIdResults($userExam['id']);
+                         $resultsId = $resultRepository->getIdResults($userExam['user_exam_id']);
                          if ($resultsId != 0) {
                              $numberOfAttemptsInResult = count($resultsId);
                          } else {
@@ -54,52 +56,53 @@ class UserExamListController extends AbstractController
                          $examInfo = $examRepository->getExam($userExam['exam_id']);
                          $examName = $examInfo['name'];
                          $maxAttempts = $examInfo['max_attempts'];
-                         if ($maxAttempts != NULL) {
-                             $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;
-                             $attemptsInfo = "- Pozostało prób: " . $remainingAttempts;
-                         }
-                         if ($remainingAttempts > 0) {
-                             $startDate = date("Y-m-d", strtotime($examInfo['start_date']['date']));
-                         $endDate = date("Y-m-d", strtotime($examInfo['end_date'] ['date']));
-                         $startYear = date("Y", strtotime($examInfo['start_date']['date']));
-                         $endYear = date("Y", strtotime($examInfo['end_date']['date']));
-                         if ($startYear >= "2020") {
-                             if ($endYear >= "2020") {
-                                 $dateInformation = "( " . $startDate . " - " . $endDate . " ) ";
-                             } else {
-                                 $dateInformation = "( dostęp od " . $startDate . " ) ";
+                         if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < '2020') {
+                             if ($maxAttempts != "") {
+                                 $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;
+                                 $attemptsInfo = "- Pozostało prób: " . $remainingAttempts;
                              }
-                         } else {
-                             if ($endYear >= "2020") {
-                                 $dateInformation = "( dostęp do " . $endDate . " ) ";
-                             } else {
-                                 $dateInformation = " ";
-                             }
-                         }
+                             if ($maxAttempts == "" or $remainingAttempts > 0) {
+                                 $startDate = date("Y-m-d", strtotime($examInfo['start_date']['date']));
+                                 $endDate = date("Y-m-d", strtotime($examInfo['end_date'] ['date']));
+                                 $startYear = date("Y", strtotime($examInfo['start_date']['date']));
+                                 $endYear = date("Y", strtotime($examInfo['end_date']['date']));
+                                 if ($startYear >= "2020") {
+                                     if ($endYear >= "2020") {
+                                         $dateInformation = "( " . $startDate . " - " . $endDate . " ) ";
+                                     } else {
+                                         $dateInformation = "( dostęp od " . $startDate . " ) ";
+                                     }
+                                 } else {
+                                     if ($endYear >= "2020") {
+                                         $dateInformation = "( dostęp do " . $endDate . " ) ";
+                                     } else {
+                                         $dateInformation = " ";
+                                     }
+                                 }
 
-                         if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) >= "2020") {
-                             $resolveDate = "";
-                         } else {
-                             $resolveDate = date("Y-M-i", strtotime($userExam['date_of_resolve_exam']['date']));
-                         }
+                                 if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) >= "2020") {
+                                     $resolveDate = "";
+                                 } else {
+                                     $resolveDate = date("Y-M-i", strtotime($userExam['date_of_resolve_exam']['date']));
+                                 }
 
-                         $error = '';
+                                 $error = '';
 
-                         $todayDate = $today->format("Y-m-d");
-
-                         if (($startDate <= $todayDate and $endDate >= $todayDate) or ($startYear < '2020' and $endYear < '2020')
-                             or ($startDate <= $todayDate and $endYear < '2020') or ($startYear < '2020' and $endDate >= $todayDate)) {
-                             $tplArray[$i] = array(
-                                 'user_exam_id' => $userExam['user_exam_id'],
-                                 'user_id' => $userExam['user_id'],
-                                 'exam_id' => $userExam['exam_id'],
-                                 'date_of_resolve_exam' => $resolveDate,
-                                 'access_period' => $dateInformation,
-                                 'remaining_attempts' => $attemptsInfo,
-                                 'exam_name' => $examName
-                             );
-                             $index++;
-                         } /*else {
+                                 $todayDate = $today->format("Y-m-d");
+                                 if (($startDate <= $todayDate and $endDate >= $todayDate) or ($startYear < '2020' and $endYear < '2020')
+                                     or ($startDate <= $todayDate and $endYear < '2020') or ($startYear < '2020' and $endDate >= $todayDate)) {
+                                     $existExam = true;
+                                     $tplArray[$index] = array(
+                                         'user_exam_id' => $userExam['user_exam_id'],
+                                         'user_id' => $userExam['user_id'],
+                                         'exam_id' => $userExam['exam_id'],
+                                         'date_of_resolve_exam' => $resolveDate,
+                                         'access_period' => $dateInformation,
+                                         'remaining_attempts' => $attemptsInfo,
+                                         'exam_name' => $examName
+                                     );
+                                     $index++;
+                                 } /*else {
                              $info = false;
                              print_r(" NIE ARRAY ");
                              $error = "Brak egzaminów do rozwiązania";
@@ -111,8 +114,8 @@ class UserExamListController extends AbstractController
                                  'end_access_time' => ''
                              );
                          }*/
-                     }
-                     } else {
+                             }
+                         }/* else {
                          $info = false;
                          $error = "Brak egzaminów do rozwiązania";
                          $tplArray = array(
@@ -122,8 +125,9 @@ class UserExamListController extends AbstractController
                              'start_access_time' => '',
                              'end_access_time' => ''
                          );
+                     }*/
                      }
-                 } else {
+                     } /*else {
                      if($i== $userExamsCount-1 and $exist==false){
                          $info = false;
                          $error = "Brak egzaminów do rozwiązania";
@@ -134,11 +138,22 @@ class UserExamListController extends AbstractController
                              'start_access_time' => '',
                              'end_access_time' => ''
                          );
-                     }
+                     }*/
+                 if($existExam==false and $i==$userExamsCount-1){
+                     $info = false;
+                     $error = "Brak egzaminów do rozwiązania";
+                     $tplArray = array(
+                         'user_id' => '',
+                         'exam_id' => '',
+                         'date_of_resolve_exam' => '',
+                         'access_period' => '',
+                         'remaining_attempts' => '',
+                     );
+                 }
                  }
              }
-         }
-         else {
+
+        /* else {
              $info = false;
              $error = "Brak egzaminów do rozwiązania";
              $tplArray = array(
@@ -148,7 +163,8 @@ class UserExamListController extends AbstractController
                 'access_period' => '',
                 'remaining_attempts' => '',
              );
-    }
+    }*/
+
         return $this->render('studentHomepage.html.twig', array(
             'data' => $tplArray,
             'error' => $error,

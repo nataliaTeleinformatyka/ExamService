@@ -1,7 +1,9 @@
 {# templates/questionAdd.html.twig #}
 {% extends 'base.html' %}
 {% block menu %}
-    {% include 'menu.html.twig' %}
+    {% if role=="ROLE_ADMIN" %}
+        {% include 'menu.html.twig' %}
+    {% endif %}
 {% endblock %}
 {% block body %}
     {{ form(form) }}

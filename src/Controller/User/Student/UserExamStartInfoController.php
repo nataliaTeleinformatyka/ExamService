@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 13.12.2019
- * Time: 11:02
- */
 
 namespace App\Controller\User\Student;
-
 
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialRepository;
@@ -21,6 +14,7 @@ class UserExamStartInfoController extends AbstractController
 {
     /**
      * @Route("studentExamStartInfo/{userExamId}", name="studentExamStartInfo")
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function studentExamStartInfoCreate(Request $request) {
@@ -42,8 +36,12 @@ class UserExamStartInfoController extends AbstractController
             $resolveDate = $userExam['date_of_resolve_exam']['date'];
         }
 
-      $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
-        $groupsAmount = count($learningMaterialGroups);
+        $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
+        if($learningMaterialGroups!=0){
+            $groupsAmount = count($learningMaterialGroups);
+        } else {
+            $groupsAmount=0;
+        }
         $requiredAmount=0;
         $additionalAmount=0;
         $additionalMaterialsArray[] = array(
@@ -59,7 +57,6 @@ class UserExamStartInfoController extends AbstractController
         for($i=0;$i<$groupsAmount;$i++){
             $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialGroups[$i]);
             $learningMaterialsAmount = count($learningMaterialsId);
-
             if($learningMaterialsAmount>0) {
                 for ($j = 0; $j < $learningMaterialsAmount; $j++) {
                     $learningInfo = $learningMaterialRepository->getLearningMaterial($learningMaterialGroups[$i], $learningMaterialsId[$j]);

@@ -51,6 +51,7 @@ class LearningMaterialsGroupController extends AbstractController
 
         return $this->render('learningMaterialsGroupAdd.html.twig', [
             'form' => $form->createView(),
+            'role' => $_SESSION['role'],
         ]);
     }
     /**
@@ -102,7 +103,7 @@ class LearningMaterialsGroupController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editLearningMaterialsGroup/{id}", name="editLearningMaterialsGroup")
      */
-    public function editExam(Request $request, LearningMaterialsGroup $learningMaterialsGroup)
+    public function editLearningMaterialsGroup(Request $request, LearningMaterialsGroup $learningMaterialsGroup)
     {
         $learningMaterialsGroupInformation = new LearningMaterialsGroupRepository();
         $groupId = (int)$request->attributes->get('id');
@@ -128,6 +129,8 @@ class LearningMaterialsGroupController extends AbstractController
         return $this->render('learningMaterialsGroupAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$examInfoArray,
+            'role' => $_SESSION['role'],
+
         ]);
     }
 

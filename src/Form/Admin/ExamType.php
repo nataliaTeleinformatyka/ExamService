@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 20.11.2019
- * Time: 10:57
- */
 
 namespace App\Form\Admin;
-
 
 use App\Entity\Admin\Exam;
 use Symfony\Component\Form\AbstractType;

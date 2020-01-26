@@ -1,48 +1,56 @@
-{# templates/questionList.html.twig #}
+{# templates/learningMaterialsGroupExamList.html.twig #}
 {% extends 'base.html' %}
+
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
-{% block body %}
-<div class="sign">
-    <a href="{{ path('learningMaterialsGroupExam') }}" class="btn btn-info btn-lg">
-        <span class="glyphicon glyphicon-plus-sign"></span> Add new learning materials group exam
-    </a>
-</div>
-    {% for error in infoDelete %}
-        {{ error.message }}
-    {% endfor %}
-{% if information==true %}
-<table>
-    <tr>
-        <td>Id</td>
-        <td>Learning materials group id</td>
-        <td>Learning materials group name</td>
-        <td>Exam id</td>
-        <td>Exam name</td>
-        <td></td>
-    </tr>
-    {% for action in data|sort %}
-        {% if action.id !="" or action.id=="0" %}
-        <tr>
-            <td> {{ action.id|default('') }}  </td>
-            <td> {{ action.learning_materials_group_id|default('') }}  </td>
-            <td> {{ action.learning_materials_group_name|default('') }}  </td>
-            <td> {{ action.exam_id|default('') }}  </td>
-            <td> {{ action.exam_name|default('') }}  </td>
-            <td><div class="sign">
-                    <a href="{{ path('deleteLearningMaterialsGroupExam', { 'id': action.id }) }}" title="delete learning materials group exam">
-                        <span class="glyphicon glyphicon-remove-sign"></span>
-                    </a>
-                    <a href="{{ path('editLearningMaterialsGroupExam', { 'id': action.id }) }}" title="edit learning materials group exam">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        {% endif %}
-    {% endfor%}
-</table>
-{% endif %}
 
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="sign">
+            <a href="{{ path('learningMaterialsGroupExam') }}" class="btn btn-info btn-lg buttonNav">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new learning materials group exam
+            </a>
+        </div>
+        {% for error in infoDelete %}
+            {{ error.message }}
+        {% endfor %}
+        {% if information==true %}
+            <table>
+                <tr class="informationRow">
+                    <th class="ISort col-lg-1 col-md-1">Id</th>
+                    <th class="ISort col-lg-1 col-md-1">Learning materials group id</th>
+                    <th class="SSort col-lg-4 col-md-2">Learning materials group name</th>
+                    <th class="ISort col-lg-1 col-md-1">Exam id</th>
+                    <th class="SSort col-lg-4 col-md-2">Exam name</th>
+                    <th></th>
+                </tr>
+                {% for action in data|sort %}
+                    {% if action.id !="" or action.id=="0" %}
+                        <tr>
+                            <td> {{ action.id|default('') }}  </td>
+                            <td> {{ action.learning_materials_group_id|default('') }}  </td>
+                            <td> {{ action.learning_materials_group_name|default('') }}  </td>
+                            <td> {{ action.exam_id|default('') }}  </td>
+                            <td> {{ action.exam_name|default('') }}  </td>
+                            <td>
+                                <div class="sign">
+                                    <a href="{{ path('deleteLearningMaterialsGroupExam', { 'id': action.id }) }}" title="delete learning materials group exam">
+                                        <span class="glyphicon glyphicon-remove-sign"></span>
+                                    </a>
+                                    <a href="{{ path('editLearningMaterialsGroupExam', { 'id': action.id }) }}" title="edit learning materials group exam">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor%}
+            </table>
+        {% endif %}
+    </div>
 {% endblock %}

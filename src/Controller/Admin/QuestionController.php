@@ -62,7 +62,8 @@ class QuestionController extends AbstractController
         return $this->render('questionAdd.html.twig', [
             'form' => $form->createView(),
             'title' => 'Questions to exam ',
-            'idExam' => $examId
+            'idExam' => $examId,
+            'role' => $_SESSION['role'],
         ]);
     }
 
@@ -228,7 +229,8 @@ class QuestionController extends AbstractController
         return $this->render('questionAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$questionInfoArray,
-            'examId' => $examId
+            'examId' => $examId,
+            'role' => $_SESSION['role'],
         ]);
     }
 

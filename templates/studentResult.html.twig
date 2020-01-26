@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
     <div class="container">
-
-    Osiągnięto wynik:
-        {{ points }}
-        {{ information }}
-        <button type="button" class="btn btn-default btn-sm">
+        <div class="studentExam">
+            <p><b>Osiągnięto wynik:</b> {{ points }} </p>
+            <p>{{ information }} </p>
+        </div>
+        <button type="button" class="btn btn-default btn-lg buttons ">
             <a href="{{ path('studentHomepage') }}" class="glyphicon glyphicon-chevron-left">Back to homepage</a>
         </button>
     </div>

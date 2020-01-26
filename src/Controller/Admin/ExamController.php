@@ -1,22 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 20.11.2019
- * Time: 12:34
- */
 
 namespace App\Controller\Admin;
 
-
 use App\Entity\Admin\Exam;
-use App\Entity\Admin\User;
 use App\Form\Admin\ExamType;
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupExamRepository;
 use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\UserExamRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,9 +43,12 @@ class ExamController extends AbstractController
                         return $this->redirectToRoute('teacherExamList');
                         break;
                     }
-            }        }
+            }
+        }
+        print_r($_SESSION['role']);
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
+            'role' => $_SESSION['role']
         ]);
     }
     /**
@@ -78,13 +72,12 @@ class ExamController extends AbstractController
             for ($i = 0; $i < $examsCount; $i++) {
 
                 $exams = $examRepository->getExam($examsId[$i]);
-                //todo: UNCOMENT THIS WHEN AGATA CHANGE learnign in database
-               /* if ($exams['learning_required'] == 1) {
-                    $is_required = true;
+                if ($exams['learning_required'] == 1) {
+                    $is_required = "true";
                 } else {
-                    $is_required = false;
-                }*/
-               $is_required = "true";
+                    $is_required = "false";
+                }
+
                 $tplArray[$i] = array(
                     'id' => $examsId[$i],
                     'name' => $exams['name'],
@@ -184,7 +177,9 @@ class ExamController extends AbstractController
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$examInfoArray,
-            'examId' => $examId
+            'examId' => $examId,
+            'role' => $_SESSION['role']
+
         ]);
     }
 

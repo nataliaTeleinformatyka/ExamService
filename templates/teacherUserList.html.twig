@@ -3,16 +3,16 @@
 
 {% block body %}
     <div class="container">
-        <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-home"></span> Strona główna
-        </a>
         <div class="signClass">
-            <a href="{{ path('user')}}" class="btn btn-info btn-lg">
+            <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg buttonNav" style="float: none">
+                <span class="glyphicon glyphicon-home"></span> Strona główna
+            </a>
+            <a href="{{ path('user')}}" class="btn btn-info btn-lg buttonNav">
                 <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nowego studenta
             </a>
         </div>
         <div class="list">
-            <p>Lista użytkowników : </p>
+            <p><b>Lista użytkowników : </b></p>
             <div>
                 {% if information==true %}
                 {% for user_data in data %}

@@ -1,15 +1,18 @@
 {# templates/examList.html.twig #}
 {% extends 'base.html' %}
 {% block menu %}
-{% include 'menu.html.twig' %}
+    {% include 'menu.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
 {% block body %}
 <div class="container">
-<div class="sign">
-    <a href="{{ path('exam') }}" class="btn btn-info btn-lg">
-        <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
-    </a>
-</div>
+    <div class="sign">
+        <a href="{{ path('exam') }}" class="btn btn-info btn-lg buttonNav">
+            <span class="glyphicon glyphicon-plus-sign"></span> Add new exam
+        </a>
+    </div>
     {% for error in infoDelete %}
         {{ error.message }}
     {% endfor %}
@@ -17,34 +20,34 @@
     {% if information==true %}
 <table>
     <tr class="informationRow">
-        <td>Id</td>
-        <td>Name</td>
-        <td>Learning required</td>
-        <td>Maximum questions</td>
-        <td>Maximum attempts</td>
-        <td>Duration of exam</td>
-        <td>Percentage passed exam</td>
-        <td>Created by (user id)</td>
-        <td>Start date</td>
-        <td>End date</td>
-        <td>Additional Information</td>
-        <td></td>
+        <th class="ISort col-lg-3 col-md-12 col-sm-12">Id</th>
+        <th class="SSort col-lg-3 col-md-3 col-sm-3">Name</th>
+        <th class="SSort col-lg-3 col-md-3 col-sm-3">Learning required</th>
+        <th class="ISort col-lg-3 col-md-12 col-sm-12">Maximum questions</th>
+        <th class="ISort col-lg-3 col-md-12 col-sm-12">Maximum attempts</th>
+        <th class="ISort col-lg-3 col-md-12 col-sm-12">Duration of exam</th>
+        <th class="ISort col-lg-3 col-md-12 col-sm-12">Percentage passed exam</th>
+        <th class="ISort col-lg-3 col-md-12">Created by (user id)</th>
+        <th class="col-lg-3 col-md-2 col-sm-2">Start date</th>
+        <th class="col-lg-3 col-md-2 col-sm-2">End date</th>
+        <th class="col-lg-3 col-md-2 col-sm-2">Additional Information</th>
+        <th class="col-lg-3 col-md-12 col-sm-12"></th>
     </tr>
     {% for action in data|sort %}
         {% if action.id !="" or action.id=="0" %}
         <tr>
-        <td> {{ action.id|default('undefined') }}  </td>
-        <td> {{ action.name|default('undefined') }}  </td>
-        <td> {{ action.learning_required|default('undefined') }} </td>
-        <td> {{ action.max_questions|default('') }} </td>
-        <td> {{ action.max_attempts|default('') }} </td>
-        <td> {{ action.duration_of_exam|default('') }}</td>
-        <td> {{ action.percentage_passed_exam|default('') }}</td>
-        <td> {{ action.created_by|default('') }}</td>
-        <td> {{ action.start_date|default('') }}</td>
-        <td> {{ action.end_date|default('') }}</td>
-        <td> {{ action.additional_information|default('') }}</td>
-        <td><div class="sign">
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.id|default('undefined') }}  </td>
+        <td class="col-lg-3 col-md-3 col-sm-3"> {{ action.name|default('undefined') }}  </td>
+        <td class="col-lg-3 col-md-3 col-sm-3"> {{ action.learning_required|default('undefined') }} </td>
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.max_questions|default('') }} </td>
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.max_attempts|default('') }} </td>
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.duration_of_exam|default('') }}</td>
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.percentage_passed_exam|default('') }}</td>
+        <td class="col-lg-3 col-md-12 col-sm-12"> {{ action.created_by|default('') }}</td>
+        <td class="col-lg-3 col-md-2 col-sm-12"> {{ action.start_date|default('') }}</td>
+        <td class="col-lg-3 col-md-2 col-sm-12"> {{ action.end_date|default('') }}</td>
+        <td class="col-lg-3 col-md-2 col-sm-12"> {{ action.additional_information|default('') }}</td>
+        <td class="col-lg-3 col-md-12 col-sm-12"><div class="sign">
                 <a href="{{ path('delete', { 'exam': action.id }) }}">
                     <span class="glyphicon glyphicon-remove-sign" title="delete exam"></span>
                 </a>

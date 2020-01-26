@@ -1,22 +1,20 @@
 {% extends 'base.html' %}
+
 {% block javascripts %}
-{{ encore_entry_script_tags('app') }}
-
+    {{ encore_entry_script_tags('app') }}
 {% endblock %}
+
 {% block body %}
-
 <div class="container">
-              Czas - odliczanie
     <div id="timer"></div>
+    <b><div id="questionNumber">Numer Pytania</div></b>
 
-    <div id="questionNumber">Numer Pytania</div>
-
-   <div id="questionContent">Question</div>
+    <b><div id="questionContent">Question</div></b>
     <form class="answers" id="answers">
 
     </form>
 
-    <div class="buttons">
+    <div class="btn btn-info buttons btn-lg ">
             <a id="buttonNext" class="glyphicon glyphicon-chevron-right">Next</a>
     </div>
 </div>

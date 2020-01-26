@@ -1,26 +1,32 @@
 {# templates/userExamList.html.twig #}
 {% extends 'base.html' %}
+
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
 {% block body %}
-<div class="container">
-    <div class="signClass">
-        <a href="{{ path('userExam') }}" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-plus-sign"></span> Add new user exam
-        </a>
-    </div>
-    {% for error in infoDelete %}
-        {{ error.message }}
-    {% endfor %}
-    {% if information==true %}
-    <table>
-        <tr>
-            <td>User id</td>
-            <td>Exam id</td>
-            <td>Date of resolve exam</td>
-            <td></td>
-        </tr>
+    <div class="container">
+        <div class="sign">
+            <a href="{{ path('userExam') }}" class="btn btn-info btn-lg buttonNav">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new user exam
+            </a>
+        </div>
+        {% for error in infoDelete %}
+            {{ error.message }}
+        {% endfor %}
+        {% if information==true %}
+            <table>
+                <tr class="informationRow">
+                    <th class="ISort col-lg-4 col-md-4">User id</th>
+                    <th class="ISort col-lg-4 col-md-4">Exam id</th>
+                    <th class=" col-lg-4 col-md-4">Date of resolve exam</th>
+                    <th class=" col-lg-4 col-md-3"></th>
+                </tr>
         {% for action in data|sort %}
             {% if action.exam_id !="" or action.exam_id=="0" %}
             <tr>

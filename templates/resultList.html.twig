@@ -1,29 +1,36 @@
 {# templates/resultList.html.twig #}
 {% extends 'base.html' %}
+
 {% block menu %}
-{% include 'menu.html.twig' %}
+    {% include 'menu.html.twig' %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
 {% block body %}
-<div class="container">
-
-    {% if information==true %}
-<table>
-    <tr class="informationRow">
-        <td>Id</td>
-        <td>Points</td>
-        <td>Is passed</td>
-
-    </tr>
-    {% for action in data %}
-        {% if action.id !="" or action.id=="0" %}
-        <tr>
-        <td> {{ action.id|default('undefined') }}  </td>
-        <td> {{ action.points|default('') }} </td>
-        <td> {{ action.is_passed|default('') }}</td>
-    </tr>
+    <div class="container">
+        {% if information==true %}
+            <table class="resultTable">
+                <tr class="informationRow">
+                    <th class="ISort col-lg-4 col-md-4 col-sm-2">Id</th>
+                    <th class="ISort col-lg-4 col-md-4 col-sm-2">Points</th>
+                    <th class="SSort col-lg-6 col-md-6 col-sm-2">Is passed</th>
+                </tr>
+                {% for action in data %}
+                    {% if action.id !="" or action.id=="0" %}
+                        <tr>
+                            <td class="col-lg-4 col-md-4 col-sm-2"> {{ action.id|default('') }}  </td>
+                            <td class="col-lg-4 col-md-4 col-sm-2"> {{ action.points|default('') }} </td>
+                            <td class="col-lg-6 col-md-6 col-sm-2"> {{ action.is_passed|default('') }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor%}
+            </table>
         {% endif %}
-    {% endfor%}
-</table>
-    {% endif %}
-</div>
+        <button type="button" class="btn btn-default btn-lg buttonColor backButton">
+            <a href="{{ path('userExamList') }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
+    </div>
 {% endblock %}

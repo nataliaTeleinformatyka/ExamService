@@ -47,7 +47,8 @@ class LearningMaterialController  extends AbstractController
 
         return $this->render('learningMaterialAdd.html.twig', [
             'form' => $form->createView(),
-            'learningMaterialsGroupId' => $learningMaterialsGroupId
+            'learningMaterialsGroupId' => $learningMaterialsGroupId,
+            'role' => $_SESSION['role'],
         ]);
     }
 
@@ -154,13 +155,27 @@ class LearningMaterialController  extends AbstractController
             $values = $learningMaterial->getAllInformation();
             $learningMaterialRepository->update($values,$materialGroupId,$materialId);
 
-            return $this->redirectToRoute('learningMaterialList',[
-                'learningMaterialsGroupId' => $materialGroupId,
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('learningMaterialList',[
+                            'learningMaterialsGroupId' => $materialGroupId,
+                        ]);                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                            'groupId' => $_SESSION['group_id'],
+                        ]);
+                        break;
+                    }
+            }
+
         }
         return $this->render('learningMaterialAdd.html.twig', [
             'form' => $form->createView(),
             'learningMaterialInformation' =>$materialInfoArray,
+            'role' => $_SESSION['role'],
         ]);
     }
 

@@ -1,45 +1,47 @@
 {# templates/answerList.html.twig #}
 {% extends 'base.html' %}
+
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
+
 {% block body %}
     <div class="container">
-<div class="sign">
-    <a href="{{ path('answer', { 'examId': examId, 'questionId': questionId}) }}" class="btn btn-info btn-lg">
-        <span class="glyphicon glyphicon-plus-sign"></span> Add new answer
-    </a>
-</div>
+        <div class="sign">
+            <a href="{{ path('answer', { 'examId': examId, 'questionId': questionId}) }}" class="btn btn-info btn-lg buttonNav">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new answer
+            </a>
+        </div>
         {% if information==true %}
-<table>
-    <tr>
-        <td class="col-md-1">Id</td>
-        <td class="col-md-1">Content</td>
-        <td class="col-md-1">Is true</td>
-        <td class="col-md-1"></td>
-    </tr>
-    {% for action in data|sort %}
-    {% if (action.id !="" or action.id=="0") %}
-        <tr>
-            <td class="col-md-1"> {{ action.id|default('undefined') }}  </td>
-            <td class="col-md-1"> {{ action.content|default('undefined') }}  </td>
-            <td class="col-md-1"> {{ action.is_true|default('') }} </td>
-
-            <td class="col-md-1" ><div class="sign">
-                    <a href="{{ path('deleteAnswer', { 'exam': examId, 'question': questionId, 'answer': action.id}) }}" title="delete answer">
-                        <span class="glyphicon glyphicon-remove-sign"></span>
-                    </a>
-                    <a href="{{ path('editAnswer', { 'examId': examId, 'questionId': questionId, 'id' : action.id }) }}" title="edit answer">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                </div>
-            </td>
-        </tr>
+            <table>
+                <tr class="informationRow">
+                    <th class="ISort col-lg-2 col-md-1 col-sm-1">Id</th>
+                    <th class="SSort col-lg-8 col-md-10 col-sm-8">Content</th>
+                    <th class="SSort col-lg-2 col-md-2 col-sm-2">Is true</th>
+                    <th class="col-lg-2 col-md-2 col-sm-2"></th>
+                </tr>
+                {% for action in data|sort %}
+                    {% if (action.id !="" or action.id=="0") %}
+                        <tr>
+                            <td class="col-lg-2 col-md-1 col-sm-1"> {{ action.id|default('') }}  </td>
+                            <td class="col-lg-8 col-md-10 col-sm-8"> {{ action.content|default('') }}  </td>
+                            <td class="col-lg-2 col-md-2 col-sm-2"> {{ action.is_true|default('') }} </td>
+                            <td class="col-lg-2 col-md-2 col-sm-2">
+                                <div class="sign">
+                                    <a href="{{ path('deleteAnswer', { 'exam': examId, 'question': questionId, 'answer': action.id}) }}" title="delete answer">
+                                        <span class="glyphicon glyphicon-remove-sign"></span>
+                                    </a>
+                                    <a href="{{ path('editAnswer', { 'examId': examId, 'questionId': questionId, 'id' : action.id }) }}" title="edit answer">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor%}
+            </table>
         {% endif %}
-    {% endfor%}
-    </table>
-        {% endif %}
-        <button type="button" class="btn btn-default btn-sm">
+        <button type="button" class="btn btn-default btn-sm backButton buttonColor">
             <a href="{{ path('questionList', { 'id' : examId }) }}" class="glyphicon glyphicon-chevron-left">Back</a>
         </button>
     </div>

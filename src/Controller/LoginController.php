@@ -40,15 +40,14 @@ class LoginController  extends AbstractController
             $id = $userRepository->getUserIdFromAuthentication($email);
 
             $information = $userRepository->getUserByEmail($email);
-print_r("SPRAWDZAM ");
             try {
-                print_r("TUTAJ");
                 $goodLog = $userRepository->checkPassword($email, $password);
                 session_destroy();
                 session_start();
                 $_SESSION['user_id']=$information['id'];
                 $_SESSION['role'] = $information['role'];
                 $_SESSION['email']=$information['email'];
+                setcookie("userName",$information['email']);
              //   $token = new UsernamePasswordToken($email, $password, 'main', $information['role']);
             //    $context = $this->get('security.context');
              //  $context->setToken($token);
@@ -99,6 +98,7 @@ print_r("SPRAWDZAM ");
      * @Route("/logout", name="logout")
      */
     public function logout() : Response {
+        setcookie ("userName", "", time() - 3600);
         return $this->redirectToRoute('login');
     }
 

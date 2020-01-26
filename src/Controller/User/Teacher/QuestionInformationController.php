@@ -52,9 +52,9 @@ class QuestionInformationController extends AbstractController
             }
         } else {
             $answerArray = array(
-                'id' => 0,
-                'content' => 0,
-                'is_true' => 0,
+                'id' => '',
+                'content' => '',
+                'is_true' => '',
             );
         }
 

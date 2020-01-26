@@ -59,6 +59,8 @@ class LearningMaterialsGroupExamController extends AbstractController
 
             return $this->render('learningMaterialsGroupExamAdd.html.twig', [
                 'form' => $form->createView(),
+                'role' => $_SESSION['role'],
+
             ]);
         }
         return $this->redirectToRoute('learningMaterialsGroupExamList');
@@ -129,7 +131,7 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editLearningMaterialsGroupExam/{id}", name="editLearningMaterialsGroupExam")
      */
-    public function editExam(Request $request, LearningMaterialsGroupExam $groupExam)
+    public function editLearningMaterialsGroupExam(Request $request, LearningMaterialsGroupExam $groupExam)
     {
         $groupExamInformation = new LearningMaterialsGroupExamRepository();
         $groupExamId = (int)$request->attributes->get('id');
@@ -150,11 +152,25 @@ class LearningMaterialsGroupExamController extends AbstractController
             $values = $groupExam->getAllInformation();
             $repositoryExam = new LearningMaterialsGroupExamRepository();
             $repositoryExam->update($values,$groupExamId);
-            return $this->redirectToRoute('learningMaterialsGroupExamList');
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('learningMaterialsGroupExamList');
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                            'groupId' => $_SESSION['group_id'],
+                        ]);
+                        break;
+                    }
+            }
         }
         return $this->render('learningMaterialsGroupExamAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$examInfoArray,
+            'role' => $_SESSION['role'],
         ]);
     }
 

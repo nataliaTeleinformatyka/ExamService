@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Admin\UserExam;
 use App\Form\Admin\UserExamType;
+use App\Repository\Admin\ResultRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +49,8 @@ class UserExamController  extends AbstractController
 
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
+            'role' => $_SESSION['role'],
+
         ]);
     }
 
@@ -146,7 +149,8 @@ class UserExamController  extends AbstractController
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
             'examInformation' =>$examInfoArray,
-            'userExamId' => $userExamId
+            'userExamId' => $userExamId,
+            'role' => $_SESSION['role'],
         ]);
     }
 
@@ -159,18 +163,16 @@ class UserExamController  extends AbstractController
     {
         $userExamId = $request->attributes->get('userExamId');
         $repo = new UserExamRepository();
-        /*if($isAnswer !=0 ){
+        $resultRepository = new ResultRepository();
+        $isResult = $resultRepository->getQuantity($userExamId);
+        if($isResult !=0 ){
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
 
         } else {
-            $repo->delete($examId, $questionId);
+            $repo->delete($userExamId);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
 
-        }*/
-        $repo->delete($userExamId);
-
-        //todo: zapytanie czy chce usunac egzamin gdy sa powiazane question i answers
-        //todo: nie mozna usunac egzaminu, gdy jest powiazanie userexam, result
+        }
 
         return $this->redirectToRoute('userExamList');
     }

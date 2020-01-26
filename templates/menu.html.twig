@@ -1,29 +1,29 @@
 {# templates/menu.html.twig #}
 {% block menu %}
-<nav style="background-color: #565656">
-    <div class="container-fluid">
+<nav class="menu">
+    <div class="container">
         <a href="{{ path('userList') }}" title="User list">
-            <button type="button" class="btn btn-default btn-sm col-md-2">
+            <button type="button" class="btn btn-default btn-sm col-md-2 col-sm-1 buttonColor">
                 <span class="glyphicon glyphicon-align-justify"></span> User
             </button>
         </a>
         <a href="{{ path('examList') }}" title="Exam list">
-            <button type="button" class="btn btn-default btn-sm col-md-2">
+            <button type="button" class="btn btn-default btn-sm col-md-2 col-sm-2 buttonColor">
                 <span class="glyphicon glyphicon-align-justify"></span> Exam
             </button>
         </a>
         <a href="{{ path('userExamList') }}" title="User exam list">
-            <button type="button" class="btn btn-default btn-sm col-md-2">
+            <button type="button" class="btn btn-default btn-sm col-md-2 col-sm-2 buttonColor">
                 <span class="glyphicon glyphicon-align-justify"></span> User exam
             </button>
         </a>
         <a href="{{ path('learningMaterialsGroupList') }}" title="Learning materials group list">
-            <button type="button" class="btn btn-default btn-sm col-md-2">
+            <button type="button" class="btn btn-default btn-sm col-md-3 col-sm-3 buttonColor">
                 <span class="glyphicon glyphicon-align-justify"></span> Learning materials group
             </button>
         </a>
         <a href="{{ path('learningMaterialsGroupExamList') }}" title="Learning materials group exam list">
-            <button type="button" class="btn btn-default btn-sm col-md-2">
+            <button type="button" class="btn btn-default btn-sm col-md-3 buttonColor">
                 <span class="glyphicon glyphicon-align-justify"></span> Learning materials group exam
             </button>
         </a>

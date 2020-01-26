@@ -3,24 +3,24 @@
 
 {% block body %}
     <div class="container">
-        <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-home"></span> Strona główna
-        </a>
         <div class="signClass">
-            <a href="{{ path('deleteQuestion', { 'exam': exam_id, 'question': question_id}) }}" class="btn btn-info btn-lg">
+            <a href="{{ path('teacherExamList') }}" class="btn btn-info btn-md buttonNav floatNone">
+                <span class="glyphicon glyphicon-home"></span> Strona główna
+            </a>
+            <a href="{{ path('deleteQuestion', { 'exam': exam_id, 'question': question_id}) }}" class="btn btn-info btn-md buttonNav floatNone">
                 <span class="glyphicon glyphicon-remove-sign"></span> Usuń pytanie
             </a>
-            <a href="{{ path('answer', { 'examId': exam_id, 'questionId': question_id}) }}" class="btn btn-info btn-lg">
+            <a href="{{ path('answer', { 'examId': exam_id, 'questionId': question_id}) }}" class="btn btn-info btn-md buttonNav floatNone">
                 <span class="glyphicon glyphicon-plus-sign"></span> Dodaj nową odpowiedź
             </a>
         </div>
         <div class="information">
             <b>Informacje o pytaniu:</b>
-                <p><b>Treść pytania :</b> {{ content|default('undefined') }}</p>
-                <p><b>Maksymalna ilość odpowiedzi :</b> {{ max_answers|default('undefined') }}</p>
+                <p><b>Treść pytania :</b> {{ content|default('') }}</p>
+                <p><b>Maksymalna ilość odpowiedzi :</b> {{ max_answers|default('') }}</p>
         </div>
         {% if information==true %}
-        <div class="list">
+        <div class="information">
             <b>Lista odpowiedzi dla egzaminu:</b>
             {% for answer in answer_data %}
             <p><b>Treść :</b> {{ answer.content|default('') }}
@@ -35,7 +35,7 @@
             {% endfor %}
         </div>
         {% endif %}
-        <button type="button" class="btn btn-default btn-sm">
+        <button type="button" class="btn btn-default btn-md buttonColor backButton">
             <a href="{{ path('teacherExamInfo', { 'exam': exam_id}) }}" class="glyphicon glyphicon-chevron-left">Back</a>
         </button>
     </div>

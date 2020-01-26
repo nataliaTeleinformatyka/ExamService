@@ -56,6 +56,7 @@ class UserController extends AbstractController
 
         return $this->render('userAdd.html.twig', [
             'form' => $form->createView(),
+            'role' => $_SESSION['role'],
         ]);
     }
 
@@ -206,7 +207,8 @@ class UserController extends AbstractController
         return $this->render('userAdd.html.twig', [
             'form' => $form->createView(),
             'userInformation' =>$userInfoArray,
-            'userId' => $userId
+            'userId' => $userId,
+            'role' => $_SESSION['role'],
         ]);
     }
 }

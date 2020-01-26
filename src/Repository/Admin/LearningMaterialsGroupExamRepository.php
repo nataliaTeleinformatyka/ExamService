@@ -129,7 +129,7 @@ class LearningMaterialsGroupExamRepository
         }
     }
 
-    public function findByExamId(int $examId) {
+    /*public function findByExamId(int $examId) {
         $id = $this->getIdLearningMaterialsGroupExams();
         if($id!=0){
             $count = count($id);
@@ -145,20 +145,29 @@ class LearningMaterialsGroupExamRepository
             }
 
         }
-    }
-
-   /* public function findByExamId(int $examId) {
-        $id = $this->getIdLearningMaterialsGroupExams();
-        $amount =0;
-        for($i=0;$i<count($id);$i++) {
-            $information = $this->reference->getChild($id[$i])->getValue();
-            if($information['exam_id'] == $examId) {
-                $learningMaterialsGroups[$amount] = $information['learning_materials_group_id'];
-                $amount++;
-            }
-        }
-        return $learningMaterialsGroups;
     }*/
+
+    public function findByExamId(int $examId) {
+        $id = $this->getIdLearningMaterialsGroupExams();
+        if($id!=0){
+            $count = count($id);
+        } else {
+            $count=0;
+        }
+        $amount =0;
+        if($count>0) {
+            for ($i = 0; $i < $count; $i++) {
+                $information = $this->reference->getChild($id[$i])->getValue();
+                if ($information['exam_id'] == $examId) {
+                    $learningMaterialsGroups[$amount] = $information['learning_materials_group_id'];
+                    $amount++;
+                }
+            }
+            return $learningMaterialsGroups;
+        } else {
+            return 0;
+        }
+    }
 
     public function getNextId() {
         $learningMaterialsGroupExamsId = $this->getIdLearningMaterialsGroupExams();

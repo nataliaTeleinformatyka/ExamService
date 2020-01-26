@@ -1,50 +1,60 @@
-{# templates/questionList.html.twig #}
+{# templates/learningMaterialList.html.twig #}
 {% extends 'base.html' %}
+
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
-{% block body %}
-    <nav> Learning Materials Group Id {{ learningMaterialsGroupId }}</nav>
-    <div class="sign">
-        <a href="{{ path('learningMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId}) }}" class="btn btn-info btn-lg">
-            <span class="glyphicon glyphicon-plus-sign"></span> Add new learning material
-        </a>
-    </div>
-{% if( information == true) %}
-    <table>
-        <tr>
-            <td>Id</td>
-            <td>Learning materials group id</td>
-            <td>Name</td>
-            <td>Name of content</td>
-            <td>Is required</td>
-            <td></td>
-        </tr>
-        {% for action in data|sort %}
-            <tr>
-                <td>{{ action.id|default('') }}  </td>
-                    <td>{{ action.learning_materials_group_id|default('') }}</td>
-                    <td>{{ action.name|default('') }}  </td>
-                    <td>{{ action.name_of_content|default('') }}  </td>
-                    <td>{{ action.is_required|default('') }}  </td>
-                    <td>
-                        <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterial': action.id }) }}" title="delete learning material">
-                            <span class="glyphicon glyphicon-remove-sign"></span>
-                        </a>
-                        <a href="{{ path('editLearningMaterial', { 'groupId': learningMaterialsGroupId, 'id': action.id }) }}" title="edit learning materials group">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                        <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_content}}" target="_blank">
-                            <span class="glyphicon glyphicon-file"></span>
-                        </a>
-                        <a href="{{ path('learningMaterialDownload', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterialId': action.id }) }}">
-                            <span class="glyphicon glyphicon-download"></span>
-                        </a>
-                    </td>
-            </tr>
-            {% endfor%}
-        </table>
-{% endif %}
 
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="sign">
+            <a href="{{ path('learningMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId}) }}" class="btn btn-info btn-lg buttonNav">
+                <span class="glyphicon glyphicon-plus-sign"></span> Add new learning material
+            </a>
+        </div>
+        <nav><b>Learning Materials Group Id {{ learningMaterialsGroupId }}</b></nav>
+
+        {% if( information == true) %}
+            <table>
+                <tr class="informationRow">
+                    <th class="ISort col-lg-1 col-md-1 col-sm-1">Id</th>
+                    <th class="ISort col-lg-1 col-md-1 col-sm-1">Learning materials group id</th>
+                    <th class="SSort col-lg-3 col-md-2 col-sm-2">Name</th>
+                    <th class="col-lg-6 col-md-4 col-sm-2">Name of content</th>
+                    <th class="SSort col-lg-2 col-md-1 col-sm-1">Is required</th>
+                    <th class="col-lg-1 col-md-1 col-sm-1"></th>
+                </tr>
+                {% for action in data|sort %}
+                    <tr>
+                        <td class="col-lg-1 col-md-1 col-sm-1">{{ action.id|default('') }}  </td>
+                        <td class="col-lg-1 col-md-1 col-sm-1">{{ action.learning_materials_group_id|default('') }}</td>
+                        <td class="col-lg-3 col-md-2 col-sm-2">{{ action.name|default('') }}  </td>
+                        <td class="col-lg-6 col-md-4 col-sm-2">{{ action.name_of_content|default('') }}  </td>
+                        <td class="col-lg-2 col-md-1 col-sm-1">{{ action.is_required|default('') }}  </td>
+                        <td class="col-lg-1 col-md-1 col-sm-1">
+                            <a href="{{ path('deleteMaterial', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterial': action.id }) }}" title="delete learning material">
+                                <span class="glyphicon glyphicon-remove-sign"></span>
+                            </a>
+                            <a href="{{ path('editLearningMaterial', { 'groupId': learningMaterialsGroupId, 'id': action.id }) }}" title="edit learning materials group">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <a href="http://files01.radiokomunikacja.edu.pl/{{action.name_of_content}}" target="_blank">
+                                <span class="glyphicon glyphicon-file"></span>
+                            </a>
+                            <a href="{{ path('learningMaterialDownload', { 'learningMaterialsGroupId': learningMaterialsGroupId, 'learningMaterialId': action.id }) }}">
+                                <span class="glyphicon glyphicon-download"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor%}
+            </table>
+        {% endif %}
+        <button type="button" class="btn btn-default btn-sm buttonColor backButton">
+            <a href="{{ path('learningMaterialsGroupList') }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
     </div>
 {% endblock %}

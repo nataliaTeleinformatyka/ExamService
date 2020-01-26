@@ -2,7 +2,6 @@
 
 namespace App\Controller\User\Student;
 
-
 use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\QuestionRepository;
@@ -15,6 +14,7 @@ class StudentExamController extends AbstractController
 {
     /**
      * @Route("studentExam/{userExamId}", name="studentExam")
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function studentExamCreate(Request $request) {
@@ -47,7 +47,7 @@ class StudentExamController extends AbstractController
 
                 setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
                 setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
-                setcookie("questionNameOfFile" . $i,  $questions['name_of_file']);
+                //setcookie("questionNameOfFile" . $i,  $questions['name_of_file']);
                 setcookie("questionContent" . $i,$questions['content']);
 
                 $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
