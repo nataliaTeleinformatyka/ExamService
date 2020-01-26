@@ -1,33 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 13:56
- */
 
 namespace App\Repository\Admin;
 
-use Google\Cloud\Storage\StorageClient;
 use App\Entity\Admin\Question;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
-
 
 class QuestionRepository
 {
     protected $db;
     protected $database;
     protected $dbname = 'Exam';
-    private $entityManager = 'Question';
     protected $reference;
-    private $connection;
-    private $login;
 
-    public function __construct()
-    {
+    public function __construct() {
         $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
 
         $factory = (new Factory)
@@ -36,16 +22,6 @@ class QuestionRepository
 
         $this->database = $factory->createDatabase();
         $this->reference = $this->database->getReference($this->dbname);
-
-
-        $ftp_server = "ftp.files1.radiokomunikacja.edu.pl";
-        $ftp_port = 21;
-        $ftp_time = 90;
-        $ftp_user = "user@files01.radiokomunikacja.edu.pl";
-        $ftp_password = "M5.wlx.KZH.4";
-        $this->connection = ftp_connect($ftp_server,$ftp_port,$ftp_time) or die("Couldn't connect to $ftp_server");
-        $this->login = ftp_login($this->connection,$ftp_user,$ftp_password);
-
     }
 
     public function getQuestion(int $examId, int $questionId) {
@@ -58,7 +34,7 @@ class QuestionRepository
         }
     }
 
-    public function insert( int $examId, array $data, string $filename) {
+    public function insert( int $examId, array $data) {
         if (empty($data)) {
             return false;
         }
@@ -74,70 +50,27 @@ class QuestionRepository
                 'exam_id' => $examId,
                 'content' => $data[0],
                 'max_answers' => $data[1],
-                'name_of_file' => $filename
             ]);
         return true;
     }
 
-    public function uploadFile(UploadedFile $file, $filename) {
-        if(ftp_put($this->connection,$filename,$file,FTP_BINARY))
-        {
-            echo "Successfully uploaded $file.";
-        }
-        else
-        {
-            echo "Error uploading $file.";
-        }
-        ftp_close($this->connection);
-
-    }
-
-    public function getFile(string $filename){
-        if(!ftp_get($this->connection,$filename,$filename,FTP_BINARY)) {
-            echo("Błąd przy próbie pobrania pliku $filename...");
-            exit;
-        } else {
-            echo("ALL IS GOOD");
-        }
-    }
-
-    public function deleteFile($filename) {
-        if(ftp_delete($this->connection,$filename)) {
-            echo "Successfully deleted $filename.";
-        }
-        else
-        {
-            echo "Error deleting $filename.";
-        }
-    }
-
-
-    public function delete(int $examId, int $questionId)
-    {
+    public function delete(int $examId, int $questionId) {
         $examReference = $this->database->getReference("Exam");
-        try {
-            if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
-                $examReference->getChild($examId)->getChild("Question")->getChild($questionId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+        if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
+            $examReference->getChild($examId)->getChild("Question")->getChild($questionId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity(int $examId)
-    {
-        try {
-            $examReference = $this->database->getReference("Exam");
+    public function getQuantity(int $examId) {
+        $examReference = $this->database->getReference("Exam");
 
-            return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->numChildren();
-        } catch (ApiException $e) {
-        }
+        return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->numChildren();
     }
 
-    public function getIdQuestions(int $examId)
-    {
+    public function getIdQuestions(int $examId) {
         $examReference = $this->database->getReference("Exam");
         $questionReference= $examReference->getChild($examId)->getChild("Question")->getSnapshot()->getReference();
         if($questionReference->getSnapshot()->hasChildren()==NULL){
@@ -147,21 +80,19 @@ class QuestionRepository
         }
     }
 
-    public function update(array $data, int $id,int $questionId,string $filename) {
+    public function update(array $data, int $id,int $questionId) {
         if (empty($data)) {
             return false;
         }
-
         $this->reference ->getChild($id)
                 ->getChild("Question")->getChild($questionId)->update([
                 'content' => $data[0],
                 'max_answers' => $data[1],
-                'name_of_file' => $filename
             ]);
         return true;
     }
 
-    public function find(int $questionId){
+    public function find(int $questionId) {
         $information = $this->reference->getSnapshot()->getChild($_SESSION['exam_id'])
             ->getChild("Question")->getChild($questionId)->getValue();
         $question = new Question([]);
@@ -171,7 +102,8 @@ class QuestionRepository
 
         return $question;
     }
-    public function getNextId($examId){
+
+    public function getNextId($examId) {
         $questionId= $this->getIdQuestions($examId);
         if($questionId!=0){
             $questionsAmount = count($questionId);

@@ -6,7 +6,6 @@ use App\Entity\Admin\Exam;
 use App\Form\Admin\ExamType;
 use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\LearningMaterialsGroupExamRepository;
-use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +18,11 @@ class ExamController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
-        $exam = new Exam([]);
+    public function new(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
 
+        $exam = new Exam([]);
         $form = $this->createForm(ExamType::class, $exam);
         $form->handleRequest($request);
 
@@ -45,7 +45,6 @@ class ExamController extends AbstractController
                     }
             }
         }
-        print_r($_SESSION['role']);
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
             'role' => $_SESSION['role']
@@ -55,8 +54,17 @@ class ExamController extends AbstractController
      * @Route("examList", name="examList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examListCreate()
-    {
+    public function examListCreate() {
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherExamList');
+                break;
+            }
+            case "ROLE_STUDENT": {
+                return $this->redirectToRoute('studentHomepage');
+                break;
+            }
+        }
 
         $examRepository = new ExamRepository();
         $examsId = $examRepository->getIdExams();
@@ -66,18 +74,15 @@ class ExamController extends AbstractController
             $examsCount=0;
         }
 
-
         if ($examsCount > 0) {
             $info = true;
             for ($i = 0; $i < $examsCount; $i++) {
-
                 $exams = $examRepository->getExam($examsId[$i]);
                 if ($exams['learning_required'] == 1) {
                     $is_required = "true";
                 } else {
                     $is_required = "false";
                 }
-
                 $tplArray[$i] = array(
                     'id' => $examsId[$i],
                     'name' => $exams['name'],
@@ -121,7 +126,7 @@ class ExamController extends AbstractController
 
         ));
     }
-//* @ParamConverter("POST", class="Entity:Exam")
+
     /**
      * @param Request $request
      * @param Exam $exam
@@ -129,8 +134,9 @@ class ExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editExam/{id}", name="editExam")
      */
-    public function editExam(Request $request, Exam $exam)
-    {
+    public function editExam(Request $request, Exam $exam) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
 
         $examInformation = new ExamRepository();
         $examId = (int)$request->attributes->get('id');
@@ -150,12 +156,8 @@ class ExamController extends AbstractController
 
         $form = $this->createForm(ExamType::class, $exam);
         $form->handleRequest($request);
-        $exams = $form->getData();
-        //print_r($exams);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $exams = $form->getData();
 
-            $examValue = $request->attributes->get('id');
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $values = $exam->getAllInformation();
             $repositoryExam = new ExamRepository();
@@ -189,18 +191,19 @@ class ExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteExam(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $examId = $request->attributes->get('exam');
 
         $repo = new ExamRepository();
-        $questionRepo = new QuestionRepository();
         $userExamRepo = new UserExamRepository();
         $learningMaterialsGroupExamRepository = new LearningMaterialsGroupExamRepository();
 
-        $isQuestion = $questionRepo->getQuantity($examId);
         $isUserExam = $userExamRepo->isUserExamForExamId($examId);
         $isLearningMaterialsGroupExam = $learningMaterialsGroupExamRepository->findByExamId($examId);
 
-        if($isQuestion !=0 or $isUserExam==true or $isLearningMaterialsGroupExam==true){
+        if($isUserExam==true or $isLearningMaterialsGroupExam==true){
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {
             $repo->delete($examId);

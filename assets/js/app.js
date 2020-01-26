@@ -2,8 +2,6 @@
 require('../css/app.css');
 
 
-const cookies = document.cookie.split(";");
-
 const questionId = document.getElementById("questionNumber");
 const questionContent = document.getElementById("questionContent");
 const nextButton = document.getElementById("buttonNext");
@@ -14,6 +12,7 @@ window.onload = function() {
     let userName = document.getElementById("userNameMenu");
     userName.innerHTML = getCookie("userName");
 }
+
 let numberQuestion=1;
 let id=0;
 let questionAmount = getCookie("questionAmount") - 1;
@@ -25,30 +24,6 @@ let accessMinute = accessTime - accessHours*60;
 let timer = document.getElementById("timer");
 nextButton.addEventListener('click', nextQuestion);
 
-
-function Contains(classArray,value){
-    for (var i=0; i<classArray.length;i++)
-        if (classArray[i]===value) return true;
-    return false;
-}
-
-function IntegerSort(a,b){return parseInt(a)>parseInt(b);}
-function ValueSort(a,b){return a>b;}
-
-function attachSorting(){
-    console.log("ATTACH SORT");
-    var handlers=[["SSort", ValueSort],["ISort",IntegerSort]];
-    for(var i=0, ths=document.getElementsByTagName('th'); th=ths[i]; i++){
-        for (var h=0; h<handlers.length;h++) {
-            if(Contains(th.className.split(" "), handlers[h][0])){
-                th.columnIndex=i;
-                th.order = -1;
-                th.sortHandler = handlers[h][1];
-                th.onclick=function(){sort(this);}
-            }
-        }
-    }
-}
 
 window.requestAnimationFrame(time);
 /*window.onload = function() {
@@ -127,6 +102,7 @@ function createCheckboxAnswers(id,i){
         br.id = i;
         answer.appendChild(br);
 }
+
 function deleteCheckboxAnswers() {
     for(let i=0;i<getCookie("amountOfAnswers"+id);i++) {
         document.getElementById("answers").removeChild(document.getElementById(i));
@@ -159,12 +135,12 @@ function time() {
     let endDate = new Date(actualYear, actualMonth, actualDay, accessHours, accessMinute, 0, 0);
     let remainingTime = endDate.getTime() - startTime.getTime();
     if (remainingTime > 0) {
-        let s = remainingTime / 1000;   // sekundy
-        let min = s / 60;               // minuty
-        let h = min / 60;               // godziny
-        let sLeft = Math.floor(s % 60);    // pozostało sekund
-        let minLeft = Math.floor(min % 60); // pozostało minut
-        let hLeft = Math.floor(h);          // pozostało godzin
+        let s = remainingTime / 1000;   // secunds
+        let min = s / 60;               // minutes
+        let h = min / 60;               // hours
+        let sLeft = Math.floor(s % 60);    // remaining seconds
+        let minLeft = Math.floor(min % 60); // remaining minutes
+        let hLeft = Math.floor(h);          // remaining hours
         if (minLeft < 10)
             minLeft = "0" + minLeft;
         if (sLeft < 10)
@@ -172,14 +148,36 @@ function time() {
         document.getElementById("timer").innerHTML = hLeft + " : " + minLeft + " : " + sLeft;
         window.requestAnimationFrame(time);
 
-    } //else
-       // return "Czas minal";
-        //timer.innerHTML = "czas minal";
+    } else {
+        return "Czas minal";
+        location.href = "result";
+    }
 }
 
-function sortTableByName(){
-    const name = document.getElementById("name");
-    const tr = document.getElementsByTagName("tr");
+
+
+function Contains(classArray,value){
+    for (var i=0; i<classArray.length;i++)
+        if (classArray[i]===value) return true;
+    return false;
+}
+
+function IntegerSort(a,b){return parseInt(a)>parseInt(b);}
+function ValueSort(a,b){return a>b;}
+
+function attachSorting(){
+    console.log("ATTACH SORT");
+    var handlers=[["SSort", ValueSort],["ISort",IntegerSort]];
+    for(var i=0, ths=document.getElementsByTagName('th'); th=ths[i]; i++){
+        for (var h=0; h<handlers.length;h++) {
+            if(Contains(th.className.split(" "), handlers[h][0])){
+                th.columnIndex=i;
+                th.order = -1;
+                th.sortHandler = handlers[h][1];
+                th.onclick=function(){sort(this);}
+            }
+        }
+    }
 }
 
 function sort(header) {
@@ -200,5 +198,4 @@ function sort(header) {
     for (var i = 0; i < tempRows.length; i++) {
         table.appendChild(tempRows[i]);
     }
-    console.log("POSOTROWANIE");
 }

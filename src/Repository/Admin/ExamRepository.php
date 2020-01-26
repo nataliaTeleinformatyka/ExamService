@@ -1,31 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 12:35
- */
 
 namespace App\Repository\Admin;
 
-
 use App\Entity\Admin\Exam;
-use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
 class ExamRepository
 {
-
     protected $db;
     protected $database;
     protected $dbname = 'Exam';
-    private $entityManager = 'Exam';
     protected $reference;
     protected $snap;
 
-    public function __construct()
-    {
+    public function __construct() {
         $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
 
         $factory = (new Factory)
@@ -36,40 +25,15 @@ class ExamRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getExam(int $examId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($examId)) {
-                return $this->reference->getChild($examId)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
-
-        }
-    }
-
-
-    public function getAllExams()
-    {
-        $examId = $this->getQuantity();
-        if (empty($examId) /*|| isset($userId)*/) {
+    public function getExam(int $examId) {
+        if ($this->reference->getSnapshot()->hasChild($examId)) {
+            return $this->reference->getChild($examId)->getValue();
+        } else {
             return 0;
         }
-        for ($i = 0; $i < $examId; $i++) {
-            try {
-                if ($this->reference->getSnapshot()->hasChild($i)) {
-                    $data[$i] = $this->reference->getChild($i)->getValue();
-                    return $data;
-                } else {
-                    return 0;
-                }
-            } catch (ApiException $e) {}
-        }
     }
 
-    public function insert(array $data)
-    {
+    public function insert(array $data){
         if (empty($data)) {
             return false;
         }
@@ -154,7 +118,7 @@ class ExamRepository
         return $exam;
     }
 
-    public function nextExamId(){
+    public function nextExamId() {
         $examsId= $this->getIdExams();
         if($examsId!=0){
             $examsAmount = count($examsId);

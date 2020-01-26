@@ -17,29 +17,24 @@ class QuestionController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $question = new Question([]);
         $repositoryQuestion = new QuestionRepository();
-        $newFilename="";
         $examId = $request->attributes->get('examId');
+
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $idExamValue = $request->attributes->get('examId');
             $question = $form->getData();
-
             $values = $question->getAllInformation();
-            if($form['file']->getData()!=NULL) {
-                $file = $form['file']->getData();
-                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = $originalFilename.'-'.uniqid().'.'.$file->guessExtension();
 
-                $repositoryQuestion->uploadFile($file,$newFilename);
-            }
-
-            $repositoryQuestion->insert($idExamValue, $values,$newFilename);
+            $repositoryQuestion->insert($idExamValue, $values);
 
             switch ($_SESSION['role']) {
                 case "ROLE_ADMIN":
@@ -58,7 +53,6 @@ class QuestionController extends AbstractController
                     }
             }
         }
-
         return $this->render('questionAdd.html.twig', [
             'form' => $form->createView(),
             'title' => 'Questions to exam ',
@@ -73,6 +67,17 @@ class QuestionController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function questionListCreate(Request $request) {
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherExamList');
+                break;
+            }
+            case "ROLE_STUDENT": {
+                return $this->redirectToRoute('studentHomepage');
+                break;
+            }
+        }
+
         $_SESSION['exam_id'] ="";
         $examId = $request->attributes->get('id');
 
@@ -94,7 +99,6 @@ class QuestionController extends AbstractController
                     'exam_id' => $questions['exam_id'],
                     'content' => $questions['content'],
                     'max_answers' => $questions['max_answers'],
-                    'name_of_file' => $questions['name_of_file'],
                 );
             }
         } else {
@@ -104,49 +108,27 @@ class QuestionController extends AbstractController
                 'exam_id' => '',
                 'content' => '',
                 'max_answers' => '',
-                'name_of_file' => '',
             );
         }
-
-    if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
-        $infoDelete = $_SESSION['information'];
-    } else {
-        $infoDelete = "";
-    }
-        $_SESSION['information'] = array();
 
         return $this->render( 'questionList.html.twig', array (
             'data' => $tplArray,
             'examId' => $examId,
             'information' => $info,
-            'infoDelete' => $infoDelete
-        ) );
+        ));
     }
+
     /**
      * @param Request $request
      * @Route("deleteQuestion/{exam}/{question}", name="deleteQuestion")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteQuestion(Request $request)
-    {
+    public function deleteQuestion(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $examId = $request->attributes->get('exam');
-        $questionId = $request->attributes->get('question');
 
-        $repo = new QuestionRepository();
-        $answerRepo = new AnswerRepository();
-
-        $question = $repo->getQuestion($examId,$questionId);
-        $filename= $question['name_of_file'];
-
-        $isAnswer = $answerRepo->getQuantity($examId,$questionId);
-        if($isAnswer !=0 ){
-            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
-        } else {
-            $repo->delete($examId, $questionId);
-            if($filename != "")
-                $repo->deleteFile($filename);
-            $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
-        }
         switch ($_SESSION['role']) {
             case "ROLE_ADMIN":
                 {
@@ -163,7 +145,6 @@ class QuestionController extends AbstractController
                     break;
                 }
         }
-
     }
 
     /**
@@ -173,41 +154,29 @@ class QuestionController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editQuestion/{exam_id}/{id}", name="editQuestion")
      */
-    public function editQuestion(Request $request, Question $question)
-    {
+    public function editQuestion(Request $request, Question $question) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $questionInformation = new QuestionRepository();
         $examId = $request->attributes->get('exam_id');
         $questionId = $request->attributes->get('id');
 
         $_SESSION['exam_id'] = $examId;
-
         $questions = $questionInformation->getQuestion($examId, $questionId);
-        $filenameFromDatabase = $questions['name_of_file'];
 
         $questionInfoArray = array(
             'content' => $questions['content'],
             'max_answers' => $questions['max_answers'],
-            'name_of_file' => $questions['name_of_file'],
         );
 
         $form = $this->createForm(QuestionType::class, $question);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-         /*   $exams = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
-            $examValue = $request->attributes->get('id');*/
-            $filename = $filenameFromDatabase;
-
             $values = $question->getAllInformation();
-            if($form['file']->getData()== NULL) {
-                $filename = $filenameFromDatabase;
-            } else {
-                $file = $form['file']->getData();
-                $filename=$questionInformation->updateFile($file,$filename);
-            }
 
-            $questionInformation->update($values,$examId, $questionId,$filename);
+            $questionInformation->update($values,$examId, $questionId);
 
             switch ($_SESSION['role']) {
                 case "ROLE_ADMIN":
@@ -231,26 +200,6 @@ class QuestionController extends AbstractController
             'examInformation' =>$questionInfoArray,
             'examId' => $examId,
             'role' => $_SESSION['role'],
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @Route("downloadFile/{exam}/{question}", name="downloadFile")
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function downloadFile(Request $request) {
-        $examId = $request->attributes->get('exam');
-        $questionId = $request->attributes->get('question');
-        $questionRepository = new QuestionRepository();
-
-        $question = $questionRepository->getQuestion($examId,$questionId);
-        $filename = $question['name_of_file'];
-
-        $questionRepository->getFile($filename);
-
-        return $this->redirectToRoute('questionList',[
-            "id" => $examId
         ]);
     }
 }

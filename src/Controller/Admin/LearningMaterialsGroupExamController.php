@@ -18,8 +18,10 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $learningMaterialsGroupExam= new LearningMaterialsGroupExam([]);
         $learningMaterialsGroupRepository = new LearningMaterialsGroupRepository();
         $examRepository = new ExamRepository();
@@ -28,19 +30,16 @@ class LearningMaterialsGroupExamController extends AbstractController
 
         if($examsId==0 or $learningMaterialsGroupsId==0) {
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => ' There are no exams or learning materials groups to assign');
-
-
         } else {
             $form = $this->createForm(LearningMaterialsGroupExamType::class, $learningMaterialsGroupExam);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                $info = $form->getData();
-
                 $values = $learningMaterialsGroupExam->getAllInformation();
                 $repositoryExam = new LearningMaterialsGroupExamRepository();
                 $repositoryExam->insert($values);
+
                 switch ($_SESSION['role']) {
                     case "ROLE_ADMIN":
                         {
@@ -56,21 +55,31 @@ class LearningMaterialsGroupExamController extends AbstractController
                         }
                 }
             }
-
             return $this->render('learningMaterialsGroupExamAdd.html.twig', [
                 'form' => $form->createView(),
                 'role' => $_SESSION['role'],
-
             ]);
         }
         return $this->redirectToRoute('learningMaterialsGroupExamList');
     }
+
     /**
      * @Route("learningMaterialsGroupExamList", name="learningMaterialsGroupExamList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function learningMaterialsGroupExamListCreate()
-    {
+    public function learningMaterialsGroupExamListCreate() {
+        switch ($_SESSION['role']) {
+            case "ROLE_STUDENT":
+                {
+                    return $this->redirectToRoute('studentHomepage');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
 
         $groupExamRepository = new LearningMaterialsGroupExamRepository();
         $examInformationRepo = new ExamRepository();
@@ -121,7 +130,6 @@ class LearningMaterialsGroupExamController extends AbstractController
             'data' => $tplArray,
             'information' => $info,
             'infoDelete' => $infoDelete
-
         ));
     }
     /**
@@ -131,8 +139,10 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editLearningMaterialsGroupExam/{id}", name="editLearningMaterialsGroupExam")
      */
-    public function editLearningMaterialsGroupExam(Request $request, LearningMaterialsGroupExam $groupExam)
-    {
+    public function editLearningMaterialsGroupExam(Request $request, LearningMaterialsGroupExam $groupExam) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $groupExamInformation = new LearningMaterialsGroupExamRepository();
         $groupExamId = (int)$request->attributes->get('id');
         $groupExams = $groupExamInformation->getLearningMaterialsGroupExam($groupExamId);
@@ -140,14 +150,12 @@ class LearningMaterialsGroupExamController extends AbstractController
         $examInfoArray = array(
             'learning_materials_group_id' => $groupExams['learning_materials_group_id'],
             'exam_id' => $groupExams['exam_id'],
-
         );
 
         $form = $this->createForm(LearningMaterialsGroupExamType::class, $groupExam);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $exams = $form->getData();
 
             $values = $groupExam->getAllInformation();
             $repositoryExam = new LearningMaterialsGroupExamRepository();
@@ -160,8 +168,8 @@ class LearningMaterialsGroupExamController extends AbstractController
                     }
                 case "ROLE_PROFESSOR":
                     {
-                        return $this->redirectToRoute('teacherLearningMaterialsInfo', [
-                            'groupId' => $_SESSION['group_id'],
+                        return $this->redirectToRoute('teacherExamInfo', [
+                            'exam' => $_SESSION['exam_id'],
                         ]);
                         break;
                     }
@@ -179,12 +187,25 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @Route("deleteLearningMaterialsGroupExam/{id}", name="deleteLearningMaterialsGroupExam")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteLearningMaterialsGroupExam(Request $request)
-    {
+    public function deleteLearningMaterialsGroupExam(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
         $id = $request->attributes->get('id');
         $repo = new LearningMaterialsGroupExamRepository();
         $repo->delete($id);
-
-        return $this->redirectToRoute('learningMaterialsGroupExamList');
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('learningMaterialsGroupExamList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamInfo', [
+                        'exam' => $_SESSION['exam_id'],
+                    ]);
+                    break;
+                }
+        }
     }
 }

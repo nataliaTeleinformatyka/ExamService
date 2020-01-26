@@ -13,20 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-   /* public function adminDashboard()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        // or add an optional message - seen by developers
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');
-    }*/
     /**
-     * @Route("/user", name="user")
+     * @Route("user", name="user")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $user = new User([]);
         $user->setLastPasswordChange(new \DateTime('now'));
         $user->setLastLogin(new \DateTime('now'));
@@ -38,7 +33,6 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();
-
             $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
             $uid = $repositoryUser->getIdNextUser();
@@ -48,12 +42,17 @@ class UserController extends AbstractController
             $repositoryUser->registerUser($uid,$email,$password);
             $repositoryUser->insert($uid, $values);
 
-
-
-            // return $this->forward($this->generateUrl('user'));
-           // return $this->redirectToRoute('/userList');
+            switch ($_SESSION['role']) {
+                case "ROLE_PROFESSOR": {
+                    return $this->redirectToRoute('teacherUserList');
+                    break;
+                }
+                case "ROLE_ADMIN": {
+                     return $this->redirectToRoute('userList');
+                    break;
+                }
+            }
         }
-
         return $this->render('userAdd.html.twig', [
             'form' => $form->createView(),
             'role' => $_SESSION['role'],
@@ -61,9 +60,19 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/userList", name="userList")
+     * @Route("userList", name="userList")
      */
     public function userListCreate() {
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherUserList');
+                break;
+            }
+            case "ROLE_STUDENT": {
+                return $this->redirectToRoute('studentHomepage');
+                break;
+            }
+        }
 
         $userRepository= new UserRepository();
         $usersId = $userRepository->getIdUsers();
@@ -78,9 +87,6 @@ class UserController extends AbstractController
             for ($i = 0; $i < $usersAmount; $i++) {
                 $users = $userRepository->getUser($usersId[$i]);
 
-                //$password[$i] = $userInformation->getUserPasswordFromAuthentication($users['email']);
-               // $lastLogin[$i] = $userInformation->getUserLastLoginFromAuthentication($users['email']);
-              //  print_r($lastLogin[$i]);
                 $tplArray[$i] = array(
                     'id' => $users['id'],
                     'first_name' => $users['first_name'],
@@ -88,11 +94,10 @@ class UserController extends AbstractController
                     'email' => $users['email'],
                     'role' => $users['role'],
                     'group_of_students' => $users['group_of_students'],
-                    'last_login' => $users['last_login']['date'],
-                    'last_password_change' => $users['last_password_change']['date'],
-                    'date_registration' => $users['date_registration']['date']
+                    'last_login' => date("Y-m-d H:m:i", strtotime($users['last_login']['date'])),
+                    'last_password_change' => date("Y-m-d H:m:i", strtotime($users['last_password_change']['date'])),
+                    'date_registration' => date("Y-m-d H:m:i", strtotime($users['date_registration']['date']))
                 );
-
             }
         }else {
             $info = false;
@@ -104,7 +109,7 @@ class UserController extends AbstractController
                 'role' => '',
                 'group_of_students' => '',
                 'last_login' => '',
-               // 'last_password_change' => '',
+                'last_password_change' => '',
                 'date_registration' => ''
             );
         }
@@ -118,8 +123,7 @@ class UserController extends AbstractController
             'information' => $info,
             'infoDelete' => $infoDelete,
 
-        ) );
-
+        ));
     }
 
     /**
@@ -128,6 +132,9 @@ class UserController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function userDelete(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $id = $request->attributes->get('userId');
         $userRepository = new UserRepository();
         $userExamRepository = new UserExamRepository();
@@ -143,8 +150,16 @@ class UserController extends AbstractController
                 $userRepository->deleteUserFromAuthenticationByEmail($email);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
         }
-
-        return $this->redirectToRoute('userList');
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherUserList');
+                break;
+            }
+            case "ROLE_ADMIN": {
+                return $this->redirectToRoute('userList');
+                break;
+            }
+        }
     }
 
     /**
@@ -153,8 +168,10 @@ class UserController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editUser/{id}", name="editUser")
      */
-    public function editUser(Request $request, User $user)
-    {
+    public function editUser(Request $request, User $user) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $userInformation = new UserRepository();
         $userId = (int)$request->attributes->get('id');
         $users = $userInformation->getUser($userId);
@@ -170,17 +187,13 @@ class UserController extends AbstractController
             'last_password_change' => $users['last_password_change']['date'],
             'date_registration' => $users['date_registration']['date']
         );
-
-
         $_SESSION['info'] = "student";
 
         $form = $this->createForm(UserEditType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userInfo = $form->getData();
-            $user->setLastPasswordChange(new \DateTime());
-            $examValue = $request->attributes->get('id');
+            $user->setLastPasswordChange(new \DateTime('now'));
             $values = $user->getAllInformation();
 
             $repositoryExam = new UserRepository();

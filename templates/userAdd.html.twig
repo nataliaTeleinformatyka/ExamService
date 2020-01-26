@@ -1,13 +1,16 @@
 {# templates/userAdd.html.twig #}
 {% extends 'base.html' %}
+
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
 {% endblock %}
+
 {% block menu %}
     {% if role=="ROLE_ADMIN" %}
         {% include 'menu.html.twig' %}
     {% endif %}
 {% endblock %}
+
 {% block body %}
     {{ form(form) }}
 {% endblock %}

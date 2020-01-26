@@ -56,6 +56,7 @@ class UserExamListController extends AbstractController
                          $examInfo = $examRepository->getExam($userExam['exam_id']);
                          $examName = $examInfo['name'];
                          $maxAttempts = $examInfo['max_attempts'];
+                         print_r($userExam['date_of_resolve_exam']['date']);
                          if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < '2020') {
                              if ($maxAttempts != "") {
                                  $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;

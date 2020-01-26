@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 15.12.2019
- * Time: 20:42
- */
 
 namespace App\Repository\Admin;
-
 
 use App\Entity\Admin\LearningMaterialsGroupExam;
 use Kreait\Firebase\Exception\ApiException;
@@ -19,11 +12,9 @@ class LearningMaterialsGroupExamRepository
     protected $db;
     protected $database;
     protected $dbname = 'LearningMaterialsGroupExam';
-    private $entityManager = 'LearningMaterialsGroupExam';
     protected $reference;
 
-    public function __construct()
-    {
+    public function __construct() {
         $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
 
         $factory = (new Factory)
@@ -34,20 +25,15 @@ class LearningMaterialsGroupExamRepository
         $this->reference = $this->database->getReference($this->dbname);
     }
 
-    public function getLearningMaterialsGroupExam(int $id)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($id)) {
-                return $this->reference->getChild($id)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
-
+    public function getLearningMaterialsGroupExam(int $id) {
+        if ($this->reference->getSnapshot()->hasChild($id)) {
+            return $this->reference->getChild($id)->getValue();
+        } else {
+            return 0;
         }
     }
-    public function insert(array $data)
-    {
+
+    public function insert(array $data) {
         if (empty($data)) {
             return false;
         }
@@ -62,8 +48,8 @@ class LearningMaterialsGroupExamRepository
             ]);
         return true;
     }
-    public function update(array $data,int $id)
-    {
+
+    public function update(array $data,int $id) {
         if (empty($data)) {
             return false;
         }
@@ -75,27 +61,19 @@ class LearningMaterialsGroupExamRepository
             ]);
         return true;
     }
-    public function delete(int $materialsGroupExamId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($materialsGroupExamId)) {
-                $this->reference->getChild($materialsGroupExamId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+
+    public function delete(int $materialsGroupExamId) {
+        if ($this->reference->getSnapshot()->hasChild($materialsGroupExamId)) {
+            $this->reference->getChild($materialsGroupExamId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity()
-    {
-        return $this->reference->getSnapshot()->numChildren();
-    }
+    public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
 
-
-    public function getIdLearningMaterialsGroupExams()
-    {
+    public function getIdLearningMaterialsGroupExams() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
@@ -103,7 +81,7 @@ class LearningMaterialsGroupExamRepository
         }
     }
 
-    public function find(int $groupId){
+    public function find(int $groupId) {
         $information = $this->reference->getChild($groupId)->getValue();
         $info = new LearningMaterialsGroupExam([]);
         $info->setLearningMaterialsGroupId($information['learning_materials_group_id']);
@@ -128,24 +106,6 @@ class LearningMaterialsGroupExamRepository
 
         }
     }
-
-    /*public function findByExamId(int $examId) {
-        $id = $this->getIdLearningMaterialsGroupExams();
-        if($id!=0){
-            $count = count($id);
-        } else {
-            $count=0;
-        }
-        for($i=0;$i<$count;$i++) {
-            $information = $this->reference->getChild($id[$i])->getValue();
-            if($information['exam_id'] == $examId) {
-                return true;
-            } else {
-                return false;
-            }
-
-        }
-    }*/
 
     public function findByExamId(int $examId) {
         $id = $this->getIdLearningMaterialsGroupExams();

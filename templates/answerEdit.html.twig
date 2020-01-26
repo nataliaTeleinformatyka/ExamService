@@ -3,6 +3,11 @@
 {% block menu %}
     {% include 'menu.html.twig' %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
 {% block body %}
 {{ form_start(form) }}
     {{ form_row(form.content) }}

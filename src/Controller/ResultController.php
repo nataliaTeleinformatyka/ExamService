@@ -1,13 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Entity\Admin\Result;
 use App\Entity\Admin\UserExam;
 use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\ExamRepository;
-use App\Repository\Admin\QuestionRepository;
 use App\Repository\Admin\ResultRepository;
 use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,31 +16,23 @@ class ResultController extends AbstractController
 {
     /**
      * @Route("studentExam/result", name="result")
-     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
+    public function new()
     {
         $examId = (int)($_SESSION['exam_id']);
-        $userId = $_SESSION['user_id'];
         $questionAmount = $_SESSION['questionsAmount'];
 
         $answerRepo = new AnswerRepository();
-        $questionRepo = new QuestionRepository();
         $userExamRepository = new UserExamRepository();
         $points = 0;
-        $existQuestion = false;
-        //$questionGoodAmount = $questionRepo->getQuantity($examId);
-        $amount = 0;
-        $questionsId = $questionRepo->getIdQuestions($examId);
+
         for ($j = 0; $j < $questionAmount; $j++) {
             $isTrueAnswer=false;
-            $amount = 0;
 
-            $question = $questionRepo->getQuestion($examId, $_COOKIE['questionId' . $j]);
-           // $answersId = $answerRepo->getIdAnswers($examId, $_COOKIE['questionId' . $j]);
             if ( $_COOKIE['amountOfAnswers' . $j]== 0 ) {
                 $points++;
+                print_r("ZEROOO");
             } else {
                 $answerIds = json_decode($_COOKIE['allAnswers' . $j]);
                 $amount = 0;
@@ -57,34 +47,48 @@ class ResultController extends AbstractController
                     for ($t = 0; $t < $amount; $t++) {
                         if (isset($_COOKIE['userAnswer' . $j . $t])){
                             $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $t]);
-                        if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
-                            $isTrueAnswer = true;
+                            if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
+                                $isTrueAnswer = true;
+                            }
+                            if ($t == $amount - 1 and $isTrueAnswer == true) {
+                                $points++;
+                            }
                         }
-                        if ($t == $amount - 1 and $isTrueAnswer == true) {
-                            $points++;
-                        }
+                        setcookie ('userAnswer'.$j.$t, "", time() - 3600);
                     }
-                    }
-                }
-
                 }
             }
 
+            for($k=0;$k<$_COOKIE['amountOfAnswers'.$j];$k++){
+                setcookie ('answerId'.$j.$k, "", time() - 3600);
+                setcookie ('answerContent'.$j.$k, "", time() - 3600);
+            }
+            setcookie ('amountOfAnswers'.$j, "", time() - 3600);
+            setcookie ('userAnswerAmount'.$j, "", time() - 3600);
+            setcookie ('questionId'.$j, "", time() - 3600);
+            setcookie ('allAnswers'.$j, "", time() - 3600);
+            setcookie ('questionContent'.$j, "", time() - 3600);
+            setcookie ('questionId'.$j, "", time() - 3600);
+            setcookie ('questionMaxAnswers'.$j, "", time() - 3600);
+        }
+
         $resultRepository = new ResultRepository();
         $examRepository = new ExamRepository();
+
         $examInformation = $examRepository->getExam($examId);
         $percentagePassedExam = $examInformation['percentage_passed_exam'];
-        print_r($percentagePassedExam);
         $numberOfAttempt = $resultRepository->getIdResults($_COOKIE['user_exam_id']);
 
-        if($points>0){
-            if($points/$questionAmount >=$percentagePassedExam){
+        if($points>0) {
+            print_r(" podloga ".($points/$questionAmount). " aby zdac ".$percentagePassedExam );
+            if(($points/$questionAmount)*100 >=$percentagePassedExam){
                 $isPassed=true;
                 $informationToUser = "Gratulacje, egzamin zakończono pomyślnie.";
                 $userExam = new UserExam([]);
-                $userExam->setDateOfResolveExam(new \DateTime());
+                print_r(new \DateTime("now"));
+                $userExam->setDateOfResolveExam(new \DateTime("now"));
                 $information = $userExam->getAllInformation();
-                $userExamRepository->update($_COOKIE['user_exam_id'],$information);
+                $userExamRepository->update($information,$_COOKIE['user_exam_id']);
             } else {
                 $isPassed = false;
                 $informationToUser = "Niestety nie udało się zakończyć egzaminu z wynikiem pozytywnym.";
@@ -92,7 +96,6 @@ class ResultController extends AbstractController
         } else {
             $isPassed=false;
             $informationToUser = "Niestety nie udało się zakończyć egzaminu z wynikiem pozytywnym.";
-
         }
 
         $result = new Result([]);
@@ -103,15 +106,20 @@ class ResultController extends AbstractController
         $data = $result->getAllInformation();
         $resultRepository->insert($_COOKIE['user_exam_id'],$data);
 
+        $_SESSION['questionsAmount']="";
+        setcookie ('accessTime', "", time() - 3600);
+        setcookie ('user_exam_id', "", time() - 3600);
+        setcookie ('questionAmount', "", time() - 3600);
+
         return $this->render('studentResult.html.twig', array(
             'points' => $points,
             'information' => $informationToUser
-
         ));
     }
 
     /**
      * @Route("resultList/{userExamId}", name="resultList")
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function resultListCreate(Request $request)

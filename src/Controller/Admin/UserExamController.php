@@ -19,14 +19,16 @@ class UserExamController  extends AbstractController
      */
     public function new(Request $request)
     {
-        $exam = new UserExam([]);
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
 
+        $exam = new UserExam([]);
         $form = $this->createForm(UserExamType::class, $exam);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $exam = $form->getData();
-
             $values = $exam->getAllInformation();
             $repositoryExam = new UserExamRepository();
             $repositoryExam->insert($values);
@@ -50,7 +52,6 @@ class UserExamController  extends AbstractController
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
             'role' => $_SESSION['role'],
-
         ]);
     }
 
@@ -60,8 +61,17 @@ class UserExamController  extends AbstractController
      */
     public function userExamListCreate()
     {
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherExamList');
+                break;
+            }
+            case "ROLE_STUDENT": {
+                return $this->redirectToRoute('studentHomepage');
+                break;
+            }
+        }
         $userExamRepository = new UserExamRepository();
-
         $userExamsId = $userExamRepository->getIdUserExams();
 
         if($userExamsId!=0){
@@ -69,7 +79,6 @@ class UserExamController  extends AbstractController
         } else {
             $userExamAmount=0;
         }
-
 
         if ($userExamAmount > 0) {
             $info = true;
@@ -119,6 +128,8 @@ class UserExamController  extends AbstractController
      * @Route("userExamEdit/{userExamId}", name="userExamEdit")
      */
     public function editUserExam(Request $request, UserExam $userExam) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
 
         $examInformation = new UserExamRepository();
         $userExamId = (int)$request->attributes->get('userExamId');
@@ -136,15 +147,21 @@ class UserExamController  extends AbstractController
         $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-            $exams = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
-            $examValue = $request->attributes->get('id');
 
             $values = $userExam->getAllInformation();
             $repositoryExam = new UserExamRepository();
             $repositoryExam->update($values,$userExamId);
 
-            // return $this->redirectToRoute('examList');
+            switch ($_SESSION['role']) {
+                case "ROLE_PROFESSOR": {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+                case "ROLE_ADMIN": {
+                    return $this->redirectToRoute('userExamList');
+                    break;
+                }
+            }
         }
         return $this->render('userExamAdd.html.twig', [
             'form' => $form->createView(),
@@ -159,21 +176,31 @@ class UserExamController  extends AbstractController
      * @Route("/deleteUserExam/{userExamId}", name="deleteUserExam")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteUserExam(Request $request)
-    {
+    public function deleteUserExam(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $userExamId = $request->attributes->get('userExamId');
         $repo = new UserExamRepository();
         $resultRepository = new ResultRepository();
         $isResult = $resultRepository->getQuantity($userExamId);
-        if($isResult !=0 ){
-            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
 
+        if($isResult !=0 ) {
+            $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {
             $repo->delete($userExamId);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
 
         }
-
-        return $this->redirectToRoute('userExamList');
+        switch ($_SESSION['role']) {
+            case "ROLE_PROFESSOR": {
+                return $this->redirectToRoute('teacherExamList');
+                break;
+            }
+            case "ROLE_ADMIN": {
+                return $this->redirectToRoute('userExamList');
+                break;
+            }
+        }
     }
 }

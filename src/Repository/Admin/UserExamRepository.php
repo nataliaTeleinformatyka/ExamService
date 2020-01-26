@@ -104,14 +104,14 @@ class UserExamRepository
         }
     }
 
-    public function update(Datetime $data, int $id) {
+    public function update($data, int $id) {
         if (empty($data)) {
             return false;
         }
 
         $this->reference
             ->getChild($id)->update([
-                'date_of_resolve_exam' => $data,
+                'date_of_resolve_exam' => $data[0],
             ]);
         return true;
     }

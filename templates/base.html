@@ -26,7 +26,6 @@
                         <span class="glyphicon glyphicon-user"></span> My profile
                     </a>
                 </div>
-            </div>
         {% endblock %}
 
         {% block menu %}
@@ -36,14 +35,13 @@
         {% endblock %}
 
         {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
-
-        <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
         {% endblock %}
 
-        <footer>
-            <hr>
-            Praca inżynierska Teleinformatyka 2020
+        <footer class="container">
+            <b>Praca inżynierska Teleinformatyka 2020</b>
         </footer>
+    </div>
+
     </body>
 </html>

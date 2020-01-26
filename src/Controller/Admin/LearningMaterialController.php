@@ -10,18 +10,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LearningMaterialController  extends AbstractController
-{
+class LearningMaterialController  extends AbstractController {
+
     /**
      * @Route("/learningMaterial/{learningMaterialsGroupId}", name="learningMaterial")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $learningMaterial = new LearningMaterial([]);
         $repositoryMaterial = new LearningMaterialRepository();
-
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
 
         $form = $this->createForm(LearningMaterialType::class, $learningMaterial);
@@ -31,7 +32,6 @@ class LearningMaterialController  extends AbstractController
 
             $material = $form->getData();
             $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
-
             $values = $material->getAllInformation();
 
             $file = $form['attachment']->getData();
@@ -40,11 +40,23 @@ class LearningMaterialController  extends AbstractController
 
             $repositoryMaterial->insert($learningMaterialsGroupId,$values,$file,$newFilename);
 
-            return $this->redirectToRoute('learningMaterialList',[
-                "learningMaterialsGroupId" => $learningMaterialsGroupId
-            ]);
+            switch ($_SESSION['role']) {
+                case "ROLE_ADMIN":
+                    {
+                        return $this->redirectToRoute('learningMaterialList',[
+                            "learningMaterialsGroupId" => $learningMaterialsGroupId
+                        ]);
+                        break;
+                    }
+                case "ROLE_PROFESSOR":
+                    {
+                        return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                            'groupId' => $_SESSION['group_id'],
+                        ]);
+                        break;
+                    }
+            }
         }
-
         return $this->render('learningMaterialAdd.html.twig', [
             'form' => $form->createView(),
             'learningMaterialsGroupId' => $learningMaterialsGroupId,
@@ -58,17 +70,31 @@ class LearningMaterialController  extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function learningMaterialListCreate(Request $request) {
+        switch ($_SESSION['role']) {
+            case "ROLE_STUDENT":
+                {
+                    return $this->redirectToRoute('studentHomepage');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $learningMaterialRepository= new LearningMaterialRepository();
 
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
         $_SESSION['group_id'] = "";
-
         $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialsGroupId);
+
         if($learningMaterialsId!=0){
             $learningMaterialsCount = count($learningMaterialsId);
         } else {
             $learningMaterialsCount=0;
         }
+
         if($learningMaterialsCount>0) {
             $info = true;
             for ($i = 0; $i < $learningMaterialsCount; $i++) {
@@ -98,21 +124,22 @@ class LearningMaterialController  extends AbstractController
 
             );
         }
-
         return $this->render( 'learningMaterialList.html.twig', array (
             'data' => $tplArray,
             'learningMaterialsGroupId' => $learningMaterialsGroupId,
             'information' => $info
-
-        ) );
+        ));
     }
+
     /**
      * @Route("/learningMaterialDownload/{learningMaterialsGroupId}/{learningMaterialId}", name="learningMaterialDownload")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function learningMaterialDownload(Request $request)
-    {
+    public function learningMaterialDownload(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $learningMaterialRepository= new LearningMaterialRepository();
 
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
@@ -122,6 +149,22 @@ class LearningMaterialController  extends AbstractController
         $filename = $learningMaterialInfo['name_of_content'];
         $learningMaterialRepository->get_file($filename);
 
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('learningMaterialList',[
+                        "learningMaterialsGroupId" => $learningMaterialsGroupId
+                    ]);
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                        'groupId' => $_SESSION['group_id'],
+                    ]);
+                    break;
+                }
+        }
         return $this->redirectToRoute('learningMaterialList',[
             "learningMaterialsGroupId" => $learningMaterialsGroupId
         ]);
@@ -133,13 +176,15 @@ class LearningMaterialController  extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @Route("editLearningMaterial/{groupId}/{id}", name="editLearningMaterial")
      */
-    public function editLearningMaterial(Request $request, LearningMaterial $learningMaterial)
-    {
+    public function editLearningMaterial(Request $request, LearningMaterial $learningMaterial) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $learningMaterialRepository = new LearningMaterialRepository();
         $materialId = (int)$request->attributes->get('id');
         $materialGroupId = (int)$request->attributes->get('groupId');
-        $_SESSION['group_id'] = $materialGroupId;
 
+        $_SESSION['group_id'] = $materialGroupId;
         $materials = $learningMaterialRepository->getLearningMaterial($materialGroupId, $materialId);
 
         $materialInfoArray = array(
@@ -170,7 +215,6 @@ class LearningMaterialController  extends AbstractController
                         break;
                     }
             }
-
         }
         return $this->render('learningMaterialAdd.html.twig', [
             'form' => $form->createView(),
@@ -179,14 +223,15 @@ class LearningMaterialController  extends AbstractController
         ]);
     }
 
-
     /**
      * @param Request $request
      * @Route("/deleteMaterial/{learningMaterialsGroupId}/{learningMaterial}", name="deleteMaterial")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function deleteLearningMaterial(Request $request)
-    {
+    public function deleteLearningMaterial(Request $request) {
+        if($_SESSION['role']=="ROLE_STUDENT")
+            $this->redirectToRoute('studentHomepage');
+
         $learningMaterialId = $request->attributes->get('learningMaterial');
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
 
@@ -199,8 +244,21 @@ class LearningMaterialController  extends AbstractController
         }
         $repo->delete($learningMaterialsGroupId,$learningMaterialId);
 
-        return $this->redirectToRoute('learningMaterialList', [
-            'learningMaterialsGroupId' => $learningMaterialsGroupId,
-        ]);
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('learningMaterialList', [
+                        'learningMaterialsGroupId' => $learningMaterialsGroupId,
+                    ]);
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherLearningMaterialsInfo', [
+                        'groupId' => $_SESSION['group_id'],
+                    ]);
+                    break;
+                }
+        }
     }
 }

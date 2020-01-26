@@ -33,8 +33,11 @@ class StudentExamController extends AbstractController
         $maxQuestions = $examInfo['max_questions'];
 
         $questionsId = $questionRepository->getIdQuestions($examId);
-        $questionsAmount = count($questionsId);
-
+        if($questionsId!=0) {
+            $questionsAmount = count($questionsId);
+        } else {
+            $questionsAmount =0;
+        }
 
         if($questionsAmount > $maxQuestions) {
             $questionsAmount=$maxQuestions;
@@ -47,12 +50,13 @@ class StudentExamController extends AbstractController
 
                 setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
                 setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
-                //setcookie("questionNameOfFile" . $i,  $questions['name_of_file']);
                 setcookie("questionContent" . $i,$questions['content']);
 
                 $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
+                print_r($answerNumbers);
                 if ($answerNumbers == 0) {
                     $allAnswersAmount = 0;
+                    print_r("JESTEM W ZERZE");
                 } else {
                     $allAnswersAmount = count($answerNumbers);
                 }

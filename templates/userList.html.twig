@@ -23,29 +23,29 @@
             <table>
                 <tr class="informationRow">
                     <th class="ISort col-lg-1 col-md-1">Id</th>
-                    <th class="SSort col-lg-2 col-md-2">First name</th>
-                    <th class="SSort col-lg-2 col-md-2">Last name</th>
-                    <th class="SSort col-lg-2 col-md-2">Email</th>
-                    <th class="SSort col-lg-2 col-md-2">Role</th>
+                    <th class="SSort col-lg-1 col-md-2">First name</th>
+                    <th class="SSort col-lg-1 col-md-2">Last name</th>
+                    <th class="SSort col-lg-1 col-md-2">Email</th>
+                    <th class="SSort col-lg-1 col-md-2">Role</th>
                     <th class="ISort col-lg-1 col-md-1">Group of students</th>
-                    <th class="col-lg-2 col-md-2">Last login</th>
-                    <th class="col-lg-2 col-md-2">Last password change</th>
-                    <th class="col-lg-2 col-md-2">Date Registration</th>
-                    <th class="col-lg-2 col-md-2"></th>
+                    <th class="col-lg-1 col-md-2">Last login</th>
+                    <th class="col-lg-1 col-md-2">Last password change</th>
+                    <th class="col-lg-1 col-md-2">Date Registration</th>
+                    <th class="col-lg-1 col-md-2"></th>
                 </tr>
                 {% for action in data|sort %}
                     {% if action.id !="" or action.id=="0" %}
                         <tr>
                             <td class="col-lg-1 col-md-1"> {{ action.id|default('') }}  </td>
-                            <td class="col-lg-2 col-md-2"> {{ action.first_name|default('') }} </td>
-                            <td class="col-lg-2 col-md-2"> {{ action.last_name|default('') }} </td>
-                            <td class="col-lg-2 col-md-2"> {{ action.email|default('') }}</td>
-                            <td class="col-lg-2 col-md-2"> {{ action.role|default('') }}</td>
+                            <td class="col-lg-1 col-md-2"> {{ action.first_name|default('') }} </td>
+                            <td class="col-lg-1 col-md-2"> {{ action.last_name|default('') }} </td>
+                            <td class="col-lg-1 col-md-2"> {{ action.email|default('') }}</td>
+                            <td class="col-lg-1 col-md-2"> {{ action.role|default('') }}</td>
                             <td class="col-lg-1 col-md-1"> {{ action.group_of_students|default('') }}</td>
-                            <td class="col-lg-2 col-md-2"> {{ action.last_login|default('') }}</td>
-                            <td class="col-lg-2 col-md-2"> {{ action.last_password_change|default('') }}</td>
-                            <td class="col-lg-2 col-md-2"> {{ action.date_registration|default('') }}</td>
-                            <td class="col-lg-2 col-md-2">
+                            <td class="col-lg-1 col-md-2"> {{ action.last_login|default('') }}</td>
+                            <td class="col-lg-1 col-md-2"> {{ action.last_password_change|default('') }}</td>
+                            <td class="col-lg-1 col-md-2"> {{ action.date_registration|default('') }}</td>
+                            <td class="col-lg-1 col-md-2">
                                 <a href="{{ path('userDelete', { 'userId': action.id }) }}">
                                     <span class="glyphicon glyphicon-remove-sign"></span>
                                 </a>

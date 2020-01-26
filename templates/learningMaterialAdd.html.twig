@@ -4,6 +4,11 @@
         {% include 'menu.html.twig' %}
     {% endif %}
 {% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
 {% block body %}
     {{ form(form) }}
 {% endblock %}

@@ -7,33 +7,33 @@ use App\Form\LoginType;
 use App\Repository\Admin\UserRepository;
 use Kreait\Firebase\Exception\Auth\InvalidPassword;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class LoginController  extends AbstractController
+class LoginController  extends Controller
 {
     /**
      * @Route("/login", name="login")
      * @param Request $request
+     * @param AuthenticationUtils $authenticationUtils
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function login(Request $request, AuthenticationUtils $authenticationUtils)
-    {
-
+    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response {
         $user = new User([]);
+        $userRepository = new UserRepository();
+
         $form = $this->createForm(LoginType::class, $user);
         $form->handleRequest($request);
-        $userRepository = new UserRepository();
         $errors = $authenticationUtils->getLastAuthenticationError();
 
 
         if ($form->isSubmitted() && $form->isValid()) {
             //$user = $this->getDoctrine()->getRepository(UserProvider::class)->loadUserByUsername($request->request->get('login'));
             $info = $form->getData();
-
-            $entityManager = $this->getDoctrine()->getManager();
 
             $email = $user->getEmail();
             $password = $user->getPassword();
@@ -48,10 +48,7 @@ class LoginController  extends AbstractController
                 $_SESSION['role'] = $information['role'];
                 $_SESSION['email']=$information['email'];
                 setcookie("userName",$information['email']);
-             //   $token = new UsernamePasswordToken($email, $password, 'main', $information['role']);
-            //    $context = $this->get('security.context');
-             //  $context->setToken($token);
-                print_r($_SESSION['role']);
+
                 switch ($_SESSION['role']) {
                     case "ROLE_ADMIN": {
                         return $this->redirectToRoute('userList');
@@ -99,6 +96,7 @@ class LoginController  extends AbstractController
      */
     public function logout() : Response {
         setcookie ("userName", "", time() - 3600);
+        session_destroy();
         return $this->redirectToRoute('login');
     }
 
