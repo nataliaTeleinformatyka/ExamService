@@ -222,7 +222,7 @@ class User extends Entity
             case 'student':
                 $role = 'ROLE_STUDENT';
                 break;
-            default: $role = '';
+            default: $role = $role;
         }
 
         $this->role = $role;

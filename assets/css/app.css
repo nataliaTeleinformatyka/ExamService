@@ -115,3 +115,5 @@ tr.informationRow {
     background: radial-gradient(ellipse farthest-corner at 5% 15%, #eeffe8, #a8afa4);
 
 }
+.ISort,.SSort{cursor: pointer;}
+.ISort div, .SSort div{display: inline-block;width: 20px;}

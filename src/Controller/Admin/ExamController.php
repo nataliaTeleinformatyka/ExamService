@@ -83,6 +83,17 @@ class ExamController extends AbstractController
                 } else {
                     $is_required = "false";
                 }
+
+                if (date("Y", strtotime($exams['start_date']['date'])) >= "2020") {
+                    $startDate = date("Y-m-d", strtotime($exams['start_date']['date']));
+                } else
+                    $startDate = " ";
+
+                if (date("Y", strtotime($exams['end_date']['date'])) >= "2020") {
+                    $endDate = date("Y-m-d", strtotime($exams['end_date']['date']));
+                } else
+                    $endDate = " ";
+
                 $tplArray[$i] = array(
                     'id' => $examsId[$i],
                     'name' => $exams['name'],
@@ -92,8 +103,8 @@ class ExamController extends AbstractController
                     'duration_of_exam' => $exams['duration_of_exam'],
                     'percentage_passed_exam' => $exams['percentage_passed_exam'],
                     'created_by' => $exams['created_by'],
-                    'start_date' => $exams['start_date']['date'],
-                    'end_date' => $exams['end_date']['date'],
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
                     'additional_information' => $exams['additional_information']
                 );
             }

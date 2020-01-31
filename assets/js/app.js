@@ -1,6 +1,4 @@
-
 require('../css/app.css');
-
 
 const questionId = document.getElementById("questionNumber");
 const questionContent = document.getElementById("questionContent");
@@ -11,15 +9,28 @@ window.onload = function() {
     attachSorting();
     let userName = document.getElementById("userNameMenu");
     userName.innerHTML = getCookie("userName");
+    checkSelect();
+}
+
+function checkSelect(){
+    let userRoles = document.getElementById("user_roles");
+    let groupOfStudents = document.getElementById('user_group_of_students');
+    for(let i=0;i<userRoles.length;i++){
+        if(userRoles[i].selected) {
+            if(userRoles[i].value != "student") {
+                groupOfStudents.disabled = true;
+            } else {
+                groupOfStudents.disabled = false;
+            }
+        }
+    }
+    window.requestAnimationFrame(checkSelect);
 }
 
 let numberQuestion=1;
 let id=0;
 let questionAmount = getCookie("questionAmount") - 1;
 setValues(0);
-let accessTime = getCookie("accessTime");
-let accessHours= Math.floor(accessTime/60);
-let accessMinute = accessTime - accessHours*60;
 
 let timer = document.getElementById("timer");
 nextButton.addEventListener('click', nextQuestion);
@@ -150,52 +161,63 @@ function time() {
 
     } else {
         return "Czas minal";
-        location.href = "result";
+        window.location.href = "result";
     }
 }
 
 
 
-function Contains(classArray,value){
+function contains(classArray,value){
     for (var i=0; i<classArray.length;i++)
-        if (classArray[i]===value) return true;
+        if (classArray[i]===value)
+            return true;
     return false;
 }
 
-function IntegerSort(a,b){return parseInt(a)>parseInt(b);}
-function ValueSort(a,b){return a>b;}
+function integerSort(a,b){ return parseInt(a)>parseInt(b); }
+function valueSort(a,b){ return a>b; }
 
-function attachSorting(){
-    console.log("ATTACH SORT");
-    var handlers=[["SSort", ValueSort],["ISort",IntegerSort]];
+function attachSorting() {
+    var handlers=[['SSort', valueSort],['ISort',integerSort]];
     for(var i=0, ths=document.getElementsByTagName('th'); th=ths[i]; i++){
         for (var h=0; h<handlers.length;h++) {
-            if(Contains(th.className.split(" "), handlers[h][0])){
+            if(contains(th.className.split(" "), handlers[h][0])){
                 th.columnIndex=i;
-                th.order = -1;
+                th.order=-1;
                 th.sortHandler = handlers[h][1];
                 th.onclick=function(){sort(this);}
+                var divNode = document.createElement('div');
+                var textNode = document.createTextNode('');
+                divNode.appendChild(textNode);
+                th.appendChild(divNode);
+                th.sortTextNode = textNode;
             }
         }
     }
 }
+function setOrder(th) {
+    th.order *= -1;
+    th.sortTextNode.nodeValue=th.order<0?'\u25B2':'\u25BC';
+}
+function resetOrder(th){
+    th.sortTextNode.nodeValue='';
+    th.order=-1;
+}
 
-function sort(header) {
-    header.order *= -1;
+function sort(header){
+    setOrder(header);
     var table = header.parentNode.parentNode;
-    for (var i = 0, th, ths = table.getElementsByTagName('th'); th = ths[i]; i++)
-        if (th != header) th.order = -1;
-    var rows = table.getElementsByTagName('tr');
-    for (var i = 1, tempRows = [], tr; tr = rows[i]; i++) {
-        tempRows[i - 1] = tr
-    }
-    tempRows.sort(function (a, b) {
-        return header.order *
+    for (var i=0, th, ths=table.getElementsByTagName('th'); th=ths[i]; i++)
+        if (th.order && th!=header)
+            resetOrder(th);
+    var rows=table.getElementsByTagName('tr');
+    for(var i=1, tempRows=[], tr; tr=rows[i]; i++){tempRows[i-1]=tr}
+    tempRows.sort(function(a,b){
+        return header.order*
             (header.sortHandler(
                 a.getElementsByTagName('td')[header.columnIndex].innerHTML,
-                b.getElementsByTagName('td')[header.columnIndex].innerHTML) ? 1 : -1)
-    });
-    for (var i = 0; i < tempRows.length; i++) {
+                b.getElementsByTagName('td')[header.columnIndex].innerHTML)?1:-1)});
+    for(var i=0; i<tempRows.length; i++){
         table.appendChild(tempRows[i]);
     }
 }

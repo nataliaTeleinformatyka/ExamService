@@ -53,50 +53,6 @@ class StudentExamController extends AbstractController
                 setcookie("questionContent" . $i,$questions['content']);
 
                 $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
-                print_r($answerNumbers);
-                if ($answerNumbers == 0) {
-                    $allAnswersAmount = 0;
-                    print_r("JESTEM W ZERZE");
-                } else {
-                    $allAnswersAmount = count($answerNumbers);
-                }
-                $ids=array();
-                if ($allAnswersAmount > 0) {
-                    if ($allAnswersAmount <= $questions['max_answers']){
-
-                        $answerNumber = array_rand($answerNumbers, $allAnswersAmount);
-
-                        for ($j = 0; $j < $allAnswersAmount; $j++) {
-                            if($allAnswersAmount>1){
-                                $answerId = $answerNumbers[$answerNumber[$j]];
-                            } else {
-                                $answerId = $answerNumber;
-                            }
-                            $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerId);
-                            $ids[$j] = $answerInfo['id'];
-
-                            setcookie("answerId" . $i . $j, $answerInfo['id']);
-                            setcookie("answerContent" . $i . $j, $answerInfo['content']);
-                        }
-                    }
-                }
-                setcookie("amountOfAnswers" . $i, $allAnswersAmount);
-                setcookie("allAnswers" . $i, json_encode($ids));
-            }
-
-        /*} else {
-            $numbers=array_rand($questionsId,$maxQuestions);
-
-            for($i=0;$i<$questionsAmount;$i++) {
-                $id = $questionsId[$numbers[$i]];
-                $questions=$questionRepository->getQuestion($examId,$id);
-
-                setcookie("questionId" . $i, $questions['id']/*$questions['id']*//*);
-                setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
-                setcookie("questionNameOfFile" . $i,  $questions['name_of_file']);
-                setcookie("questionContent" . $i,$questions['content']);
-
-                $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
                 if ($answerNumbers == 0) {
                     $allAnswersAmount = 0;
                 } else {
@@ -125,7 +81,7 @@ class StudentExamController extends AbstractController
                 setcookie("amountOfAnswers" . $i, $allAnswersAmount);
                 setcookie("allAnswers" . $i, json_encode($ids));
             }
-        }*/
+
         setcookie("questionAmount", $questionsAmount);
 
         $actualHour = date('H')*60;
@@ -142,27 +98,4 @@ class StudentExamController extends AbstractController
         return $this->render('studentExam.html', array(
         ));
     }
-
-
- /*   public function random($amountOfQuestions, $maxQuestions) {
-         $randomNumbers[0] =  rand(0, $amountOfQuestions);
-         $amountOfRandomedNumbers = 1;
-
-         for ($i = 1; $i < $maxQuestions; $i++) {
-             do {
-                 $number = rand(0, $amountOfQuestions);
-                 $isRandom = true;
-
-                 for ($j = 0; $j < $amountOfRandomedNumbers; $j++) {
-                     if ($number == $randomNumbers[$j]) $isRandom = false;
-                 }
-                 if ($isRandom == true) {
-                     $randomNumbers[$amountOfRandomedNumbers] = $number;
-                     $amountOfRandomedNumbers++;
-                 }
-
-             } while ($isRandom != true);
-         }
-         return $randomNumbers;
-    }*/
 }

@@ -192,7 +192,7 @@ class LearningMaterialController  extends AbstractController {
             'is_required' => $materials['is_required'],
         );
 
-        $form = $this->createForm(LearningMaterialEditType::class, $learningMaterial);
+        $form = $this->createForm(LearningMaterialType::class, $learningMaterial);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

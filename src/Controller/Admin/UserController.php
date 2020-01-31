@@ -11,8 +11,7 @@ use App\Form\Admin\UserType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends AbstractController
-{
+class UserController extends AbstractController {
     /**
      * @Route("user", name="user")
      * @param Request $request
@@ -33,15 +32,17 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $form->getData();
-            $values = $user->getAllInformation();
             $repositoryUser = new UserRepository();
             $uid = $repositoryUser->getIdNextUser();
+            if($user->getRoles()!="ROLE_STUDENT"){
+                $user->setGroupOfStudents('-1');
+            }
+            $values = $user->getAllInformation();
 
             $email=$values[3];
             $password=$values[0];
             $repositoryUser->registerUser($uid,$email,$password);
             $repositoryUser->insert($uid, $values);
-
             switch ($_SESSION['role']) {
                 case "ROLE_PROFESSOR": {
                     return $this->redirectToRoute('teacherUserList');
@@ -189,7 +190,7 @@ class UserController extends AbstractController
         );
         $_SESSION['info'] = "student";
 
-        $form = $this->createForm(UserEditType::class, $user);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

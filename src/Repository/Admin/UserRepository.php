@@ -153,7 +153,7 @@ class UserRepository
         $email = $data[3];
         $idFromAuthentication = $this->getUserIdFromAuthentication($email);
         $user = $this->auth->getUser($idFromAuthentication);
-        $updatedUser = $this->auth->changeUserPassword($user->uid, $data[0]);
+        $this->auth->changeUserPassword($user->uid, $data[0]);
         $this->reference
             ->getChild($id)->update([
                 'first_name' => $data[1],
@@ -222,11 +222,13 @@ class UserRepository
 
     public function find(int $userId){
         $information = $this->reference->getChild($userId)->getValue();
+
         $user = new User([]);
+        $user->setId($information['id']);
         $user->setFirstName($information['first_name']);
         $user->setLastName($information['last_name']);
         $user->setEmail($information['email']);
-
+        $user->setRoles($information['role']);
         $user->setGroupOfStudents($information['group_of_students']);
 
         return $user;

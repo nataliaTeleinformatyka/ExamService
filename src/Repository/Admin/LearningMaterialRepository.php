@@ -153,6 +153,8 @@ class LearningMaterialRepository {
             ->getChild("LearningMaterial")->getChild($materialId)->getSnapshot()->getValue();
 
         $learningMaterial = new LearningMaterial([]);
+
+        $learningMaterial->setId($information['id']);
         $learningMaterial->setName($information['name']);
         $learningMaterial->setIsRequired($information['is_required']);
 

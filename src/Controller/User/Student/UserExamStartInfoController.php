@@ -29,61 +29,72 @@ class UserExamStartInfoController extends AbstractController
         $examInfo = $exam->getExam($userExam['exam_id']);
         $examName = $examInfo['name'];
         $durationOfExam = $examInfo['duration_of_exam'];
+        $isLearningRequiredInExam = $examInfo['is_required'];
 
         if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < "2020") {
             $resolveDate = " ";
         } else {
             $resolveDate = $userExam['date_of_resolve_exam']['date'];
         }
-
-        $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
-        if($learningMaterialGroups!=0){
-            $groupsAmount = count($learningMaterialGroups);
-        } else {
-            $groupsAmount=0;
-        }
-        $requiredAmount=0;
-        $additionalAmount=0;
-        $additionalMaterialsArray[] = array(
-            'id' => "",
-            'name' => "",
-            'name_of_content' => "",
-        );
-        $requiredMaterialsArray[$requiredAmount] = array(
-            'id' => "",
-            'name' => "",
-            'name_of_content' => "",
-        );
-        for($i=0;$i<$groupsAmount;$i++){
-            $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialGroups[$i]);
-            $learningMaterialsAmount = count($learningMaterialsId);
-            if($learningMaterialsAmount>0) {
-                for ($j = 0; $j < $learningMaterialsAmount; $j++) {
-                    $learningInfo = $learningMaterialRepository->getLearningMaterial($learningMaterialGroups[$i], $learningMaterialsId[$j]);
-
-                    if($learningInfo['is_required']==true) {
-                        $requiredMaterialsArray[$requiredAmount] = array(
-                            'id' => $learningInfo['id'],
-                            'name' => $learningInfo['name'],
-                            'name_of_content' => $learningInfo['name_of_content'],
-                        );
-                        $requiredAmount++;
-                    } else {
-                        $additionalMaterialsArray[$additionalAmount] = array(
-                            'id' => $learningInfo['id'],
-                            'name' => $learningInfo['name'],
-                            'name_of_content' => $learningInfo['name_of_content'],
-                        );
-                        $additionalAmount++;
-                    }
-                }
+        if($isLearningRequiredInExam==true){
+            $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
+            if($learningMaterialGroups!=0){
+                $groupsAmount = count($learningMaterialGroups);
             } else {
-                $requiredMaterialsArray = "";
-                $additionalMaterialsArray="";
+                $groupsAmount=0;
             }
+            $requiredAmount=0;
+            $additionalAmount=0;
+            $additionalMaterialsArray[] = array(
+                'id' => "",
+                'name' => "",
+                'name_of_content' => "",
+            );
+            $requiredMaterialsArray[$requiredAmount] = array(
+                'id' => "",
+                'name' => "",
+                'name_of_content' => "",
+            );
+            for($i=0;$i<$groupsAmount;$i++) {
+                $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialGroups[$i]);
+                $learningMaterialsAmount = count($learningMaterialsId);
+                if ($learningMaterialsAmount > 0) {
+                    for ($j = 0; $j < $learningMaterialsAmount; $j++) {
+                        $learningInfo = $learningMaterialRepository->getLearningMaterial($learningMaterialGroups[$i], $learningMaterialsId[$j]);
+
+                        if ($learningInfo['is_required'] == true) {
+                            $requiredMaterialsArray[$requiredAmount] = array(
+                                'id' => $learningInfo['id'],
+                                'name' => $learningInfo['name'],
+                                'name_of_content' => $learningInfo['name_of_content'],
+                            );
+                            $requiredAmount++;
+                        } else {
+                            $additionalMaterialsArray[$additionalAmount] = array(
+                                'id' => $learningInfo['id'],
+                                'name' => $learningInfo['name'],
+                                'name_of_content' => $learningInfo['name_of_content'],
+                            );
+                            $additionalAmount++;
+                        }
+                    }
+                } else {
+                    $requiredMaterialsArray = "";
+                    $additionalMaterialsArray = "";
+                }
+            }
+        } else {
+            $requiredMaterialsArray = array(
+                'id' => '',
+                'name' => '',
+                'name_of_content' => '',
+            );
+            $additionalMaterialsArray[] = array(
+                'id' => "",
+                'name' => "",
+                'name_of_content' => "",
+            );
         }
-
-
 
         $tplArray= array(
             'user_id' => $userExam['user_id'],

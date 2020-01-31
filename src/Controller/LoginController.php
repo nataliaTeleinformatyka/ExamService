@@ -32,8 +32,6 @@ class LoginController  extends Controller
 
 
         if ($form->isSubmitted() && $form->isValid()) {
-            //$user = $this->getDoctrine()->getRepository(UserProvider::class)->loadUserByUsername($request->request->get('login'));
-            $info = $form->getData();
 
             $email = $user->getEmail();
             $password = $user->getPassword();
@@ -44,6 +42,10 @@ class LoginController  extends Controller
                 $goodLog = $userRepository->checkPassword($email, $password);
                 session_destroy();
                 session_start();
+                $user->setLastPasswordChange(new \DateTime('now'));
+                $values = $user->getAllInformation();
+                $id = $userRepository->getUserByEmail($email);
+                $userRepository->update($values,$id);
                 $_SESSION['user_id']=$information['id'];
                 $_SESSION['role'] = $information['role'];
                 $_SESSION['email']=$information['email'];
@@ -69,7 +71,6 @@ class LoginController  extends Controller
             }catch (InvalidPassword $e) {
                     $errors = $e->getMessage();
             }
-            //todo; last login change in database or download from authentication
         }
         return $this->render('login.html.twig', [
             'form' => $form->createView(),
