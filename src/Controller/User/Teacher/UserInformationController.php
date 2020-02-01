@@ -13,8 +13,22 @@ class UserInformationController extends AbstractController
      * @Route("teacherUserList", name="teacherUserList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function userListCreate()
-    {
+    public function userListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $info = false;
         $userInformation = new UserRepository();
         $usersId = $userInformation->getIdUsers();

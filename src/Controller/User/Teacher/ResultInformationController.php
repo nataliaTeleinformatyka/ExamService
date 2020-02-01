@@ -14,8 +14,22 @@ class ResultInformationController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function resultInfoCreate(Request $request)
-    {
+    public function resultInfoCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $userExamId = $request->attributes->get('userExam');
 
         $existResult = false;

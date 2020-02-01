@@ -17,8 +17,10 @@ class UserExamController  extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -59,8 +61,10 @@ class UserExamController  extends AbstractController
      * @Route("userExamList", name="userExamList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function userExamListCreate()
-    {
+    public function userExamListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         switch ($_SESSION['role']) {
             case "ROLE_PROFESSOR": {
                 return $this->redirectToRoute('teacherExamList');
@@ -128,6 +132,8 @@ class UserExamController  extends AbstractController
      * @Route("userExamEdit/{userExamId}", name="userExamEdit")
      */
     public function editUserExam(Request $request, UserExam $userExam) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -177,6 +183,8 @@ class UserExamController  extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteUserExam(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 

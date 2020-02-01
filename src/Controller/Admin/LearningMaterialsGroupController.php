@@ -19,6 +19,8 @@ class LearningMaterialsGroupController extends AbstractController {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -62,6 +64,9 @@ class LearningMaterialsGroupController extends AbstractController {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function learningMaterialsGroupListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         switch ($_SESSION['role']) {
             case "ROLE_STUDENT":
                 {
@@ -120,6 +125,8 @@ class LearningMaterialsGroupController extends AbstractController {
      * @Route("editLearningMaterialsGroup/{id}", name="editLearningMaterialsGroup")
      */
     public function editLearningMaterialsGroup(Request $request, LearningMaterialsGroup $learningMaterialsGroup) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -168,6 +175,8 @@ class LearningMaterialsGroupController extends AbstractController {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteGroup(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 

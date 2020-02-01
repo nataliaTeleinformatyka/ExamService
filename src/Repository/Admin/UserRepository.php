@@ -106,20 +106,22 @@ class UserRepository
     }
 
    public function getUser(int $userId) {
-       try {
-           if ($this->reference->getSnapshot()->hasChild($userId)) {
-               return $this->reference->getChild($userId)->getValue();
-           } else {
-               return 0;
-           }
-       } catch (ApiException $e) {
-
+        if ($this->reference->getSnapshot()->hasChild($userId)) {
+            return $this->reference->getChild($userId)->getValue();
+        } else {
+            return 0;
        }
    }
     public function getUserByEmail(string $email) {
-        $amount = $this->getQuantity();
+        $idUsers = $this->getIdUsers();
+        if($idUsers==0){
+            $amount =0;
+        } else {
+            $amount = count($idUsers);
+        }
+
         for($i=0;$i<$amount;$i++) {
-            $userInfo = $this->reference->getChild($i)->getValue();
+            $userInfo = $this->reference->getChild($idUsers[$i])->getValue();
 
             if($userInfo['email'] == $email) {
                 return $userInfo;

@@ -24,9 +24,17 @@ class LearningMaterialsGroupExamType extends AbstractType
         $group = new LearningMaterialsGroupRepository();
 
         $examsId = $exam->getIdExams();
-        $examsCount = count($examsId);
+        if($examsId==0){
+            $examsCount=0;
+        } else
+            $examsCount = count($examsId);
+
         $learningMaterialsGroupsId = $group->getLearningMaterialsGroupId();
-        $learningMaterialsGroupsCount = count($learningMaterialsGroupsId);
+        if($learningMaterialsGroupsId==0){
+            $learningMaterialsGroupsCount = 0;
+        } else
+            $learningMaterialsGroupsCount = count($learningMaterialsGroupsId);
+
         for ($i = 0; $i < $examsCount; $i++) {
             $values = $exam->getExam($examsId[$i]);
             $examArray[$values['exam_id'].' - '.$values["name"]] = $values['exam_id'];

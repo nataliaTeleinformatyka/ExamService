@@ -14,8 +14,22 @@ class LearningMaterialsInformationController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function learningMaterialsListCreate(Request $request)
-    {
+    public function learningMaterialsListCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $_SESSION['group_id']="";
         $materialGroupId = $request->attributes->get('groupId');
         $_SESSION['group_id']=$materialGroupId;

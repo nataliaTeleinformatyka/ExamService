@@ -18,8 +18,22 @@ class ResultController extends AbstractController
      * @Route("studentExam/result", name="result")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new()
-    {
+    public function new() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $examId = (int)($_SESSION['exam_id']);
         $questionAmount = $_SESSION['questionsAmount'];
 
@@ -122,8 +136,22 @@ class ResultController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function resultListCreate(Request $request)
-    {
+    public function resultListCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $userExamId=(int)$request->attributes->get('userExamId');
 
         $resultInformation = new ResultRepository();

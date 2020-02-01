@@ -19,6 +19,8 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -68,6 +70,9 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function learningMaterialsGroupExamListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         switch ($_SESSION['role']) {
             case "ROLE_STUDENT":
                 {
@@ -140,6 +145,8 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @Route("editLearningMaterialsGroupExam/{id}", name="editLearningMaterialsGroupExam")
      */
     public function editLearningMaterialsGroupExam(Request $request, LearningMaterialsGroupExam $groupExam) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -188,8 +195,11 @@ class LearningMaterialsGroupExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteLearningMaterialsGroupExam(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
+
         $id = $request->attributes->get('id');
         $repo = new LearningMaterialsGroupExamRepository();
         $repo->delete($id);

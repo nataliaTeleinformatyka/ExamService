@@ -18,8 +18,22 @@ class ExamInformationController extends AbstractController
      * @Route("teacherExamList", name="teacherExamList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examListCreate()
-    {
+    public function examListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $_SESSION['exam_id'] = "";
         $examRepository = new ExamRepository();
         $examsId = $examRepository->getIdExams();
@@ -77,8 +91,22 @@ class ExamInformationController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examInfoCreate(Request $request)
-    {
+    public function examInfoCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $examInformation = new ExamRepository();
         $examId = $request->attributes->get('exam');
         $_SESSION['exam_id'] = $examId;

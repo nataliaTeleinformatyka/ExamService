@@ -16,6 +16,20 @@ class UserExamListController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function studentExamListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
         $userExamRepository = new UserExamRepository();
         $questionRepository = new QuestionRepository();
         $resultRepository = new ResultRepository();

@@ -18,6 +18,21 @@ class UserExamStartInfoController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function studentExamStartInfoCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+        switch ($_SESSION['role']) {
+            case "ROLE_ADMIN":
+                {
+                    return $this->redirectToRoute('examList');
+                    break;
+                }
+            case "ROLE_PROFESSOR":
+                {
+                    return $this->redirectToRoute('teacherExamList');
+                    break;
+                }
+        }
+
         $examInformation = new UserExamRepository();
         $exam = new ExamRepository();
         $learningMaterialRepository = new LearningMaterialRepository();

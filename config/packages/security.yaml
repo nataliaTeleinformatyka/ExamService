@@ -39,4 +39,4 @@ security:
         # - { path: ^/profile, roles: ROLE_TEACHER }
         # - { path: ^/profile, roles: ROLE_STUDENT }
         # - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        #- { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }

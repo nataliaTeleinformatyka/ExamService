@@ -16,22 +16,34 @@ class UserExamType extends AbstractType {
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+    //todo nie mozna edytowac !
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $user = new UserRepository();
-        for ($i = 0; $i < $user->getQuantity(); $i++) {
-            $values = $user->getUser($i);
-            if (($values['id'] != "" or $values['id'] == 0) and $values['role'] == "ROLE_STUDENT") {
-                $firstName = $values['first_name'];
-                $lastName = $values['last_name'];
-                $userInfo[$i . " - " . $firstName . " " . $lastName] = $values['id'];
+
+        $idUsers = $user->getIdUsers();
+        if($idUsers==0){
+            $amount =0;
+        } else {
+            $amount = count($idUsers);
+        }
+        for ($i = 0; $i < $amount; $i++) {
+            $values = $user->getUser($idUsers[$i]);
+            if ($values['role'] == "ROLE_STUDENT") {
+                $userInfo[$i . " - " . $values['first_name'] . " " . $values['last_name']] = $values['id'];
             }
         }
 
         $exams= new ExamRepository();
-        for($j=0;$j<$exams->getQuantity();$i++) {
-            $valuesExam = $exams->getExam($i);
+        $examsId = $exams->getIdExams();
+        if($examsId==0){
+            $examsAmount =0;
+        } else
+            $examsAmount=count($examsId);
+
+        for($j=0;$j<$examsAmount;$j++) {
+            $valuesExam = $exams->getExam($examsId[$j]);
             $name = $valuesExam['name'];
-            $examInfo[$i." - ".$name] = $valuesExam['exam_id'];
+            $examInfo[$j." - ".$name] = $valuesExam['exam_id'];
         }
 
         $builder

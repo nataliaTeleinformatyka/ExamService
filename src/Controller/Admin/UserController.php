@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Form\Admin\UserEditType;
 use App\Repository\Admin\UserExamRepository;
 use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +17,9 @@ class UserController extends AbstractController {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -64,6 +66,9 @@ class UserController extends AbstractController {
      * @Route("userList", name="userList")
      */
     public function userListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
+
         switch ($_SESSION['role']) {
             case "ROLE_PROFESSOR": {
                 return $this->redirectToRoute('teacherUserList');
@@ -133,6 +138,8 @@ class UserController extends AbstractController {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function userDelete(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -170,6 +177,8 @@ class UserController extends AbstractController {
      * @Route("editUser/{id}", name="editUser")
      */
     public function editUser(Request $request, User $user) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 

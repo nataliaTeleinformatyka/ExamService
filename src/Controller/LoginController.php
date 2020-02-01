@@ -44,7 +44,9 @@ class LoginController  extends Controller
                 session_start();
                 $user->setLastPasswordChange(new \DateTime('now'));
                 $values = $user->getAllInformation();
-                $id = $userRepository->getUserByEmail($email);
+                $userInformation = $userRepository->getUserByEmail($email);
+                $id = $userInformation['id'];
+                print_r($id);
                 $userRepository->update($values,$id);
                 $_SESSION['user_id']=$information['id'];
                 $_SESSION['role'] = $information['role'];

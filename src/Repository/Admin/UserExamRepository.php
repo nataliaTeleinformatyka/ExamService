@@ -2,6 +2,7 @@
 
 namespace App\Repository\Admin;
 
+use App\Entity\Admin\UserExam;
 use DateTime;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
@@ -144,4 +145,5 @@ class UserExamRepository
         }
         return $maxNumber;
     }
+
 }
