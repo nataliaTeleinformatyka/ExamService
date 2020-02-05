@@ -46,7 +46,6 @@ class ResultController extends AbstractController
 
             if ( $_COOKIE['amountOfAnswers' . $j]== 0 ) {
                 $points++;
-                print_r("ZEROOO");
             } else {
                 $answerIds = json_decode($_COOKIE['allAnswers' . $j]);
                 $amount = 0;
@@ -118,7 +117,7 @@ class ResultController extends AbstractController
         $result->setIsPassed($isPassed);
 
         $data = $result->getAllInformation();
-        $resultRepository->insert($_COOKIE['user_exam_id'],$data);
+        $resultRepository->insert($_COOKIE['user_exam_id'],$data,$examId);
 
         $_SESSION['questionsAmount']="";
         setcookie ('accessTime', "", time() - 3600);
@@ -140,11 +139,6 @@ class ResultController extends AbstractController
         if(!isset($_SESSION['role']))
             return $this->redirectToRoute("login");
         switch ($_SESSION['role']) {
-            case "ROLE_ADMIN":
-                {
-                    return $this->redirectToRoute('examList');
-                    break;
-                }
             case "ROLE_PROFESSOR":
                 {
                     return $this->redirectToRoute('teacherExamList');

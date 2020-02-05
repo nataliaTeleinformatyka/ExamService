@@ -24,9 +24,9 @@ class QuestionInformationController extends AbstractController
                     return $this->redirectToRoute('examList');
                     break;
                 }
-            case "ROLE_PROFESSOR":
+            case "ROLE_STUDENT":
                 {
-                    return $this->redirectToRoute('teacherExamList');
+                    return $this->redirectToRoute('studentHomepage');
                     break;
                 }
         }

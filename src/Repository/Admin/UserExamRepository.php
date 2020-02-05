@@ -105,6 +105,32 @@ class UserExamRepository
         }
     }
 
+    public function getUserExamIdForUser(int $userId) {
+
+        $amount =0;
+        $isExam = false;
+
+        $userExamsId = $this->getIdUserExams();
+        if($userExamsId!=0){
+            $userExamsCount = count($userExamsId);
+        } else {
+            $userExamsCount=0;
+            $tplArray="";
+        }
+        for ($i = 0; $i < $userExamsCount; $i++) {
+            $userExam = $this->getUserExam($userExamsId[$i]);
+            if ($userExam['user_id'] == $userId) {
+                $tplArray[$amount] = $userExam['user_exam_id'];
+                $amount++;
+                $isExam = true;
+            }
+            if($i==($userExamsCount-1) and $isExam==false) {
+                $tplArray = "";
+            }
+        }
+        return $tplArray;
+    }
+
     public function update($data, int $id) {
         if (empty($data)) {
             return false;
@@ -145,5 +171,4 @@ class UserExamRepository
         }
         return $maxNumber;
     }
-
 }

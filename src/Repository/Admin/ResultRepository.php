@@ -61,38 +61,20 @@ class ResultRepository
         }
     }*/
 
-    public function insert($userExamId, $data)//, $numberOfAttempt,$points, $isPassed)
-    {
-        print_r(" jestem w insert ");
+    public function insert($userExamId, $data, $examId) {
         if (empty($data)) {
             return false;
         }
 
         $actualResultId = $this->getNextId($userExamId);
-        print_r("id".$actualResultId);
 
         $this->reference->getChild($userExamId)->getChild("Result")
             ->getChild($actualResultId)->set([
                 'id' => $actualResultId,
+               'exam_id' => $examId,
                // 'number_of_attempt' => $data[2],//$numberOfAttempt,
                 'points' => $data[3],//$points,
                 'is_passed' => $data[4],//$isPassed,
-            ]);
-        return true;
-    }
-    public function update($userExamId,array $data, int $id) {
-        if (empty($data)) {
-            return false;
-        }
-//todo : edit userexam and result child add everywhere in this repo
-        $this->reference->getChild($userExamId)->getChild("Result")
-            ->getChild($id)->update([
-                'user_id' => $data[0],
-                'exam_id' => $data[1],
-                'number_of_attempt' => $data[2],
-                'points' => $data[3],
-                'is_passed' => $data[4],
-                'date_of_resolve_exam' => $data[5]
             ]);
         return true;
     }
@@ -113,7 +95,6 @@ class ResultRepository
     public function getIdResults(int $userExamId)
     {
         $resultReference= $this->reference->getChild($userExamId)->getChild("Result")->getSnapshot()->getReference();
-
         if($resultReference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
@@ -137,18 +118,6 @@ class ResultRepository
             }
         }
     }*/
-
-    public function find(int $userExamId, int $resultId){
-        $information = $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->getValue();
-        $result = new Result([]);
-        $result->setUserId($information['user_id']);
-        $result->setExamId($information['exam_id']);
-        $result->setNumberOfAttempt($information['number_of_attempt']);
-        $result->setPoints($information['points']);
-        $result->setIsPassed($information['is_passed']);
-        $result->setDateOfResolveExam($information['date_of_resolve_exam']);
-        return $result;
-    }
 
     public function getNextId($userExamId){
         $resultsId= $this->getIdResults($userExamId);

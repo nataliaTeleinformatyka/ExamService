@@ -16,18 +16,7 @@ class UserProfileController extends AbstractController
     public function userInformationCreate() {
         if(!isset($_SESSION['role']))
             return $this->redirectToRoute("login");
-        switch ($_SESSION['role']) {
-            case "ROLE_ADMIN":
-                {
-                    return $this->redirectToRoute('examList');
-                    break;
-                }
-            case "ROLE_PROFESSOR":
-                {
-                    return $this->redirectToRoute('teacherExamList');
-                    break;
-                }
-        }
+
 
         $userId = $_SESSION['user_id'];
         $userRepository = new UserRepository();

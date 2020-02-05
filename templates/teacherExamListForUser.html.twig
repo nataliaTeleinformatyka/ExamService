@@ -1,0 +1,29 @@
+{# templates/teacherExamListForUser.html.twig #}
+{% extends 'base.html' %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {{ information }}
+        {% if info == true %}
+    <div class="teacherInfo">
+        Lista egzaminów do których przypisano użytkownika:
+    {% for action in data %}
+                <p><b><a href=" {{ path('teacherExamInfo', { 'exam': action.id }) }}">{{ action.name|default('') }} </a></b></p>
+            {% endfor%}
+    </div>
+    <div class="teacherInfo">
+        Lista wyników użytkownika:
+    {% for result in result_data %}
+        <p><b>{{ result.exam_name|default('') }}</b> - <b>Punkty:</b> {{ result.points|default('') }} <b>Wynik pozytywny?:</b> {{ result.is_passed|default('') }}</p>
+            {% endfor%}
+    </div>
+        {% endif %}
+        <button type="button" class="btn btn-default btn-md buttonColor backButton">
+            <a href="{{ path('teacherUserList') }}" class="glyphicon glyphicon-chevron-left">Back</a>
+        </button>
+    </div>
+{% endblock %}

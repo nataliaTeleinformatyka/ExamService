@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Admin\User;
 use App\Form\LoginType;
+use App\Repository\Admin\DatabaseConnection;
 use App\Repository\Admin\UserRepository;
 use Kreait\Firebase\Exception\Auth\InvalidPassword;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class LoginController  extends Controller
+class LoginController  extends AbstractController
 {
     /**
      * @Route("/login", name="login")
@@ -25,6 +26,9 @@ class LoginController  extends Controller
     public function login(Request $request, AuthenticationUtils $authenticationUtils): Response {
         $user = new User([]);
         $userRepository = new UserRepository();
+
+        $database = new DatabaseConnection();
+        $database ->createAdmin();
 
         $form = $this->createForm(LoginType::class, $user);
         $form->handleRequest($request);
@@ -40,14 +44,17 @@ class LoginController  extends Controller
             $information = $userRepository->getUserByEmail($email);
             try {
                 $goodLog = $userRepository->checkPassword($email, $password);
+                print_r($goodLog);
+
                 session_destroy();
                 session_start();
-                $user->setLastPasswordChange(new \DateTime('now'));
+                $user->setLastLogin(new \DateTime('now'));
                 $values = $user->getAllInformation();
+
                 $userInformation = $userRepository->getUserByEmail($email);
                 $id = $userInformation['id'];
-                print_r($id);
-                $userRepository->update($values,$id);
+
+                $userRepository->updateLastLogin($values,$id);
                 $_SESSION['user_id']=$information['id'];
                 $_SESSION['role'] = $information['role'];
                 $_SESSION['email']=$information['email'];

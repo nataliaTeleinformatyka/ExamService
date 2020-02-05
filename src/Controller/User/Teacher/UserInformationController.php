@@ -3,6 +3,7 @@
 namespace App\Controller\User\Teacher;
 
 
+use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,9 +23,9 @@ class UserInformationController extends AbstractController
                     return $this->redirectToRoute('examList');
                     break;
                 }
-            case "ROLE_PROFESSOR":
+            case "ROLE_STUDENT":
                 {
-                    return $this->redirectToRoute('teacherExamList');
+                    return $this->redirectToRoute('studentHomepage');
                     break;
                 }
         }
@@ -45,7 +46,7 @@ class UserInformationController extends AbstractController
                     $info = true;
 
                     $tplArray[$amount] = array(
-                        'id' => $i,
+                        'id' => $user['id'],
                         'first_name' => $user['first_name'],
                         'last_name' => $user['last_name'],
                         'email' => $user['email'],

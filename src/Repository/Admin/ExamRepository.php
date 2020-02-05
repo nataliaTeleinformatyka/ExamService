@@ -3,26 +3,13 @@
 namespace App\Repository\Admin;
 
 use App\Entity\Admin\Exam;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
 
-class ExamRepository
-{
-    protected $db;
-    protected $database;
-    protected $dbname = 'Exam';
+class ExamRepository {
     protected $reference;
-    protected $snap;
 
     public function __construct() {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
-
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-        $this->database = $factory->createDatabase();
-        $this->reference = $this->database->getReference($this->dbname);
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('Exam');
     }
 
     public function getExam(int $examId) {
@@ -33,10 +20,10 @@ class ExamRepository
         }
     }
 
-    public function insert(array $data){
-        if (empty($data)) {
+    public function insert(array $data) {
+        if (empty($data))
             return false;
-        }
+
         if($_SESSION['role'] == "ROLE_ADMIN") {
             $userId = -1;
         } else {
@@ -63,9 +50,8 @@ class ExamRepository
     }
 
     public function update(array $data, int $id) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
 
         $this->reference
             ->getChild($id)->update([

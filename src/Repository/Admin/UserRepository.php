@@ -3,86 +3,54 @@
 namespace App\Repository\Admin;
 
 use App\Entity\Admin\User;
-
-use Kreait\Firebase\Exception\ApiException;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
 require_once 'C:\xampp\htdocs\examServiceProject\vendor\autoload.php';
-class UserRepository
-{
-
-    protected $db;
-    protected $database;
-    protected $dbname = 'User';
-    private $entityManager = 'User';
+class UserRepository {
     protected $reference;
     private $auth;
+
     /**
      * UserRepository constructor.
      */
-    public function __construct()
-    {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
+    public function __construct() {
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('User');
 
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-
-        $this->database = $factory->createDatabase();
-        $this->auth = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->createAuth();
-        $this->reference = $this->database->getReference($this->dbname);
+        $this->auth = $database->getAuthentication();
     }
 
-    public function registerUser(int $uid,String $email,String $password){
-
-            $userProperties = [
-                'uid' => $uid,
-                'email' => $email,
-                'emailVerified' => false,
-                'password' => $password,
-                'displayName' => $email
-            ];
-
-            $createdUser = $this->auth->createUser($userProperties);
+    public function registerUser(int $uid,String $email,String $password) {
+        $userProperties = [
+            'uid' => $uid,
+            'email' => $email,
+            'emailVerified' => false,
+            'password' => $password,
+            'displayName' => $email
+        ];
+        $this->auth->createUser($userProperties);
     }
 
     public function getUsersFromAuthentication() {
         $users = $this->auth->listUsers($defaultMaxResults = 1000, $defaultBatchSize = 1000);
-
-      return $users;
+        return $users;
     }
 
-  /*  public function getUserPasswordFromAuthentication(String $email){
-        $user = $this->auth->getUserByEmail($email);
-        $data= $user->toArray();
-        return $data['passwordHash'];
-    }*/
-    public function getUserIdFromAuthentication(String $email){
+    public function getUserIdFromAuthentication(String $email) {
         $user = $this->auth->getUserByEmail($email);
         $data= $user->toArray();
         return $data['uid'];
     }
-   /* public function getUserLastLoginFromAuthentication(String $email){
-        $user = $this->auth->getUserByEmail($email);
-        $data= $user->toArray();
-        $metadata= $data['metadata']->toArray();
-       /* foreach($metadata as &$blog) {
-            $blogs = get_object_vars($blog);*/
-     /*       $date = $metadata['lastLoginAt'];
-    //    }
-        return $date;
-    }*/
-    public function deleteUserFromAuthenticationByEmail(string $email){
+
+    public function deleteUserFromAuthenticationByEmail(string $email) {
         $user = $this->auth->getUserByEmail($email);
         $id = $user->uid;
         print_r("ID: ".$user->uid);
         $this->auth->deleteUser(strval($id));
         return true;
     }
+
     public function deleteUserFromAuthentication(int $id){
         $this->auth->deleteUser(strval($id));
         return true;
@@ -166,24 +134,43 @@ class UserRepository
         return true;
     }
 
+    public function updateLastLogin($data,$id){
+        if (empty($data) ) {
+            return false;
+        }
+        $this->reference
+            ->getChild($id)->update([
+                'last_login' => $data[5]
+            ]);
+        return true;
+    }
+
     public function delete(int $userId) {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($userId)) {
-                $this->reference->getChild($userId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
+        if ($this->reference->getSnapshot()->hasChild($userId)) {
+            $this->reference->getChild($userId)->remove();
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getQuantity() {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
-        } catch (ApiException $e) {
+    public function existAdmin(){
+        $usersId = $this->getIdUsers();
+        if($usersId==0){
+            return false;
+        } else {
+            $usersAmount = count($usersId);
         }
+        for($i=0;$i<$usersAmount;$i++){
+            $userInformation = $this->getUser($usersId[$i]);
+            if($userInformation['email']=="administrator@admin.pl"){
+                return true;
+            }
+        }
+        return false;
     }
+
+    public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
 
     public function getIdUsers() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){

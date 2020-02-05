@@ -183,11 +183,14 @@ class UserController extends AbstractController {
             $this->redirectToRoute('studentHomepage');
 
         $userInformation = new UserRepository();
-        $userId = (int)$request->attributes->get('id');
+        if($_SESSION['role']=="ROLE_ADMIN") {
+            $userId = (int)$request->attributes->get('id');
+        } else
+            $userId= $_SESSION['user_id'];
         $users = $userInformation->getUser($userId);
 
         $userInfoArray = array(
-            'id' => $users['id'],
+            'id' => $userId,
             'first_name' => $users['first_name'],
             'last_name' => $users['last_name'],
             'email' => $users['email'],

@@ -24,6 +24,9 @@
                         <a href="{{ path('userDelete', { 'userId': user_data.id|default('')}) }}" title="Usuń">
                             <span class="glyphicon glyphicon-remove-sign"></span> Usuń
                         </a></p>
+                    <a href="{{ path('teacherExamListForUser', { 'userId': user_data.id }) }}" title="Exam list">
+                        <span class="glyphicon glyphicon-list"></span> Egzaminy użytkownika
+                    </a>
                 {% endfor%}
                 {% endif %}
             </div>
