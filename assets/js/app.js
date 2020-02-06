@@ -160,8 +160,9 @@ function time() {
         window.requestAnimationFrame(time);
 
     } else {
-        return "Czas minal";
+        console.log("THE END");
         window.location.href = "result";
+        return "Czas minal";
     }
 }
 

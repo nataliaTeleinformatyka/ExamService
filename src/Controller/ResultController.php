@@ -56,20 +56,22 @@ class ResultController extends AbstractController
                         $amount++;
                     }
                 }
-                if ($_COOKIE['userAnswerAmount' . $j] == $amount){
-                    for ($t = 0; $t < $amount; $t++) {
-                        if (isset($_COOKIE['userAnswer' . $j . $t])){
-                            $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $t]);
-                            if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
-                                $isTrueAnswer = true;
+                if (isset($_COOKIE['userAnswerAmount'.$j])) {
+                    if ($_COOKIE['userAnswerAmount' . $j] == $amount) {
+                        for ($t = 0; $t < $amount; $t++) {
+                            if (isset($_COOKIE['userAnswer' . $j . $t])) {
+                                $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $t]);
+                                if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
+                                    $isTrueAnswer = true;
+                                }
+                                if ($t == $amount - 1 and $isTrueAnswer == true) {
+                                    $points++;
+                                }
                             }
-                            if ($t == $amount - 1 and $isTrueAnswer == true) {
-                                $points++;
-                            }
+                            setcookie('userAnswer' . $j . $t, "", time() - 3600);
                         }
-                        setcookie ('userAnswer'.$j.$t, "", time() - 3600);
                     }
-                }
+            }
             }
 
             for($k=0;$k<$_COOKIE['amountOfAnswers'.$j];$k++){

@@ -32,7 +32,7 @@ class UserExamStartInfoController extends AbstractController
                     break;
                 }
         }
-
+        $groupInfo = false;
         $examInformation = new UserExamRepository();
         $exam = new ExamRepository();
         $learningMaterialRepository = new LearningMaterialRepository();
@@ -44,7 +44,7 @@ class UserExamStartInfoController extends AbstractController
         $examInfo = $exam->getExam($userExam['exam_id']);
         $examName = $examInfo['name'];
         $durationOfExam = $examInfo['duration_of_exam'];
-        $isLearningRequiredInExam = $examInfo['is_required'];
+        $isLearningRequiredInExam = $examInfo['learning_required'];
 
         if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < "2020") {
             $resolveDate = " ";
@@ -55,6 +55,7 @@ class UserExamStartInfoController extends AbstractController
             $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
             if($learningMaterialGroups!=0){
                 $groupsAmount = count($learningMaterialGroups);
+                $groupInfo = true;
             } else {
                 $groupsAmount=0;
             }
@@ -127,6 +128,7 @@ class UserExamStartInfoController extends AbstractController
             'user_exam_id' => $userExamId,
             'required_materials' => $requiredMaterialsArray,
             'additional_materials' => $additionalMaterialsArray,
+            'groupInfo' => $groupInfo
         ));
     }
 }

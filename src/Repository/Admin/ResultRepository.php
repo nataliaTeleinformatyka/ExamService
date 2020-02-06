@@ -1,80 +1,34 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 15.12.2019
- * Time: 21:43
- */
 
 namespace App\Repository\Admin;
 
-use App\Entity\Admin\Result;
-use Kreait\Firebase\Exception\ApiException;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
-
-class ResultRepository
-{
-    protected $db;
-    protected $database;
-    protected $dbname = 'UserExam';
-    private $entityManager = 'Result';
+class ResultRepository {
     protected $reference;
 
-    public function __construct()
-    {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
-
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-        $this->database = $factory->createDatabase();
-        $this->reference = $this->database->getReference($this->dbname);
+    public function __construct() {
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('UserExam');
     }
 
-    public function getResult(int $userExamId, int $resultId)
-    {
+    public function getResult(int $userExamId, int $resultId) {
         if ($this->reference->getSnapshot()->getChild($userExamId)->hasChild("Result")) {
             return $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->getValue();
-        } else {
+        } else
             return 0;
-        }
     }
 
-
-/*    public function getAllResults()
-    {
-        $resultId = $this->getQuantity();
-        if (empty($resultId) /*|| isset($userId)*//*) {
-       /*     return 0;
-        }
-        for ($i = 0; $i < $resultId; $i++) {
-            try {
-                if ($this->reference->getSnapshot()->hasChild($i)) {
-                    $data[$i] = $this->reference->getChild($i)->getValue();
-                    return $data;
-                } else {
-                    return 0;
-                }
-            } catch (ApiException $e) {}
-        }
-    }*/
-
     public function insert($userExamId, $data, $examId) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
 
         $actualResultId = $this->getNextId($userExamId);
 
         $this->reference->getChild($userExamId)->getChild("Result")
             ->getChild($actualResultId)->set([
                 'id' => $actualResultId,
-               'exam_id' => $examId,
-               // 'number_of_attempt' => $data[2],//$numberOfAttempt,
-                'points' => $data[3],//$points,
-                'is_passed' => $data[4],//$isPassed,
+                'exam_id' => $examId,
+                'points' => $data[3],
+                'is_passed' => $data[4],
             ]);
         return true;
     }
@@ -83,23 +37,20 @@ class ResultRepository
         if ($this->reference->getSnapshot()->getChild($userExamId)->hasChild("Result")) {
             $this->reference->getChild($userExamId)->getChild("Result")->getChild($resultId)->remove();
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     public function getQuantity(int $userExamId) {
         return $this->reference->getSnapshot()->getChild($userExamId)->getChild("Result")->numChildren();
     }
 
-    public function getIdResults(int $userExamId)
-    {
+    public function getIdResults(int $userExamId) {
         $resultReference= $this->reference->getChild($userExamId)->getChild("Result")->getSnapshot()->getReference();
         if($resultReference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return $resultReference->getChildKeys();
-        }
     }
 //todo: THIS
    /*public function getQuantityAttempt($userExamId,$examId, $userId){
@@ -119,7 +70,7 @@ class ResultRepository
         }
     }*/
 
-    public function getNextId($userExamId){
+    public function getNextId($userExamId) {
         $resultsId= $this->getIdResults($userExamId);
         if($resultsId!=0){
             $resultsAmount = count($resultsId);

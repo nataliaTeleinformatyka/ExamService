@@ -2,42 +2,25 @@
 
 namespace App\Repository\Admin;
 
-use App\Entity\Admin\UserExam;
-use DateTime;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
-
-class UserExamRepository
-{
-    private $dbname= "UserExam";
-    protected $db;
-    protected $database;
-    private $entityManager = 'UserExam';
+class UserExamRepository {
     protected $reference;
 
     public function __construct() {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
-
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-        $this->database = $factory->createDatabase();
-        $this->reference = $this->database->getReference($this->dbname);
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('UserExam');
     }
 
     public function getUserExam(int $userExamId) {
         if ($this->reference->getSnapshot()->hasChild($userExamId)) {
             return $this->reference->getChild($userExamId)->getValue();
-        } else {
+        } else
             return 0;
-        }
     }
 
     public function insert(array $data) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
+
         $time = new \DateTime('1970-01-01');
         $maxNumber = $this->nextUserExamId();
         $this->reference
@@ -54,9 +37,8 @@ class UserExamRepository
         if ($this->reference->getSnapshot()->hasChild($userExamId)) {
             $this->reference->getChild($userExamId)->remove();
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
@@ -64,26 +46,23 @@ class UserExamRepository
     public function getIdUserExams() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return $this->reference->getChildKeys();
-        }
     }
 
     public function isUserExamForExamId(int $examId) {
         $userExamsId = $this->getIdUserExams();
         if ($userExamsId != 0) {
             $userExamsCount = count($userExamsId);
-        } else {
-            $userExamsCount = 0;
+        } else
             return false;
-        }
+
         for ($i = 0; $i < $userExamsCount; $i++) {
             $userExam = $this->getUserExam($userExamsId[$i]);
             if ($userExam['exam_id'] == $examId) {
                 return true;
-            } else {
+            } else
                 return false;
-            }
         }
     }
 
@@ -91,17 +70,15 @@ class UserExamRepository
         $userExamsId = $this->getIdUserExams();
         if($userExamsId!=0){
             $userExamsCount = count($userExamsId);
-        } else {
-            $userExamsCount=0;
+        } else
             return false;
-        }
+
         for ($i = 0; $i < $userExamsCount; $i++) {
             $userExam = $this->getUserExam($userExamsId[$i]);
             if ($userExam['user_id'] == $userId) {
                 return true;
-            } else {
+            } else
                 return false;
-            }
         }
     }
 
@@ -132,9 +109,8 @@ class UserExamRepository
     }
 
     public function update($data, int $id) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
 
         $this->reference
             ->getChild($id)->update([
@@ -143,13 +119,13 @@ class UserExamRepository
         return true;
     }
 
-    public function nextUserExamId(){
+    public function nextUserExamId() {
         $userExamsId= $this->getIdUserExams();
         if($userExamsId!=0){
             $userExamsAmount = count($userExamsId);
-        } else {
+        } else
             $userExamsAmount=0;
-        }
+
         switch ($userExamsAmount) {
             case 0:{
                 $maxNumber = 0;

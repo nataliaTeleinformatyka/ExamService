@@ -3,48 +3,30 @@
 namespace App\Repository\Admin;
 
 use App\Entity\Admin\Question;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
 
-class QuestionRepository
-{
-    protected $db;
-    protected $database;
-    protected $dbname = 'Exam';
+class QuestionRepository {
     protected $reference;
 
     public function __construct() {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
-
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-        $this->database = $factory->createDatabase();
-        $this->reference = $this->database->getReference($this->dbname);
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('Exam');
     }
 
     public function getQuestion(int $examId, int $questionId) {
-        $examReference = $this->database->getReference("Exam");
-
-        if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
-            return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)->getValue();
-        } else {
+        if ($this->reference->getSnapshot()->getChild($examId)->hasChild("Question")) {
+            return $this->reference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)->getValue();
+        } else
             return 0;
-        }
     }
 
     public function insert( int $examId, array $data) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
 
         $questionRepository = new QuestionRepository();
-        $examReference = $this->database->getReference("Exam");
-
         $maxNumber = $questionRepository->getNextId($examId);
 
-        $examReference->getChild($examId)
+        $this->reference->getChild($examId)
             ->getChild("Question")->getChild($maxNumber)->set([
                 'id' => $maxNumber,
                 'exam_id' => $examId,
@@ -55,24 +37,17 @@ class QuestionRepository
     }
 
     public function delete(int $examId, int $questionId) {
-        $examReference = $this->database->getReference("Exam");
-        if ($examReference->getSnapshot()->getChild($examId)->hasChild("Question")) {
-            $examReference->getChild($examId)->getChild("Question")->getChild($questionId)->remove();
+        if ($this->reference->getSnapshot()->getChild($examId)->hasChild("Question")) {
+            $this->reference->getChild($examId)->getChild("Question")->getChild($questionId)->remove();
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
-    public function getQuantity(int $examId) {
-        $examReference = $this->database->getReference("Exam");
-
-        return $examReference->getSnapshot()->getChild($examId)->getChild("Question")->numChildren();
-    }
+    public function getQuantity(int $examId) { return $this->reference->getSnapshot()->getChild($examId)->getChild("Question")->numChildren(); }
 
     public function getIdQuestions(int $examId) {
-        $examReference = $this->database->getReference("Exam");
-        $questionReference= $examReference->getChild($examId)->getChild("Question")->getSnapshot()->getReference();
+        $questionReference= $this->reference->getChild($examId)->getChild("Question")->getSnapshot()->getReference();
         if($questionReference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else {
@@ -81,10 +56,10 @@ class QuestionRepository
     }
 
     public function update(array $data, int $id,int $questionId) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
-        $this->reference ->getChild($id)
+
+        $this->reference->getChild($id)
                 ->getChild("Question")->getChild($questionId)->update([
                 'content' => $data[0],
                 'max_answers' => $data[1],

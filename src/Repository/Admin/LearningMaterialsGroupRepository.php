@@ -1,77 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 17:20
- */
 
 namespace App\Repository\Admin;
 
-
 use App\Entity\Admin\LearningMaterialsGroup;
-use Kreait\Firebase\Exception\ApiException;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
 
-class LearningMaterialsGroupRepository
-{
-    protected $db;
-    protected $database;
-    protected $dbname = 'LearningMaterialsGroup';
-    private $entityManager = 'LearningMaterialsGroup';
+class LearningMaterialsGroupRepository {
     protected $reference;
 
-    public function __construct()
-    {
-        $serviceAccount = ServiceAccount::fromJsonFile('C:\xampp\htdocs\examServiceProject\secret\examservicedatabase-88ff116bf2b0.json');
-
-        $factory = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://examservicedatabase.firebaseio.com/');
-
-        $this->database = $factory->createDatabase();
-        $this->reference = $this->database->getReference($this->dbname);
+    public function __construct() {
+        $database = new DatabaseConnection();
+        $this->reference = $database->getReference('LearningMaterialsGroup');
     }
 
-    public function getLearningMaterialsGroup(int $materialsGroupId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
-                return $this->reference->getChild($materialsGroupId)->getValue();
-            } else {
-                return 0;
-            }
-        } catch (ApiException $e) {
-
-        }
-    }
-
-    public function getAllExams()
-    {
-        $materialsGroupId = $this->getQuantity();
-        if (empty($materialsGroupId) /*|| isset($userId)*/) {
+    public function getLearningMaterialsGroup(int $materialsGroupId) {
+        if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
+            return $this->reference->getChild($materialsGroupId)->getValue();
+        } else
             return 0;
-        }
-        for ($i = 0; $i < $materialsGroupId; $i++) {
-            try {
-                if ($this->reference->getSnapshot()->hasChild($i)) {
-                    $data[$i] = $this->reference->getChild($i)->getValue();
-                    return $data;
-                } else {
-                    return 0;
-                }
-            } catch (ApiException $e) {
-
-            }
-        }
     }
 
-    public function insert(array $data)
-    {
-        if (empty($data)) {
+    public function insert(array $data) {
+        if (empty($data))
             return false;
-        }
 
         $materialsGroupId = $this->getNextId();
 
@@ -82,11 +32,10 @@ class LearningMaterialsGroupRepository
             ]);
         return true;
     }
-    public function update(array $data,int $groupId)
-    {
-        if (empty($data)) {
+
+    public function update(array $data,int $groupId) {
+        if (empty($data))
             return false;
-        }
 
         $this->reference
             ->getChild($groupId)->update([
@@ -94,49 +43,38 @@ class LearningMaterialsGroupRepository
             ]);
         return true;
     }
-    public function delete(int $materialsGroupId)
-    {
-        try {
-            if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
-                    $this->reference->getChild($materialsGroupId)->remove();
-                return true;
-            } else {
-                return false;
-            }
-        } catch (ApiException $e) {
-        }
+
+    public function delete(int $materialsGroupId) {
+        if ($this->reference->getSnapshot()->hasChild($materialsGroupId)) {
+            $this->reference->getChild($materialsGroupId)->remove();
+            return true;
+        } else
+            return false;
     }
 
-    public function getQuantity()
-    {
-        try {
-            return $this->reference->getSnapshot()->numChildren();
-        } catch (ApiException $e) {
-        }
-    }
+    public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
 
     public function getLearningMaterialsGroupId() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return  $this->reference->getChildKeys();
-        }
     }
 
-    public function find(int $groupId){
+    public function find(int $groupId) {
         $information = $this->reference->getChild($groupId)->getValue();
         $info = new LearningMaterialsGroup([]);
         $info->setNameOfGroup($information['name_of_group']);
         return $info;
     }
 
-    public function getNextId(){
+    public function getNextId() {
         $learningMaterialsGroupId= $this->getLearningMaterialsGroupId();
         if($learningMaterialsGroupId!=0){
             $learningMaterialsGroupAmount = count($learningMaterialsGroupId);
-        } else {
+        } else
             $learningMaterialsGroupAmount=0;
-        }
+
         switch ($learningMaterialsGroupAmount) {
             case 0:{
                 $maxNumber = 0;

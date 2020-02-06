@@ -12,6 +12,7 @@
         <p><b> Czas przeznaczony na rozwiązanie egzaminu : </b> {{ time }} min </p>
     </div>
     <div class="materials">
+        {% if groupInfo %}
         {% if required_materials!="" %}
             <p><b>Wymagane materiały:</b></p>
             {% for action in required_materials|sort %}
@@ -21,16 +22,17 @@
             {% endfor %}
         {% endif %}
 
-        <p><b>Dodatkowe materiały:</b></p>
-        {% if required_materials!="" %}
+        {% if additional_materials!="" %}
+            <p><b>Dodatkowe materiały:</b></p>
             {% for materials in additional_materials|sort %}
                 <p><a href="http://files01.radiokomunikacja.edu.pl/{{ materials.name_of_content }}">{{ materials.name}}</a></p>
             {% endfor %}
         {% endif %}
+        {% endif %}
     </div>
     <div class="buttons">
         <a href="{{ path('studentExam', { 'userExamId' : user_exam_id }) }}" class="btn btn-info btn-lg buttonNav">
-            <span class="glyphicon glyphicon-plus-sign"></span> Start Exam
+            <span class="glyphicon glyphicon-play"></span> Start Exam
         </a>
     </div>
 </div>

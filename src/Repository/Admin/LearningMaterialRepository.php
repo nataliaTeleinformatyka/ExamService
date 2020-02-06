@@ -4,8 +4,6 @@ namespace App\Repository\Admin;
 
 use App\Entity\Admin\LearningMaterial;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Kreait\Firebase\Factory;
-use Kreait\Firebase\ServiceAccount;
 
 class LearningMaterialRepository {
     protected $reference;
@@ -58,20 +56,16 @@ class LearningMaterialRepository {
             echo "Successfully uploaded $file.";
         }
         else
-        {
             echo "Error uploading $file.";
-        }
         ftp_close($this->connection);
-
     }
 
     public function get_file(string $filename) {
         if(!ftp_get($this->connection,$filename,$filename,FTP_BINARY)) {
             echo("Error");
         exit;
-        } else {
+        } else
             echo("Success");
-        }
     }
 
     public function deleteFile($filename) {
@@ -79,17 +73,12 @@ class LearningMaterialRepository {
             echo "Successfully deleted $filename.";
         }
         else
-        {
             echo "Error deleting $filename.";
-        }
     }
 
-    public function getAllFiles(){ print_r(ftp_rawlist($this->connection,"/")); }
-
     public function update(array $data, int $learningMaterialsGroupId,$materialId) {
-        if (empty($data)) {
+        if (empty($data))
             return false;
-        }
 
         $this->reference->getChild($learningMaterialsGroupId)
             ->getChild("LearningMaterial")->getChild($materialId)->update([
@@ -100,35 +89,29 @@ class LearningMaterialRepository {
     }
 
     public function delete(int $learningMaterialsGroupId, int $materialId) {
-
         if ($this->reference->getSnapshot()->getChild($learningMaterialsGroupId)
             ->hasChild("LearningMaterial")) {
             $this->reference->getChild($learningMaterialsGroupId)
                 ->getChild("LearningMaterial")->getChild($materialId)->remove();
             return true;
-        } else {
+        } else
             return false;
-        }
     }
-
 
     public function getQuantity(int $learningMaterialsGroupId) {
         return $this->reference->getSnapshot()->getChild($learningMaterialsGroupId)
             ->getChild("LearningMaterial")->numChildren();
-
     }
 
     public function getIdLearningMaterials(int $groupId) {
-        $learningMaterialsReference= $this->reference->getChild($groupId)->getChild("LearningMaterial")->getSnapshot()->getReference();
+        $learningMaterialsReference = $this->reference->getChild($groupId)->getChild("LearningMaterial")->getSnapshot()->getReference();
         if($learningMaterialsReference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return $learningMaterialsReference->getChildKeys();
-        }
     }
 
     public function find(int $materialId) {
-
         $information = $this->reference->getChild($_SESSION['group_id'])
             ->getChild("LearningMaterial")->getChild($materialId)->getSnapshot()->getValue();
 
@@ -145,9 +128,9 @@ class LearningMaterialRepository {
         $learningMaterialsId= $this->getIdLearningMaterials($groupId);
         if($learningMaterialsId!=0){
             $learningMaterialsAmount = count($learningMaterialsId);
-        } else {
+        } else
             $learningMaterialsAmount=0;
-        }
+
         switch ($learningMaterialsAmount) {
             case 0:{
                 $maxNumber = 0;
