@@ -19,6 +19,8 @@ class ExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -55,6 +57,8 @@ class ExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function examListCreate() {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         switch ($_SESSION['role']) {
             case "ROLE_PROFESSOR": {
                 return $this->redirectToRoute('teacherExamList');
@@ -146,6 +150,8 @@ class ExamController extends AbstractController
      * @Route("editExam/{id}", name="editExam")
      */
     public function editExam(Request $request, Exam $exam) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -189,7 +195,7 @@ class ExamController extends AbstractController
         }
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
-            'examInformation' =>$examInfoArray,
+          //  'examInformation' =>$examInfoArray,
             'examId' => $examId,
             'role' => $_SESSION['role']
 
@@ -202,6 +208,8 @@ class ExamController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function deleteExam(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 

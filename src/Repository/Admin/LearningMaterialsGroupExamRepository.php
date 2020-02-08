@@ -88,6 +88,8 @@ class LearningMaterialsGroupExamRepository {
 
     public function findByExamId(int $examId) {
         $id = $this->getIdLearningMaterialsGroupExams();
+        $isExist= false;
+
         if($id!=0){
             $count = count($id);
         } else
@@ -100,7 +102,10 @@ class LearningMaterialsGroupExamRepository {
                 if ($information['exam_id'] == $examId) {
                     $learningMaterialsGroups[$amount] = $information['learning_materials_group_id'];
                     $amount++;
+                    $isExist=true;
                 }
+                if($i==$count-1 && $isExist==false)
+                    return 0;
             }
             return $learningMaterialsGroups;
         } else

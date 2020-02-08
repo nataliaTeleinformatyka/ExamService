@@ -59,7 +59,7 @@ function endExam() {
 
 function getCookie(cname) {
     let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
+    let decodedCookie = decodeURIComponent(document.cookie).replace(/\+/g, " ");
     let ca = decodedCookie.split(';');
     for(let i = 0; i <ca.length; i++) {
         let c = ca[i];

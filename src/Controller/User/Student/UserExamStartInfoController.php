@@ -32,6 +32,7 @@ class UserExamStartInfoController extends AbstractController
                     break;
                 }
         }
+
         $groupInfo = false;
         $examInformation = new UserExamRepository();
         $exam = new ExamRepository();

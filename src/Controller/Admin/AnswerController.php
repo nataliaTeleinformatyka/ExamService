@@ -16,8 +16,9 @@ class AnswerController extends AbstractController
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function new(Request $request)
-    {
+    public function new(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
         $question = new Answer([]);
@@ -76,6 +77,8 @@ class AnswerController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function answerListCreate(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         switch ($_SESSION['role']) {
             case "ROLE_PROFESSOR": {
                 return $this->redirectToRoute('teacherExamList');
@@ -138,6 +141,8 @@ class AnswerController extends AbstractController
      * @Route("editAnswer/{examId}/{questionId}/{id}", name="editAnswer")
      */
     public function editAnswer(Request $request, Answer $answer) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
@@ -194,6 +199,8 @@ class AnswerController extends AbstractController
      * @Route("deleteAnswer/{exam}/{question}/{answer}", name="deleteAnswer")
      */
     public function deleteAnswer(Request $request) {
+        if(!isset($_SESSION['role']))
+            return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
 
