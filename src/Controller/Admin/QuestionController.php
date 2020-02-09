@@ -135,6 +135,10 @@ class QuestionController extends AbstractController
             $this->redirectToRoute('studentHomepage');
 
         $examId = $request->attributes->get('exam');
+        $questionId = $request->attributes->get('question');
+
+        $repository = new QuestionRepository();
+        $repository->delete($examId,$questionId);
 
         switch ($_SESSION['role']) {
             case "ROLE_ADMIN":

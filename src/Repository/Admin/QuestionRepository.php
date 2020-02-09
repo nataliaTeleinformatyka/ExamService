@@ -73,7 +73,6 @@ class QuestionRepository {
         $question = new Question([]);
         $question->setContent($information['content']);
         $question->setMaxAnswers($information['max_answers']);
-        $question->setNameOfFile($information['name_of_file']);
 
         return $question;
     }
