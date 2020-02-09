@@ -195,7 +195,7 @@ class ExamController extends AbstractController
         }
         return $this->render('examAdd.html.twig', [
             'form' => $form->createView(),
-          //  'examInformation' =>$examInfoArray,
+            'examInformation' =>$examInfoArray,
             'examId' => $examId,
             'role' => $_SESSION['role']
 
