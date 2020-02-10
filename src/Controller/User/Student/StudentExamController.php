@@ -62,16 +62,16 @@ class StudentExamController extends AbstractController {
             $id = $questionsId[$numbers[$i]];
             $questions=$questionRepository->getQuestion($examId,$id);
 
-            setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
+            setcookie("questionId" . $i, $questions['id']);
             setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
             setcookie("questionContent" . $i,$questions['content']);
 
             $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
             if ($answerNumbers == 0) {
                 $allAnswersAmount = 0;
-            } else {
+            } else 
                 $allAnswersAmount = count($answerNumbers);
-            }
+
             $ids=array();
             if ($allAnswersAmount > 0) {
                 if ($allAnswersAmount <= $questions['max_answers']){
@@ -102,7 +102,6 @@ class StudentExamController extends AbstractController {
 
         $durationOfExam = $examInfo['duration_of_exam']+$actualHour+$actualMinutes;
         setcookie("accessTime",$durationOfExam);
-
 
         $_SESSION['questionsAmount'] = $questionsAmount;
         $_SESSION['exam_id']= $examId;
