@@ -69,7 +69,7 @@ class StudentExamController extends AbstractController {
             $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
             if ($answerNumbers == 0) {
                 $allAnswersAmount = 0;
-            } else 
+            } else
                 $allAnswersAmount = count($answerNumbers);
 
             $ids=array();

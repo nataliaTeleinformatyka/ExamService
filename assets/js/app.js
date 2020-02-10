@@ -4,7 +4,6 @@ const questionId = document.getElementById("questionNumber");
 const questionContent = document.getElementById("questionContent");
 const nextButton = document.getElementById("buttonNext");
 
-
 window.onload = function() {
     attachSorting();
     let userName = document.getElementById("userNameMenu");
@@ -32,16 +31,8 @@ let id=0;
 let questionAmount = getCookie("questionAmount") - 1;
 setValues(0);
 
-let timer = document.getElementById("timer");
 nextButton.addEventListener('click', nextQuestion);
-
-
 window.requestAnimationFrame(time);
-/*window.onload = function() {
-   // let timer = document.getElementById("timer").innerHTML = time();
-    setInterval(time(), 1000);
-// todo: jezeli czas minal -> przekierowanie do result, brak mozliwosc cofniecia do egzaminu i dalszego rozwiazywania
-}*/
 
 function nextQuestion() {
     checkForm(id);
@@ -142,7 +133,6 @@ function time() {
     let actualMonth = startTime.getMonth();
     let actualYear = startTime.getFullYear();
 
-
     let endDate = new Date(actualYear, actualMonth, actualDay, accessHours, accessMinute, 0, 0);
     let remainingTime = endDate.getTime() - startTime.getTime();
     if (remainingTime > 0) {
@@ -160,13 +150,9 @@ function time() {
         window.requestAnimationFrame(time);
 
     } else {
-        console.log("THE END");
         window.location.href = "result";
-        return "Czas minal";
     }
 }
-
-
 
 function contains(classArray,value){
     for (var i=0; i<classArray.length;i++)
