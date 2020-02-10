@@ -2,14 +2,12 @@
 
 namespace App\Controller\User\Teacher;
 
-
-use App\Repository\Admin\ExamRepository;
 use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserInformationController extends AbstractController
-{
+class UserInformationController extends AbstractController {
+
     /**
      * @Route("teacherUserList", name="teacherUserList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -35,9 +33,9 @@ class UserInformationController extends AbstractController
         $usersId = $userInformation->getIdUsers();
         if($usersId!=0){
             $usersCount = count($usersId);
-        } else {
+        } else
             $usersCount=0;
-        }
+
         if ($usersCount > 0) {
             $amount = 0;
             for ($i = 0; $i < $usersCount; $i++) {

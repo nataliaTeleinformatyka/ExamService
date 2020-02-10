@@ -7,6 +7,7 @@ use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 
 class DatabaseConnection {
+
     public $database;
     public $reference;
     protected $serviceAccount;
@@ -42,7 +43,6 @@ class DatabaseConnection {
             $user->setRoles("ROLE_ADMIN");
             $user->setPassword('administrator123');
             $user->setGroupOfStudents('-1');
-            //$user->setName('administrator');
             $user->setLastName('administrator');
             $user->setEmail('administrator@admin.pl');
             $user->setFirstName('administrator');

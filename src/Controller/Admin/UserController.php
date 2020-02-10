@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController {
+
     /**
      * @Route("user", name="user")
      * @param Request $request
@@ -35,6 +36,7 @@ class UserController extends AbstractController {
 
             $user = $form->getData();
             $repositoryUser = new UserRepository();
+
             $uid = $repositoryUser->getIdNextUser();
             if($user->getRoles()!="ROLE_STUDENT"){
                 $user->setGroupOfStudents('-1');
@@ -44,7 +46,9 @@ class UserController extends AbstractController {
             $email=$values[3];
             $password=$values[0];
             $repositoryUser->registerUser($uid,$email,$password);
+
             $repositoryUser->insert($uid, $values);
+
             switch ($_SESSION['role']) {
                 case "ROLE_PROFESSOR": {
                     return $this->redirectToRoute('teacherUserList');
@@ -124,11 +128,11 @@ class UserController extends AbstractController {
         } else {
             $infoDelete = "";
         }
+        $_SESSION['information'] = array();
         return $this->render( 'userList.html.twig', array (
             'data' => $tplArray,
             'information' => $info,
             'infoDelete' => $infoDelete,
-
         ));
     }
 
@@ -154,7 +158,7 @@ class UserController extends AbstractController {
         if($isUserExam==true){
             $_SESSION['information'][] = array( 'type' => 'error', 'message' => 'The record cannot be deleted, there are links in the database');
         } else {
-            if($userRepository->delete($id))
+           $userRepository->delete($id);
                 $userRepository->deleteUserFromAuthenticationByEmail($email);
             $_SESSION['information'][] = array( 'type' => 'ok', 'message' => 'Successfully deleted');
         }

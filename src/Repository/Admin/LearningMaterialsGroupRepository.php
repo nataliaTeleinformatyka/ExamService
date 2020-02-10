@@ -5,6 +5,7 @@ namespace App\Repository\Admin;
 use App\Entity\Admin\LearningMaterialsGroup;
 
 class LearningMaterialsGroupRepository {
+
     protected $reference;
 
     public function __construct() {
@@ -27,7 +28,7 @@ class LearningMaterialsGroupRepository {
 
         $this->reference
             ->getChild($materialsGroupId)->set([
-                'learning_materials_groups_id' => $materialsGroupId,
+                'learning_materials_group_id' => $materialsGroupId,
                 'name_of_group' => $data[1],
             ]);
         return true;

@@ -4,14 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\Admin\Question;
 use App\Form\Admin\QuestionType;
-use App\Repository\Admin\AnswerRepository;
 use App\Repository\Admin\QuestionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuestionController extends AbstractController
-{
+class QuestionController extends AbstractController {
+
      /**
      * @Route("question/{examId}", name="question")
      * @param Request $request

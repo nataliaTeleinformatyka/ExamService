@@ -9,10 +9,13 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LoginType extends AbstractType
-{
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+class LoginType extends AbstractType {
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add("email",EmailType::class)
             ->add("password",PasswordType::class)
@@ -20,10 +23,11 @@ class LoginType extends AbstractType
             ->setMethod('POST')
             ->getForm();
     }
-    public function getName()
-    {
+
+    public function getName() {
         return 'login';
     }
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -31,8 +35,3 @@ class LoginType extends AbstractType
         ]);
     }
 }
-//php -S 127.0.0.1:8000 -t public
-//yarn encore dev --watch
-//yarn encore dev
-// php bin/console cache:pool:clear cache.global_clearer
-//php bin/console cache:pool:list

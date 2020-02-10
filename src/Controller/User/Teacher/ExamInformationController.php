@@ -12,8 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ExamInformationController extends AbstractController
-{
+class ExamInformationController extends AbstractController {
+
     /**
      * @Route("teacherExamList", name="teacherExamList")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -37,7 +37,6 @@ class ExamInformationController extends AbstractController
         $_SESSION['exam_id'] = "";
         $examRepository = new ExamRepository();
         $examsId = $examRepository->getIdExams();
-
         if($examsId!=0){
             $examsCount = count($examsId);
         } else {
@@ -50,9 +49,8 @@ class ExamInformationController extends AbstractController
                 if ($exams['created_by'] == $_SESSION['user_id'] or $exams['created_by'] == -1){
                     if ($exams['learning_required'] == 1) {
                         $is_required = "true";
-                    } else {
+                    } else
                         $is_required = "false";
-                    }
 
                     $tplArray[$i] = array(
                         'id' => $exams['exam_id'],
@@ -60,7 +58,7 @@ class ExamInformationController extends AbstractController
                         'learning_required' => $is_required,
                         'max_questions' => $exams['max_questions'],
                         'max_attempts' => $exams['max_attempts'],
-                        'duration_of_exam' => $exams['duration_of_exam'], //$accessTime." minut",
+                        'duration_of_exam' => $exams['duration_of_exam'],
                         'start_date' => $exams['start_date']['date'],
                         'end_date' => $exams['end_date']['date'],
                         'additional_information' => $exams['additional_information']
@@ -111,6 +109,7 @@ class ExamInformationController extends AbstractController
         $examId = $request->attributes->get('exam');
         $_SESSION['exam_id'] = $examId;
         $_SESSION['question_id']="";
+
         $exams = $examInformation->getExam($examId);
         $existQuestions = false;
         if ($exams['learning_required'] == 1) {
@@ -145,6 +144,7 @@ class ExamInformationController extends AbstractController
         } else {
             $questionsCount=0;
         }
+
         if($questionsCount>0) {
             $existQuestions = true;
             for ($i = 0; $i < $questionsCount; $i++) {
@@ -169,9 +169,8 @@ class ExamInformationController extends AbstractController
         $learningMaterialsGroupExamsId = $learningMaterialsGroupExamInformation->getIdLearningMaterialsGroupExams();
         if($learningMaterialsGroupExamsId!=0){
             $learningMaterialsGroupExamsCount = count($learningMaterialsGroupExamsId);
-        } else {
+        } else
             $learningMaterialsGroupExamsCount=0;
-        }
 
         if($learningMaterialsGroupExamsCount>0) {
             $informationMaterialGroupExam = false;
@@ -212,25 +211,24 @@ class ExamInformationController extends AbstractController
         } else {
             $usersCount=0;
         }
+
         if ($usersCount > 0) {
             $userExamInformation = new UserExamRepository();
             $userExamsId = $userExamInformation->getIdUserExams();
             if($userExamsId!=0){
                 $userExamsCount = count($userExamsId);
-            } else {
+            } else
                 $userExamsCount=0;
-            }
 
             if ($userExamsCount > 0) {
                 $informationUserExam = false;
-            print_r($userExamsCount);
                 $k =0;
                 for ($i = 0; $i < $userExamsCount; $i++) {
                     $userExam = $userExamInformation->getUserExam($userExamsId[$i]);
                     if($userExam['exam_id'] == $examId) {
                         $informationUserExam = true;
                         $users = $userInformation->getUser($userExam['user_id']);
-                        print_r($userExam['user_id']);
+
                         $userExamArray[$k] = array(
                             'user_exam_id' => $userExam['user_exam_id'],
                             'user_id' => $userExam['user_id'],
@@ -242,7 +240,6 @@ class ExamInformationController extends AbstractController
                         $k++;
                     } else {
                         if($i==$userExamsCount-1 and $informationUserExam == false){
-                            print_r("PPPP");
                             $userExamArray[] = array(
                                 'user_exam_id' => '',
                                 'user_id' => '',
@@ -274,7 +271,6 @@ class ExamInformationController extends AbstractController
                 'email' => ''
             );
         }
-        print_r($userExamArray);
         return $this->render('teacherExamInfo.html.twig', array(
             'data' => $examInfoArray,
             'information_question' => $existQuestions,
@@ -285,6 +281,5 @@ class ExamInformationController extends AbstractController
             'informationMaterialGroupExam' => $informationMaterialGroupExam,
             'informationUserExam' => $informationUserExam,
         ));
-
     }
 }

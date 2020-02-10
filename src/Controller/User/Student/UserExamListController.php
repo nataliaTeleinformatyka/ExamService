@@ -9,8 +9,8 @@ use App\Repository\Admin\UserExamRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserExamListController extends AbstractController
-{
+class UserExamListController extends AbstractController {
+
     /**
      * @Route("studentHomepage", name="studentHomepage")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -35,9 +35,9 @@ class UserExamListController extends AbstractController
         $resultRepository = new ResultRepository();
         $examRepository = new ExamRepository();
 
-        $exist=false;
         $attemptsInfo="";
         $remainingAttempts="";
+
         $userExamsId = $userExamRepository->getIdUserExams();
         if($userExamsId!=0){
             $userExamsCount = count($userExamsId);
@@ -58,19 +58,17 @@ class UserExamListController extends AbstractController
 
                      if ($questionsId > 0) {
                          $info = true;
-                         $exist = true;
                          $today = new \DateTime();
                          $resultsId = $resultRepository->getIdResults($userExam['user_exam_id']);
                          if ($resultsId != 0) {
                              $numberOfAttemptsInResult = count($resultsId);
-                         } else {
+                         } else
                              $numberOfAttemptsInResult = 0;
-                         }
 
                          $examInfo = $examRepository->getExam($userExam['exam_id']);
                          $examName = $examInfo['name'];
                          $maxAttempts = $examInfo['max_attempts'];
-                         print_r($userExam['date_of_resolve_exam']['date']);
+
                          if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < '2020') {
                              if ($maxAttempts != "") {
                                  $remainingAttempts = $maxAttempts - $numberOfAttemptsInResult;
@@ -90,17 +88,14 @@ class UserExamListController extends AbstractController
                                  } else {
                                      if ($endYear >= "2020") {
                                          $dateInformation = "( dostęp do " . $endDate . " ) ";
-                                     } else {
+                                     } else
                                          $dateInformation = " ";
-                                     }
                                  }
 
                                  if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) >= "2020") {
                                      $resolveDate = "";
-                                 } else {
+                                 } else
                                      $resolveDate = date("Y-M-i", strtotime($userExam['date_of_resolve_exam']['date']));
-                                 }
-
                                  $error = '';
 
                                  $todayDate = $today->format("Y-m-d");
@@ -117,44 +112,12 @@ class UserExamListController extends AbstractController
                                          'exam_name' => $examName
                                      );
                                      $index++;
-                                 } /*else {
-                             $info = false;
-                             print_r(" NIE ARRAY ");
-                             $error = "Brak egzaminów do rozwiązania";
-                             $tplArray = array(
-                                 'user_id' => '',
-                                 'exam_id' => '',
-                                 'date_of_resolve_exam' => '',
-                                 'start_access_time' => '',
-                                 'end_access_time' => ''
-                             );
-                         }*/
+                                 }
                              }
-                         }/* else {
-                         $info = false;
-                         $error = "Brak egzaminów do rozwiązania";
-                         $tplArray = array(
-                             'user_id' => '',
-                             'exam_id' => '',
-                             'date_of_resolve_exam' => '',
-                             'start_access_time' => '',
-                             'end_access_time' => ''
-                         );
-                     }*/
+                         }
                      }
-                     } /*else {
-                     if($i== $userExamsCount-1 and $exist==false){
-                         $info = false;
-                         $error = "Brak egzaminów do rozwiązania";
-                         $tplArray = array(
-                             'user_id' => '',
-                             'exam_id' => '',
-                             'date_of_resolve_exam' => '',
-                             'start_access_time' => '',
-                             'end_access_time' => ''
-                         );
-                     }*/
-                 if($existExam==false and $i==$userExamsCount-1){
+                 }
+                 if($existExam==false and $i==$userExamsCount-1) {
                      $info = false;
                      $error = "Brak egzaminów do rozwiązania";
                      $tplArray = array(
@@ -165,21 +128,8 @@ class UserExamListController extends AbstractController
                          'remaining_attempts' => '',
                      );
                  }
-                 }
              }
-
-        /* else {
-             $info = false;
-             $error = "Brak egzaminów do rozwiązania";
-             $tplArray = array(
-                'user_id' => '',
-                'exam_id' => '',
-                'date_of_resolve_exam' => '',
-                'access_period' => '',
-                'remaining_attempts' => '',
-             );
-    }*/
-
+         }
         return $this->render('studentHomepage.html.twig', array(
             'data' => $tplArray,
             'error' => $error,

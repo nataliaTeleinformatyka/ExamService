@@ -5,6 +5,7 @@ namespace App\Repository\Admin;
 use App\Entity\Admin\Answer;
 
 class AnswerRepository {
+
     protected $reference;
 
     public function __construct() {
@@ -16,9 +17,8 @@ class AnswerRepository {
         if ($this->reference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)) {
             return $this->reference->getSnapshot()->getChild($examId)->getChild("Question")->getChild($questionId)
                 ->getChild("Answer")->getChild($answerId)->getValue();
-        } else {
+        } else
             return 0;
-        }
     }
 
     public function insert(int $examId, int $questionId, array $data) {
@@ -66,9 +66,8 @@ class AnswerRepository {
             ->getSnapshot()->getReference();
         if($answerReference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return $answerReference->getChildKeys();
-        }
     }
 
     public function find(int $answerId){

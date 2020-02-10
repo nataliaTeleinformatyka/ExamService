@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class StudentExamController extends AbstractController
-{
+class StudentExamController extends AbstractController {
+
     /**
      * @Route("studentExam/{userExamId}", name="studentExam")
      * @param Request $request
@@ -34,7 +34,6 @@ class StudentExamController extends AbstractController
         }
 
         $userExamId = $request->attributes->get('userExamId');
-        $amount = 0;
 
         $userExamRepository = new UserExamRepository();
         $examRepository = new ExamRepository();
@@ -54,48 +53,47 @@ class StudentExamController extends AbstractController
             $questionsAmount =0;
         }
 
-        if($questionsAmount > $maxQuestions) {
+        if($questionsAmount > $maxQuestions)
             $questionsAmount=$maxQuestions;
-        }
-            $numbers = array_rand($questionsId, $questionsAmount);
 
-            for($i=0;$i<$questionsAmount;$i++) {
-                $id = $questionsId[$numbers[$i]];
-                $questions=$questionRepository->getQuestion($examId,$id);
+        $numbers = array_rand($questionsId, $questionsAmount);
 
-                setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
-                setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
-                setcookie("questionContent" . $i,$questions['content']);
+        for($i=0;$i<$questionsAmount;$i++) {
+            $id = $questionsId[$numbers[$i]];
+            $questions=$questionRepository->getQuestion($examId,$id);
 
-                $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
-                if ($answerNumbers == 0) {
-                    $allAnswersAmount = 0;
-                } else {
-                    $allAnswersAmount = count($answerNumbers);
-                }
-                $ids=array();
-                if ($allAnswersAmount > 0) {
-                    if ($allAnswersAmount <= $questions['max_answers']){
+            setcookie("questionId" . $i, $questions['id']/*$questions['id']*/);
+            setcookie("questionMaxAnswers" . $i, $questions['max_answers']);
+            setcookie("questionContent" . $i,$questions['content']);
 
-                        $answerNumber = array_rand($answerNumbers, $allAnswersAmount);
+            $answerNumbers = $answerRepository->getIdAnswers($examId, $questions['id']);
+            if ($answerNumbers == 0) {
+                $allAnswersAmount = 0;
+            } else {
+                $allAnswersAmount = count($answerNumbers);
+            }
+            $ids=array();
+            if ($allAnswersAmount > 0) {
+                if ($allAnswersAmount <= $questions['max_answers']){
+                    $answerNumber = array_rand($answerNumbers, $allAnswersAmount);
 
-                        for ($j = 0; $j < $allAnswersAmount; $j++) {
-                            if($allAnswersAmount>1){
-                                $answerId = $answerNumbers[$answerNumber[$j]];
-                            } else {
-                                $answerId = $answerNumber;
-                            }
-                            $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerId);
-                            $ids[$j] = $answerInfo['id'];
+                    for ($j = 0; $j < $allAnswersAmount; $j++) {
+                        if($allAnswersAmount>1){
+                            $answerId = $answerNumbers[$answerNumber[$j]];
+                        } else
+                            $answerId = $answerNumber;
 
-                            setcookie("answerId" . $i . $j, $answerInfo['id']);
-                            setcookie("answerContent" . $i . $j, $answerInfo['content']);
-                        }
+                        $answerInfo = $answerRepository->getAnswer($examId, $questions['id'], $answerId);
+                        $ids[$j] = $answerInfo['id'];
+
+                        setcookie("answerId" . $i . $j, $answerInfo['id']);
+                        setcookie("answerContent" . $i . $j, $answerInfo['content']);
                     }
                 }
-                setcookie("amountOfAnswers" . $i, $allAnswersAmount);
-                setcookie("allAnswers" . $i, json_encode($ids));
             }
+            setcookie("amountOfAnswers" . $i, $allAnswersAmount);
+            setcookie("allAnswers" . $i, json_encode($ids));
+        }
 
         setcookie("questionAmount", $questionsAmount);
 

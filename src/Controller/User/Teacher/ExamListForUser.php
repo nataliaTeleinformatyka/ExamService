@@ -1,28 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 04.02.2020
- * Time: 13:25
- */
 
 namespace App\Controller\User\Teacher;
 
 use App\Repository\Admin\ResultRepository;
 use App\Repository\Admin\UserExamRepository;
+use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\Admin\ExamRepository;
 
-class ExamListForUser extends AbstractController
-{
+class ExamListForUser extends AbstractController {
+
     /**
      * @Route("teacherExamListForUser/{userId}", name="teacherExamListForUser")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function examListForUser(Request $request){
+    public function examListForUser(Request $request) {
         if(!isset($_SESSION['role']))
             return $this->redirectToRoute("login");
         switch ($_SESSION['role']) {
@@ -46,6 +41,10 @@ class ExamListForUser extends AbstractController
         $userExamRepository = new UserExamRepository();
         $examRepository = new ExamRepository();
         $resultRepository = new ResultRepository();
+        $userRepository = new UserRepository();
+
+        $userInformation = $userRepository->getUser($userId);
+        $userName = $userInformation['first_name']." ".$userInformation['last_name'];
 
         $userExamsId = $userExamRepository->getUserExamIdForUser($userId);
 
@@ -53,8 +52,12 @@ class ExamListForUser extends AbstractController
             $information = " Brak przypisanych egzaminów ";
         } else {
             $information = "";
-            $userExamAmount = count($userExamsId);
+            if($userExamsId==0){
+                $userExamAmount=0;
+            } else
+                $userExamAmount = count($userExamsId);
         }
+
         for($i=0;$i<$userExamAmount;$i++) {
             $userExamInformation = $userExamRepository->getUserExam($userExamsId[$i]);
             $examInformation = $examRepository->getExam($userExamInformation['exam_id']);
@@ -70,6 +73,7 @@ class ExamListForUser extends AbstractController
                     $resultsAmount = 0;
                 } else
                     $resultsAmount = count($resultsId);
+
                 for($j=0;$j<$resultsAmount;$j++){
                     $resultInformation = $resultRepository->getResult($userExamsId[$i],$resultsId[$j]);
                     if($resultInformation['is_passed']) {
@@ -82,7 +86,6 @@ class ExamListForUser extends AbstractController
                         'points' => $resultInformation['points']
                     );
                 }
-
             }
             if($info==false && $i<($userExamAmount-1)) {
                 $tplArray[] = array(
@@ -96,16 +99,12 @@ class ExamListForUser extends AbstractController
                 );
             }
         }
-
-
-
-
         return $this->render('teacherExamListForUser.html.twig', array (
             'information' => $information,
             'data' => $tplArray,
             'result_data' => $resultArray,
-            'info' => $info
+            'info' => $info,
+            'userName' => $userName,
         ));
-
     }
 }

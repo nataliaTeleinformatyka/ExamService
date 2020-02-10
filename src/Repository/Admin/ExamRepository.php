@@ -5,6 +5,7 @@ namespace App\Repository\Admin;
 use App\Entity\Admin\Exam;
 
 class ExamRepository {
+
     protected $reference;
 
     public function __construct() {
@@ -15,9 +16,8 @@ class ExamRepository {
     public function getExam(int $examId) {
         if ($this->reference->getSnapshot()->hasChild($examId)) {
             return $this->reference->getChild($examId)->getValue();
-        } else {
+        } else
             return 0;
-        }
     }
 
     public function insert(array $data) {
@@ -72,9 +72,8 @@ class ExamRepository {
         if ($this->reference->getSnapshot()->hasChild($examId)) {
             $this->reference->getChild($examId)->remove();
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
     public function getQuantity() { return $this->reference->getSnapshot()->numChildren(); }
@@ -82,9 +81,8 @@ class ExamRepository {
     public function getIdExams() {
         if($this->reference->getSnapshot()->hasChildren()==NULL){
             return 0;
-        } else {
+        } else
             return  $this->reference->getChildKeys();
-        }
     }
 
     public function find(int $examId) {

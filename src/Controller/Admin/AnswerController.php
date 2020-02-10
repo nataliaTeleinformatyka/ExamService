@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AnswerController extends AbstractController
-{
+class AnswerController extends AbstractController {
+
     /**
      * @Route("answer/{examId}/{questionId}", name="answer")
      * @param Request $request
@@ -21,8 +21,8 @@ class AnswerController extends AbstractController
             return $this->redirectToRoute("login");
         if($_SESSION['role']=="ROLE_STUDENT")
             $this->redirectToRoute('studentHomepage');
-        $question = new Answer([]);
 
+        $question = new Answer([]);
         $examId = $request->attributes->get('examId');
         $questionId = $request->attributes->get('questionId');
 
@@ -96,6 +96,7 @@ class AnswerController extends AbstractController
 
         $examId = $request->attributes->get('examId');
         $questionId = $request->attributes->get('questionId');
+
         $answersId = $answerInformation->getIdAnswers($examId,$questionId);
         if($answersId!=0){
             $answersCount = count($answersId);
@@ -149,6 +150,7 @@ class AnswerController extends AbstractController
         $examId = (int)$request->attributes->get('examId');
         $questionId = (int)$request->attributes->get('questionId');
         $id = (int)$request->attributes->get('id');
+
         $_SESSION['exam_id'] = $examId;
         $_SESSION['question_id'] = $questionId;
 
@@ -165,6 +167,7 @@ class AnswerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $values = $answer->getAllInformation();
+
             $answerInformation->update($values,$examId,$questionId,$id);
             switch ($_SESSION['role']) {
                 case "ROLE_ADMIN":

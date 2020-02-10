@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserExamController  extends AbstractController
-{
+class UserExamController  extends AbstractController {
+
     /**
      * @Route("userExam", name="userExam")
      * @param Request $request

@@ -6,13 +6,14 @@ use App\Entity\Admin\LearningMaterial;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class LearningMaterialRepository {
+
     protected $reference;
     private $connection;
     private $login;
 
     public function __construct() {
     $database = new DatabaseConnection();
-    $this->reference = $database->getReference('LearningMaterialGroup');
+    $this->reference = $database->getReference('LearningMaterialsGroup');
 
     $ftp_server = "ftp.files1.radiokomunikacja.edu.pl";
     $ftp_port =21;
@@ -27,9 +28,8 @@ class LearningMaterialRepository {
         if ($this->reference->getSnapshot()->getChild($materialsGroupId)->hasChild("LearningMaterial")) {
             return $this->reference->getSnapshot()->getChild($materialsGroupId)
                 ->getChild("LearningMaterial")->getChild($materialId)->getValue();
-        } else {
+        } else
             return 0;
-        }
     }
 
     public function insert( int $learningMaterialsGroupId, array $data, UploadedFile $file, $filename) {
@@ -104,7 +104,9 @@ class LearningMaterialRepository {
     }
 
     public function getIdLearningMaterials(int $groupId) {
+
         $learningMaterialsReference = $this->reference->getChild($groupId)->getChild("LearningMaterial")->getSnapshot()->getReference();
+
         if($learningMaterialsReference->getSnapshot()->hasChildren()==NULL){
             return 0;
         } else

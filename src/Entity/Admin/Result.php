@@ -1,25 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 12:17
- */
 
 namespace App\Entity\Admin;
 
-
 use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Component\Security\Core\User\EquatableInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Admin\ResultRepository")
  */
-class Result extends Entity  implements  EquatableInterface
-{
+class Result extends Entity {
     /**
      * @Assert\Type("Integer")
      * @ORM\Id
@@ -62,130 +52,104 @@ class Result extends Entity  implements  EquatableInterface
     /**
      * @return mixed
      */
-    public function getPoints()
-    {
+    public function getPoints() {
         return $this->points;
     }
 
     /**
      * @param mixed $points
      */
-    public function setPoints($points): void
-    {
+    public function setPoints($points): void {
         $this->points = $points;
     }
 
     /**
      * @return mixed
      */
-    public function getIsPassed()
-    {
+    public function getIsPassed() {
         return $this->is_passed;
     }
 
     /**
      * @param mixed $is_passed
      */
-    public function setIsPassed($is_passed): void
-    {
+    public function setIsPassed($is_passed): void {
         $this->is_passed = $is_passed;
     }
 
     /**
      * @return mixed
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * @param mixed $id
      */
-    public function setId($id): void
-    {
+    public function setId($id): void {
         $this->id = $id;
     }
 
     /**
      * @return mixed
      */
-    public function getUserId()
-    {
+    public function getUserId() {
         return $this->user_id;
     }
 
     /**
      * @param mixed $user_id
      */
-    public function setUserId($user_id): void
-    {
+    public function setUserId($user_id): void {
         $this->user_id = $user_id;
     }
 
     /**
      * @return mixed
      */
-    public function getExamId()
-    {
+    public function getExamId() {
         return $this->exam_id;
     }
 
     /**
      * @param mixed $exam_id
      */
-    public function setExamId($exam_id): void
-    {
+    public function setExamId($exam_id): void {
         $this->exam_id = $exam_id;
     }
 
     /**
      * @return mixed
      */
-    public function getNumberOfAttempt()
-    {
+    public function getNumberOfAttempt() {
         return $this->number_of_attempt;
     }
 
     /**
      * @param mixed $number_of_attempt
      */
-    public function setNumberOfAttempt($number_of_attempt): void
-    {
+    public function setNumberOfAttempt($number_of_attempt): void {
         $this->number_of_attempt = $number_of_attempt;
     }
 
     /**
      * @return mixed
      */
-    public function getDateOfResolveExam()
-    {
+    public function getDateOfResolveExam() {
         return $this->date_of_resolve_exam;
     }
 
     /**
      * @param mixed $date_of_resolve_exam
      */
-    public function setDateOfResolveExam($date_of_resolve_exam): void
-    {
+    public function setDateOfResolveExam($date_of_resolve_exam): void {
         $this->date_of_resolve_exam = $date_of_resolve_exam;
     }
-    public function getAllInformation(){
+
+    public function getAllInformation() {
         $data = [$this->user_id,$this->exam_id,$this->number_of_attempt,$this->points,$this->is_passed,
             $this->date_of_resolve_exam];
         return $data;
-    }
-    /**
-     * The equality comparison should neither be done by referential equality
-     * nor by comparing identities (i.e. getId() === getId()).
-     *
-     * However, you do not need to compare every attribute, but only those that
-     * are relevant for assessing whether re-authentication is required.
-     *
-     * @return bool
-     */
-    public function isEqualTo(UserInterface $user)
-    {
-        // TODO: Implement isEqualTo() method.
     }
 }

@@ -7,8 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ResultInformationController extends AbstractController
-{
+class ResultInformationController extends AbstractController {
+
     /**
      * @Route("teacherResultInfo/{userExam}", name="teacherResultInfo")
      * @param Request $request
@@ -31,16 +31,13 @@ class ResultInformationController extends AbstractController
         }
 
         $userExamId = $request->attributes->get('userExam');
-
         $existResult = false;
-
         $resultRepository = new ResultRepository();
         $resultsId = $resultRepository->getIdResults($userExamId);
         if($resultsId!=0){
             $resultsCount = count($resultsId);
-        } else {
+        } else
             $resultsCount=0;
-        }
 
         if($resultsCount>0) {
             $existResult=true;
@@ -48,9 +45,9 @@ class ResultInformationController extends AbstractController
                 $result = $resultRepository->getResult($userExamId,$resultsId[$i]);
                 if($result['is_passed']){
                     $isPassed="Tak";
-                } else {
+                } else
                     $isPassed="Nie";
-                }
+
                 $resultArray[$i] = array(
                     'id' => $i,
                     'is_passed' => $isPassed,
@@ -64,12 +61,10 @@ class ResultInformationController extends AbstractController
                 'points' => '',
             );
         }
-
         return $this->render('teacherResultInfo.html.twig', array(
             'result' => $resultArray,
             'information' => $existResult,
             'exam_id' => $_SESSION['exam_id'],
         ));
-
     }
 }

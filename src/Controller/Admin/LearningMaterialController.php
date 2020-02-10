@@ -92,13 +92,11 @@ class LearningMaterialController  extends AbstractController {
         $learningMaterialsGroupId = $request->attributes->get('learningMaterialsGroupId');
         $_SESSION['group_id'] = "";
         $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialsGroupId);
-
         if($learningMaterialsId!=0){
             $learningMaterialsCount = count($learningMaterialsId);
         } else {
             $learningMaterialsCount=0;
         }
-
         if($learningMaterialsCount>0) {
             $info = true;
             for ($i = 0; $i < $learningMaterialsCount; $i++) {

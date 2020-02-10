@@ -12,11 +12,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserExamType extends AbstractType {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    //todo nie mozna edytowac !
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $user = new UserRepository();
 

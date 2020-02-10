@@ -10,8 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserExamStartInfoController extends AbstractController
-{
+class UserExamStartInfoController extends AbstractController {
+
     /**
      * @Route("studentExamStartInfo/{userExamId}", name="studentExamStartInfo")
      * @param Request $request
@@ -38,8 +38,8 @@ class UserExamStartInfoController extends AbstractController
         $exam = new ExamRepository();
         $learningMaterialRepository = new LearningMaterialRepository();
         $learningMaterialGroupExamRepository = new LearningMaterialsGroupExamRepository();
-        $userExamId = $request->attributes->get('userExamId');
 
+        $userExamId = $request->attributes->get('userExamId');
         $userExam = $examInformation->getUserExam($userExamId);
 
         $examInfo = $exam->getExam($userExam['exam_id']);
@@ -49,17 +49,18 @@ class UserExamStartInfoController extends AbstractController
 
         if (date("Y", strtotime($userExam['date_of_resolve_exam']['date'])) < "2020") {
             $resolveDate = " ";
-        } else {
+        } else
             $resolveDate = $userExam['date_of_resolve_exam']['date'];
-        }
+
         if($isLearningRequiredInExam==true){
+
             $learningMaterialGroups = $learningMaterialGroupExamRepository->findByExamId($userExam['exam_id']);
             if($learningMaterialGroups!=0){
                 $groupsAmount = count($learningMaterialGroups);
                 $groupInfo = true;
-            } else {
+            } else
                 $groupsAmount=0;
-            }
+
             $requiredAmount=0;
             $additionalAmount=0;
             $additionalMaterialsArray[] = array(
@@ -73,8 +74,13 @@ class UserExamStartInfoController extends AbstractController
                 'name_of_content' => "",
             );
             for($i=0;$i<$groupsAmount;$i++) {
+
                 $learningMaterialsId = $learningMaterialRepository->getIdLearningMaterials($learningMaterialGroups[$i]);
-                $learningMaterialsAmount = count($learningMaterialsId);
+                if ($learningMaterialsId != 0) {
+                    $learningMaterialsAmount = count($learningMaterialsId);
+                } else
+                    $learningMaterialsAmount=0;
+
                 if ($learningMaterialsAmount > 0) {
                     for ($j = 0; $j < $learningMaterialsAmount; $j++) {
                         $learningInfo = $learningMaterialRepository->getLearningMaterial($learningMaterialGroups[$i], $learningMaterialsId[$j]);
@@ -117,9 +123,6 @@ class UserExamStartInfoController extends AbstractController
             'user_id' => $userExam['user_id'],
             'exam_id' => $userExam['exam_id'],
             'date_of_resolve_exam' => $resolveDate,
-
-          //  'start_date' => $startDate,
-            //'end_date' => $endDate
         );
 
         return $this->render('studentExamStartInfo.html.twig', array(

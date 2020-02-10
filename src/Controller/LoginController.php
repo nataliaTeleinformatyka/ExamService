@@ -7,16 +7,14 @@ use App\Form\LoginType;
 use App\Repository\Admin\DatabaseConnection;
 use App\Repository\Admin\UserRepository;
 use Kreait\Firebase\Exception\Auth\InvalidPassword;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class LoginController  extends AbstractController
-{
+class LoginController  extends AbstractController {
+
     /**
      * @Route("/login", name="login")
      * @param Request $request
@@ -26,7 +24,6 @@ class LoginController  extends AbstractController
     public function login(Request $request, AuthenticationUtils $authenticationUtils): Response {
         $user = new User([]);
         $userRepository = new UserRepository();
-
         $database = new DatabaseConnection();
         $database ->createAdmin();
 
@@ -40,11 +37,9 @@ class LoginController  extends AbstractController
             $email = $user->getEmail();
             $password = $user->getPassword();
             $id = $userRepository->getUserIdFromAuthentication($email);
-
             $information = $userRepository->getUserByEmail($email);
             try {
                 $goodLog = $userRepository->checkPassword($email, $password);
-                print_r($goodLog);
 
                 session_destroy();
                 session_start();
@@ -87,20 +82,6 @@ class LoginController  extends AbstractController
         ]);
     }
 
-          /*  if ($user[0]['username'] == $request->request->get('username') && $user[0]['password'] == $request->request->get('password')) {
-                $session = new Session();
-                $session->start();
-                $session->set("client", $user);
-                $_SESSION['username'] = $request->request->get('username');
-                return $this->redirectToRoute('user');
-            }//todo: else return $this->redirectToRoute('login', array("message" => 'Bad login or password'));
-        }
-
-        return $this->render('login.html.twig', [
-            'form' => $form->createView(),
-            'errors' => $errors,
-        ]);
-    }*/
     /**
      * @Route("/logout", name="logout")
      */
@@ -109,5 +90,4 @@ class LoginController  extends AbstractController
         session_destroy();
         return $this->redirectToRoute('login');
     }
-
 }

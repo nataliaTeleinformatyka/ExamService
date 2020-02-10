@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 15:45
- */
 
 namespace App\Form\Admin;
-
 
 use App\Entity\Admin\Answer;
 use Symfony\Component\Form\AbstractType;
@@ -17,14 +10,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AnswerType extends AbstractType
-{
+class AnswerType extends AbstractType {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
+    public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('content', TextareaType::class)
             ->add('is_true', ChoiceType::class,
@@ -38,8 +30,7 @@ class AnswerType extends AbstractType
             ->getForm();
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
             'data_class' => Answer::class,
         ]);

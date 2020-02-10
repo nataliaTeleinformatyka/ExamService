@@ -14,8 +14,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-class LearningMaterialType extends AbstractType
-{
+class LearningMaterialType extends AbstractType {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options

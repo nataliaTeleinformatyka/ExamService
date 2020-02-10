@@ -7,8 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LearningMaterialsInformationController extends AbstractController
-{
+class LearningMaterialsInformationController extends AbstractController {
+
     /**
      * @Route("teacherLearningMaterialsInfo/{groupId}", name="teacherLearningMaterialsInfo")
      * @param Request $request
@@ -39,18 +39,19 @@ class LearningMaterialsInformationController extends AbstractController
         $learningMaterialsId = $learningMaterialsInformation->getIdLearningMaterials($materialGroupId);
         if($learningMaterialsId!=0){
             $learningMaterialsCount = count($learningMaterialsId);
-        } else {
+        } else
             $learningMaterialsCount=0;
-        }
+
         if ($learningMaterialsCount > 0) {
             $existLearningMaterial=true;
             for ($i = 0; $i < $learningMaterialsCount; $i++) {
+
                 $learningMaterials = $learningMaterialsInformation->getLearningMaterial($materialGroupId, $learningMaterialsId[$i]);
                 if($learningMaterials['is_required'] == true) {
                     $is_required = "Tak";
-                } else {
+                } else
                     $is_required="Nie";
-                }
+
                     $learningMaterialsArray[$i] = array(
                         'id' => $learningMaterials['id'],
                         'name' => $learningMaterials['name'],
@@ -64,14 +65,14 @@ class LearningMaterialsInformationController extends AbstractController
                 'name' => '',
                 'name_of_content' => '',
                 'is_required' => ''
-
             );
         }
+
         if( isset( $_SESSION['information'] ) && count( $_SESSION['information'] ) > 0  ) {
             $infoDelete = $_SESSION['information'];
-        } else {
+        } else
             $infoDelete = "";
-        }
+
         $_SESSION['information'] = array();
         return $this->render('teacherLearningMaterialsInfo.html.twig', array(
             'learning_materials_data' => $learningMaterialsArray,
@@ -79,8 +80,6 @@ class LearningMaterialsInformationController extends AbstractController
             'info_delete' => $infoDelete,
             'information' => $existLearningMaterial,
             'exam_id' => $_SESSION['exam_id']
-
         ));
-
     }
 }

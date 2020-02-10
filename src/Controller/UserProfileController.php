@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
-
 use App\Repository\Admin\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserProfileController extends AbstractController
-{
+class UserProfileController extends AbstractController {
+
     /**
      * @Route("userProfile", name="userProfile")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -16,7 +15,6 @@ class UserProfileController extends AbstractController
     public function userInformationCreate() {
         if(!isset($_SESSION['role']))
             return $this->redirectToRoute("login");
-
 
         $userId = $_SESSION['user_id'];
         $userRepository = new UserRepository();
@@ -26,7 +24,6 @@ class UserProfileController extends AbstractController
             'last_name' => $userInformation['last_name'],
             'email' => $userInformation['email'],
             'last_login' => $userInformation['last_login']['date'],
-            //'last_password_change' => $userInformation['last_password_change'],
             'date_registration' => $userInformation['date_registration']['date']
         );
         return $this->render('userProfile.html.twig',[

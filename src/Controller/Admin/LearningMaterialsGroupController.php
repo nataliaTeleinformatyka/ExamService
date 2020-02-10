@@ -94,7 +94,7 @@ class LearningMaterialsGroupController extends AbstractController {
                 $learningMaterialsGroup = $learningMaterialsGroupRepository->getLearningMaterialsGroup($learningMaterialsGroupsId[$i]);
 
                 $tplArray[$i] = array(
-                    'id' => $i,
+                    'id' => $learningMaterialsGroup['learning_materials_group_id'],
                     'name_of_group' => $learningMaterialsGroup['name_of_group'],
                 );
             }

@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ExamController extends AbstractController
-{
+class ExamController extends AbstractController {
+
     /**
      * @Route("exam", name="exam")
      * @param Request $request
@@ -32,6 +32,7 @@ class ExamController extends AbstractController
             $exam = $form->getData();
             $values = $exam->getAllInformation();
             $repositoryExam = new ExamRepository();
+
             $repositoryExam->insert($values);
 
             switch ($_SESSION['role']) {
@@ -178,6 +179,7 @@ class ExamController extends AbstractController
 
             $values = $exam->getAllInformation();
             $repositoryExam = new ExamRepository();
+
             $repositoryExam->update($values,$examId);
 
             switch ($_SESSION['role']) {

@@ -7,7 +7,10 @@
 
 {% block body %}
     <div class="container">
+        <div class="informationRow"> <b>{{ userName }}</b></div>
+
         {{ information }}
+
         {% if info == true %}
     <div class="teacherInfo">
         Lista egzaminów do których przypisano użytkownika:

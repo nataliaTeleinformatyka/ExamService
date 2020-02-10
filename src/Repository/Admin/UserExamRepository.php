@@ -90,10 +90,9 @@ class UserExamRepository {
         $userExamsId = $this->getIdUserExams();
         if($userExamsId!=0){
             $userExamsCount = count($userExamsId);
-        } else {
-            $userExamsCount=0;
-            $tplArray="";
-        }
+        } else
+            return 0;
+
         for ($i = 0; $i < $userExamsCount; $i++) {
             $userExam = $this->getUserExam($userExamsId[$i]);
             if ($userExam['user_id'] == $userId) {
@@ -102,7 +101,7 @@ class UserExamRepository {
                 $isExam = true;
             }
             if($i==($userExamsCount-1) and $isExam==false) {
-                $tplArray = "";
+                return 0;
             }
         }
         return $tplArray;

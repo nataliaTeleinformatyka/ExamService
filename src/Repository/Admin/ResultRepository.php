@@ -52,23 +52,6 @@ class ResultRepository {
         } else
             return $resultReference->getChildKeys();
     }
-//todo: THIS
-   /*public function getQuantityAttempt($userExamId,$examId, $userId){
-        $id = $this->getIdResults($userExamId);
-        $idAmount = count($id);
-        for($i=0;$i<$idAmount;$i++) {
-            if ($this->reference->getChild($userExamId)->getChild("Result")->getSnapshot()->hasChild($id[$i])) {
-                $resultInfo = $this->reference->getChild($userExamId)->getChild("Result")->getChild($i)->getValue();
-                if($resultInfo['exam_id'] == $examId and $resultInfo['user_id']==$userId){
-                    return $resultInfo['number_of_attempt'];
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        }
-    }*/
 
     public function getNextId($userExamId) {
         $resultsId= $this->getIdResults($userExamId);

@@ -12,8 +12,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ResultController extends AbstractController
-{
+class ResultController extends AbstractController {
+
     /**
      * @Route("studentExam/result", name="result")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
@@ -61,19 +61,16 @@ class ResultController extends AbstractController
                         for ($t = 0; $t < $amount; $t++) {
                             if (isset($_COOKIE['userAnswer' . $j . $t])) {
                                 $userAnswerInformation = $answerRepo->getAnswer($examId, $_COOKIE['questionId' . $j], $_COOKIE['userAnswer' . $j . $t]);
-                                if ($userAnswerInformation['id'] == $trueAnswers[$t]) {
+                                if ($userAnswerInformation['id'] == $trueAnswers[$t])
                                     $isTrueAnswer = true;
-                                }
-                                if ($t == $amount - 1 and $isTrueAnswer == true) {
+                                if ($t == $amount - 1 and $isTrueAnswer == true)
                                     $points++;
-                                }
                             }
                             setcookie('userAnswer' . $j . $t, "", time() - 3600);
                         }
                     }
+                }
             }
-            }
-
             for($k=0;$k<$_COOKIE['amountOfAnswers'.$j];$k++){
                 setcookie ('answerId'.$j.$k, "", time() - 3600);
                 setcookie ('answerContent'.$j.$k, "", time() - 3600);
@@ -86,7 +83,6 @@ class ResultController extends AbstractController
             setcookie ('questionId'.$j, "", time() - 3600);
             setcookie ('questionMaxAnswers'.$j, "", time() - 3600);
         }
-
         $resultRepository = new ResultRepository();
         $examRepository = new ExamRepository();
 
@@ -95,12 +91,11 @@ class ResultController extends AbstractController
         $numberOfAttempt = $resultRepository->getIdResults($_COOKIE['user_exam_id']);
 
         if($points>0) {
-            print_r(" podloga ".($points/$questionAmount). " aby zdac ".$percentagePassedExam );
             if(($points/$questionAmount)*100 >=$percentagePassedExam){
                 $isPassed=true;
                 $informationToUser = "Gratulacje, egzamin zakończono pomyślnie.";
                 $userExam = new UserExam([]);
-                print_r(new \DateTime("now"));
+
                 $userExam->setDateOfResolveExam(new \DateTime("now"));
                 $information = $userExam->getAllInformation();
                 $userExamRepository->update($information,$_COOKIE['user_exam_id']);
@@ -112,7 +107,6 @@ class ResultController extends AbstractController
             $isPassed=false;
             $informationToUser = "Niestety nie udało się zakończyć egzaminu z wynikiem pozytywnym.";
         }
-
         $result = new Result([]);
         $result->setPoints($points);
         $result->setNumberOfAttempt($numberOfAttempt);
@@ -147,16 +141,15 @@ class ResultController extends AbstractController
                     break;
                 }
         }
-
         $userExamId=(int)$request->attributes->get('userExamId');
 
         $resultInformation = new ResultRepository();
         $id = $resultInformation->getIdResults($userExamId);
         if($id!=0){
             $idCount = count($id);
-        } else {
+        } else
             $idCount=0;
-        }
+
         $isPassed="False";
         if ($idCount > 0) {
             $info = true;
@@ -179,11 +172,9 @@ class ResultController extends AbstractController
                 'is_passed' => '',
             );
         }
-
         return $this->render('resultList.html.twig', array(
             'data' => $tplArray,
             'information' => $info,
-
         ));
     }
 }

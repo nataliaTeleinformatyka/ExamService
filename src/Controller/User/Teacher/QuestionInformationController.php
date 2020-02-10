@@ -8,8 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuestionInformationController extends AbstractController
-{
+class QuestionInformationController extends AbstractController {
+
     /**
      * @Route("teacherQuestionInfo/{exam}/{question}", name="teacherQuestionInfo")
      * @param Request $request
@@ -36,17 +36,17 @@ class QuestionInformationController extends AbstractController
         $existAnswer = false;
         $_SESSION['question_id'] = $questionId;
         $questionInformation= new QuestionRepository();
+        $answerInformation= new AnswerRepository();
+
         $questions = $questionInformation->getQuestion($examId,$questionId);
         $content = $questions['content'];
         $maxAnswers = $questions['max_answers'];
-        $answerInformation= new AnswerRepository();
 
         $answersId = $answerInformation-> getIdAnswers($examId,$questionId);
         if($answersId!=0){
             $answersCount = count($answersId);
-        } else {
+        } else
             $answersCount=0;
-        }
 
         if($answersCount>0) {
             $existAnswer=true;
@@ -54,9 +54,8 @@ class QuestionInformationController extends AbstractController
                 $answers = $answerInformation->getAnswer($examId,$questionId,$answersId[$i]);
                 if ($answers['is_true'] == 1) {
                     $is_required = "Tak";
-                } else {
+                } else
                     $is_required = "Nie";
-                }
 
                 $answerArray[$i] = array(
                     'id' => $i,
@@ -71,7 +70,6 @@ class QuestionInformationController extends AbstractController
                 'is_true' => '',
             );
         }
-
         return $this->render('teacherQuestionInfo.html.twig', array(
             'question_id' => $questionId,
             'exam_id' => $examId,
@@ -80,6 +78,5 @@ class QuestionInformationController extends AbstractController
             'answer_data' => $answerArray,
             'information' => $existAnswer
         ));
-
     }
 }

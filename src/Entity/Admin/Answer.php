@@ -1,26 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Asus
- * Date: 23.11.2019
- * Time: 12:12
- */
 
 namespace App\Entity\Admin;
 
-
 use Doctrine\ORM\Mapping as ORM;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Symfony\Component\Security\Core\User\EquatableInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Admin\AnswerRepository")
  */
 
-class Answer extends Entity  implements  EquatableInterface
-{
+class Answer extends Entity {
     /**
      * @Assert\Type("Integer")
      * @ORM\Id
@@ -54,80 +44,70 @@ class Answer extends Entity  implements  EquatableInterface
     /**
      * @return mixed
      */
-    public function getExamId()
-    {
+    public function getExamId() {
         return $this->exam_id;
     }
 
     /**
      * @param mixed $exam_id
      */
-    public function setExamId($exam_id): void
-    {
+    public function setExamId($exam_id): void {
         $this->exam_id = $exam_id;
     }
 
     /**
      * @return mixed
      */
-    public function getQuestionId()
-    {
+    public function getQuestionId() {
         return $this->question_id;
     }
 
     /**
      * @param mixed $question_id
      */
-    public function setQuestionId($question_id): void
-    {
+    public function setQuestionId($question_id): void {
         $this->question_id = $question_id;
     }
 
     /**
      * @return mixed
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * @param mixed $id
      */
-    public function setId($id): void
-    {
+    public function setId($id): void {
         $this->id = $id;
     }
 
     /**
      * @return mixed
      */
-    public function getContent()
-    {
+    public function getContent() {
         return $this->content;
     }
 
     /**
      * @param mixed $content
      */
-    public function setContent($content): void
-    {
+    public function setContent($content): void {
         $this->content = $content;
     }
 
     /**
      * @return mixed
      */
-    public function getisTrue()
-    {
+    public function getisTrue() {
         return $this->is_true;
     }
 
     /**
      * @param mixed $is_true
      */
-    public function setIsTrue($is_true): void
-    {
+    public function setIsTrue($is_true): void {
         $this->is_true = $is_true;
     }
 
@@ -135,21 +115,8 @@ class Answer extends Entity  implements  EquatableInterface
      * @return mixed
      */
 
-    public function getAllInformation(){
+    public function getAllInformation() {
         $data = [$this->content,$this->is_true];
         return $data;
-    }
-    /**
-     * The equality comparison should neither be done by referential equality
-     * nor by comparing identities (i.e. getId() === getId()).
-     *
-     * However, you do not need to compare every attribute, but only those that
-     * are relevant for assessing whether re-authentication is required.
-     *
-     * @return bool
-     */
-    public function isEqualTo(UserInterface $user)
-    {
-        // TODO: Implement isEqualTo() method.
     }
 }

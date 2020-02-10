@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LearningMaterialsGroupExamController extends AbstractController
-{
+class LearningMaterialsGroupExamController extends AbstractController {
+
     /**
      * @Route("learningMaterialsGroupExam", name="learningMaterialsGroupExam")
      * @param Request $request
@@ -27,6 +27,7 @@ class LearningMaterialsGroupExamController extends AbstractController
         $learningMaterialsGroupExam= new LearningMaterialsGroupExam([]);
         $learningMaterialsGroupRepository = new LearningMaterialsGroupRepository();
         $examRepository = new ExamRepository();
+
         $examsId = $examRepository->getIdExams();
         $learningMaterialsGroupsId = $learningMaterialsGroupRepository->getLearningMaterialsGroupId();
 
