@@ -55,8 +55,12 @@ class UserExamListController extends AbstractController {
 
                  if ($userExam['user_id'] == $_SESSION['user_id']) {
                      $questionsId = $questionRepository->getIdQuestions($userExam['exam_id']);
+                     if($questionsId!=0){
+                         $questionsCount = count($questionsId);
+                     } else
+                         $questionsCount=0;
 
-                     if ($questionsId > 0) {
+                     if ($questionsCount > 0) {
                          $info = true;
                          $today = new \DateTime();
                          $resultsId = $resultRepository->getIdResults($userExam['user_exam_id']);

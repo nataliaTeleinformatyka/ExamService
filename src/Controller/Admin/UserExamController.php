@@ -124,7 +124,7 @@ class UserExamController  extends AbstractController {
             'information' => $info
         ));
     }
-    
+
     /**
      * @param Request $request
      * @Route("/deleteUserExam/{userExamId}", name="deleteUserExam")
