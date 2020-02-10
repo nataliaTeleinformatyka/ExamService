@@ -124,59 +124,7 @@ class UserExamController  extends AbstractController {
             'information' => $info
         ));
     }
-
-    /**
-     * @param Request $request
-     * @param UserExam $userExam
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @Route("userExamEdit/{userExamId}", name="userExamEdit")
-     */
-    public function editUserExam(Request $request, UserExam $userExam) {
-        if(!isset($_SESSION['role']))
-            return $this->redirectToRoute("login");
-        if($_SESSION['role']=="ROLE_STUDENT")
-            $this->redirectToRoute('studentHomepage');
-
-        $examInformation = new UserExamRepository();
-        $userExamId = (int)$request->attributes->get('userExamId');
-        $userExams = $examInformation->getUserExam($userExamId);
-
-        $examInfoArray = array(
-            'user_exam_id' => $userExams['user_exam_id'],
-            'user_id' => $userExams['user_id'],
-            'exam_id' => $userExams['exam_id'],
-            'start_access_time' => $userExams['start_access_time'],
-            'end_access_time' => $userExams['end_access_time']
-        );
-
-        $form = $this->createForm(UserExamType::class, $userExam);
-        $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-
-            $values = $userExam->getAllInformation();
-            $repositoryExam = new UserExamRepository();
-            $repositoryExam->update($values,$userExamId);
-
-            switch ($_SESSION['role']) {
-                case "ROLE_PROFESSOR": {
-                    return $this->redirectToRoute('teacherExamList');
-                    break;
-                }
-                case "ROLE_ADMIN": {
-                    return $this->redirectToRoute('userExamList');
-                    break;
-                }
-            }
-        }
-        return $this->render('userExamAdd.html.twig', [
-            'form' => $form->createView(),
-            'examInformation' =>$examInfoArray,
-            'userExamId' => $userExamId,
-            'role' => $_SESSION['role'],
-        ]);
-    }
-
+    
     /**
      * @param Request $request
      * @Route("/deleteUserExam/{userExamId}", name="deleteUserExam")
