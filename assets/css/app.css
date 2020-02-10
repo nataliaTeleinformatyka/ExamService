@@ -115,5 +115,10 @@ tr.informationRow {
     background: radial-gradient(ellipse farthest-corner at 5% 15%, #eeffe8, #a8afa4);
 
 }
+.loginClass{
+    margin-top: 150px;
+    margin-left: 25%;
+    margin-right: 25%;
+}
 .ISort,.SSort{cursor: pointer;}
 .ISort div, .SSort div{display: inline-block;width: 20px;}

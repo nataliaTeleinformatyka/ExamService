@@ -1,12 +1,25 @@
 {# templates/login.html.twig #}
-{% extends 'base.html' %}
+{%block head%}
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Serwis Egzaminacyjny{% endblock %}</title>
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+{% endblock %}
 {% block body %}
     <body>
-    {% if errors %}
-        {{ errors }}
-    {% endif %}
-        <div class="signIn"> LOGOWANIE
-        {{ form(form) }}
+        <div class="container">
+        {% if errors %}
+            {{ errors }}
+        {% endif %}
+        <div class="teacherInfo loginClass"> LOGOWANIE
+            {{ form(form) }}
+        </div>
+        <footer class="container">
+            <b>Praca inżynierska Teleinformatyka 2020</b>
+        </footer>
         </div>
     </body>
 {% endblock %}

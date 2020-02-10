@@ -18,19 +18,16 @@ class LoginController  extends AbstractController {
     /**
      * @Route("/login", name="login")
      * @param Request $request
-     * @param AuthenticationUtils $authenticationUtils
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response {
+    public function login(Request $request): Response {
         $user = new User([]);
         $userRepository = new UserRepository();
         $database = new DatabaseConnection();
         $database ->createAdmin();
-
+        $errors="";
         $form = $this->createForm(LoginType::class, $user);
         $form->handleRequest($request);
-        $errors = $authenticationUtils->getLastAuthenticationError();
-
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -71,14 +68,13 @@ class LoginController  extends AbstractController {
                         break;
                     }
                 }
-
             }catch (InvalidPassword $e) {
                     $errors = $e->getMessage();
             }
         }
         return $this->render('login.html.twig', [
             'form' => $form->createView(),
-            'errors' => $errors,
+            'errors' => $errors
         ]);
     }
 
