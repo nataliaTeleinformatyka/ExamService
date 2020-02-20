@@ -53,7 +53,7 @@
             {% if informationMaterialGroupExam==true %}
                 {% for materials_group in materials_group_data %}
                     <p><a href="{{ path('teacherLearningMaterialsInfo', { 'groupId': exam_id}) }}"> {{ materials_group.name_of_group }} </a>
-                    <a href="{{ path('deleteLearningMaterialsGroupExam', { 'id': materials_group.id }) }}" title="Usuń">
+                    <a href="{{ path('deleteLearningMaterialsGroupExam', { 'id': id }) }}" title="Usuń">
                         <span class="glyphicon glyphicon-remove-sign"></span> Usuń
                     </a></p>
                 {% endfor %}

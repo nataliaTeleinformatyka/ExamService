@@ -92,7 +92,7 @@ class UserExam extends Entity {
     }
 
     public function getAllInformation() {
-        $data = [$this->date_of_resolve_exam];
+        $data = [$this->user_id,$this->exam_id,$this->date_of_resolve_exam];
         return $data;
     }
 }

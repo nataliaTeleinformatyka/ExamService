@@ -97,7 +97,6 @@ class LearningMaterialsGroupExamController extends AbstractController {
         } else {
             $groupExamsCount=0;
         }
-
         if ($groupExamsCount > 0) {
             $info = true;
             for ($i = 0; $i < $groupExamsCount; $i++) {

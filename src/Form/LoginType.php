@@ -28,8 +28,7 @@ class LoginType extends AbstractType {
         return 'login';
     }
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);

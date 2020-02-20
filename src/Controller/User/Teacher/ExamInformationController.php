@@ -178,13 +178,14 @@ class ExamInformationController extends AbstractController {
 
             for ($i = 0; $i < $learningMaterialsGroupExamsCount; $i++) {
                 $learningMaterialsGroupExam = $learningMaterialsGroupExamInformation->getLearningMaterialsGroupExam($learningMaterialsGroupExamsId[$i]);
+                $groupExamId = $learningMaterialsGroupExam['id'];
                 if ($learningMaterialsGroupExam['exam_id'] == $examId){
                     $informationMaterialGroupExam = true;
                     $learning_materials_group_id = $learningMaterialsGroupExam['learning_materials_group_id'];
 
                     $learningMaterialsGroup = $learningMaterialsGroupInformation->getLearningMaterialsGroup($learning_materials_group_id);
                     $materialsGroupArray[$amount] = array(
-                        'id' => $learningMaterialsGroup['learning_materials_groups_id'],
+                        'id' => $learningMaterialsGroup['learning_materials_group_id'],
                         'name_of_group' => $learningMaterialsGroup['name_of_group'],
                     );
                     $amount++;
@@ -280,6 +281,7 @@ class ExamInformationController extends AbstractController {
             'exam_id' => $examId,
             'informationMaterialGroupExam' => $informationMaterialGroupExam,
             'informationUserExam' => $informationUserExam,
+            'id' => $groupExamId
         ));
     }
 }

@@ -111,6 +111,23 @@ class LearningMaterialsGroupExamRepository {
         } else
             return 0;
     }
+    /*public function findByExamId(int $examId) {
+        $id = $this->getIdLearningMaterialsGroupExams();
+        if($id!=0){
+            $count = count($id);
+        } else {
+            $count=0;
+        }
+        for($i=0;$i<$count;$i++) {
+            $information = $this->reference->getChild($id[$i])->getValue();
+            if($information['exam_id'] == $examId) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }*/
 
     public function getNextId() {
         $learningMaterialsGroupExamsId = $this->getIdLearningMaterialsGroupExams();

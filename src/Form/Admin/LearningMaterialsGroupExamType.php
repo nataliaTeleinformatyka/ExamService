@@ -39,7 +39,7 @@ class LearningMaterialsGroupExamType extends AbstractType {
         }
         for ($i = 0; $i < $learningMaterialsGroupsCount; $i++) {
             $valuesGroup = $group->getLearningMaterialsGroup($learningMaterialsGroupsId[$i]);
-            $groupArray[$valuesGroup['learning_materials_groups_id'].' - '.$values['name']] = $valuesGroup['learning_materials_groups_id'];
+            $groupArray[$valuesGroup['learning_materials_group_id'].' - '.$valuesGroup['name_of_group']] = $valuesGroup['learning_materials_group_id'];
         }
 
         $builder
